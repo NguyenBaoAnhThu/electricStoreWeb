@@ -1,0 +1,41 @@
+name: Build Electric Store
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Give permission to gradlew
+        run: chmod +x ./gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew build -x test --no-daemon
+
+      - name: Debug - List build directories
+        run: |
+          echo "Checking build outputs"
+          ls -la
+          ls -la build/ || echo "No build directory"
+          ls -la build/libs/ || echo "No libs directory" 
+
+      - name: Upload artifact for deployment
+        uses: actions/upload-artifact@v4
+        with:
+          name: java-app
+          path: build/libs/electricStore-0.0.1-SNAPSHOT.jar

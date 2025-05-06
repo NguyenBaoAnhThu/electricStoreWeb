@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanh Toán Chuyển Khoản</title>
+    <link rel="stylesheet" th:href="@{/css/admin/fragments/sidebar.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/fragments/header.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/fragments/footer.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/layout/layout.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        :root {
+            --shop-red: #D10024;
+            --shop-red-hover: #bb2d3b;
+            --shop-light-bg: #f8f9fa;
+            --shop-border: #e9ecef;
+            --shop-light-red: rgba(209, 0, 36, 0.05);
+            --shop-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-collapsed .main-content {
+            margin-left: 70px;
+        }
+
+        .wrapper {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+            padding: 25px;
+            margin: 0 auto;
+            max-width: 1000px;
+        }
+
+        .payment-container {
+            max-width: 800px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--shop-shadow);
+            overflow: hidden;
+        }
+
+        .payment-header {
+            background: linear-gradient(135deg, var(--shop-red) 0%, #ff3e4b 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .payment-header h2 {
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .payment-body {
+            padding: 30px;
+        }
+
+        .qr-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .qr-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        .qr-code {
+            width: 250px;
+            height: 250px;
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+        }
+
+        .bank-details {
+            background-color: var(--shop-light-bg);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .bank-details h4 {
+            color: var(--shop-red);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed var(--shop-border);
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .detail-value {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .copy-btn {
+            background-color: var(--shop-light-bg);
+            border: 1px solid var(--shop-border);
+            color: #555;
+            font-size: 14px;
+            padding: 2px 8px;
+            margin-left: 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            background-color: #e9ecef;
+        }
+
+        .order-summary {
+            background-color: var(--shop-light-bg);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .order-summary h4 {
+            color: var(--shop-red);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .payment-footer {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px 30px;
+            background-color: var(--shop-light-bg);
+            border-top: 1px solid var(--shop-border);
+        }
+
+        .btn-primary {
+            background-color: var(--shop-red);
+            border-color: var(--shop-red);
+            padding: 10px 20px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--shop-red-hover);
+            border-color: var(--shop-red-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline-secondary {
+            color: #6c757d;
+            border-color: #ced4da;
+            padding: 10px 20px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-outline-secondary:hover {
+            background-color: #f8f9fa;
+        }
+
+        .timer-section {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .timer {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--shop-red);
+        }
+
+        .payment-status {
+            background-color: #fff8e1;
+            color: #ff8f00;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .note-section {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-left: 4px solid var(--shop-red);
+            border-radius: 5px;
+        }
+
+        .modal-content {
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border: none;
+        }
+
+        .modal-content::before {
+            content: none !important;
+            display: none !important;
+        }
+
+        .modal-header {
+            background-color: #15161D;
+            color: white;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px 8px 0 0;
+        }
+
+        .modal-header .btn-close {
+            color: white;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 1200px) {
+            .main-content {
+                margin-left: 220px;
+            }
+
+            .sidebar-collapsed .main-content {
+                margin-left: 70px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .main-content {
+                margin-left: 0;
+            }
+
+            .sidebar-collapsed .main-content {
+                margin-left: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+            }
+
+            .payment-body {
+                padding: 20px;
+            }
+
+            .qr-code {
+                width: 200px;
+                height: 200px;
+            }
+
+            .detail-row {
+                flex-direction: column;
+                gap: 5px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .payment-footer {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{admin/fragments/header :: header}"></div>
+<div th:replace="~{admin/fragments/sidebar :: sidebar}"></div>
+
+<main class="main-content">
+    <div class="wrapper">
+        <div class="payment-container">
+            <div class="payment-header">
+                <h2><i class="fas fa-qrcode me-2"></i> Thanh Toán Chuyển Khoản</h2>
+            </div>
+
+            <div class="payment-body">
+                <div class="payment-status">
+                    <i class="fas fa-clock me-2"></i> Đang chờ thanh toán
+                </div>
+
+                <div class="timer-section">
+                    <p>Vui lòng hoàn tất thanh toán trong:</p>
+                    <div class="timer" id="countdown">10:00</div>
+                </div>
+
+                <div class="qr-section">
+                    <div class="qr-container">
+                        <div class="qr-code">
+                            <!-- QR code từ file SVG -->
+                            <img th:src="@{/images/qrcode.svg}" alt="QR Code thanh toán" width="250" height="250" />
+                        </div>
+                    </div>
+                    <p>Quét mã QR bằng ứng dụng ngân hàng để thanh toán</p>
+                </div>
+
+                <div class="bank-details">
+                    <h4><i class="fas fa-university me-2"></i>Thông Tin Chuyển Khoản</h4>
+
+                    <div class="detail-row">
+                        <div class="detail-label">Ngân hàng:</div>
+                        <div class="detail-value">
+                            Vietcombank <button class="copy-btn" onclick="copyToClipboard('Vietcombank')"><i class="far fa-copy"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="detail-row">
+                        <div class="detail-label">Số tài khoản:</div>
+                        <div class="detail-value">
+                            1234567890123 <button class="copy-btn" onclick="copyToClipboard('1234567890123')"><i class="far fa-copy"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="detail-row">
+                        <div class="detail-label">Chủ tài khoản:</div>
+                        <div class="detail-value">
+                            CÔNG TY TNHH ABC XYZ <button class="copy-btn" onclick="copyToClipboard('CÔNG TY TNHH ABC XYZ')"><i class="far fa-copy"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="detail-row">
+                        <div class="detail-label">Số tiền:</div>
+                        <div class="detail-value">
+                            <span th:if="${order != null}" th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')}">500,000</span> VND
+                            <button class="copy-btn" th:if="${order != null}" th:attr="onclick='copyToClipboard(\'' + ${order.totalPrice} + '\')'"><i class="far fa-copy"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="detail-row">
+                        <div class="detail-label">Nội dung chuyển khoản:</div>
+                        <div class="detail-value">
+                            <span th:if="${order != null}" th:text="${'THANH TOAN DH ' + order.codeOrder}">THANH TOAN DH #12345</span>
+                            <button class="copy-btn" th:if="${order != null}" th:attr="onclick='copyToClipboard(\'THANH TOAN DH ' + ${order.codeOrder} + '\')'"><i class="far fa-copy"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="order-summary">
+                    <h4><i class="fas fa-file-invoice me-2"></i>Thông Tin Đơn Hàng</h4>
+
+                    <div class="detail-row">
+                        <div class="detail-label">Mã đơn hàng:</div>
+                        <div class="detail-value" th:text="${order != null ? order.codeOrder : '#12345'}">#12345</div>
+                    </div>
+
+                    <div class="detail-row">
+                        <div class="detail-label">Khách hàng:</div>
+                        <div class="detail-value" th:text="${order != null && order.customer != null ? order.customer.customerName : 'Nguyễn Văn A'}">Nguyễn Văn A</div>
+                    </div>
+
+                    <div class="detail-row">
+                        <div class="detail-label">Số điện thoại:</div>
+                        <div class="detail-value" th:text="${order != null && order.customer != null ? order.customer.phoneNumber : '0987654321'}">0987654321</div>
+                    </div>
+
+                    <div class="detail-row">
+                        <div class="detail-label">Tổng tiền:</div>
+                        <div class="detail-value">
+                            <span th:if="${order != null}" th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')}">500,000</span> VND
+                        </div>
+                    </div>
+                </div>
+
+                <div class="note-section">
+                    <h5><i class="fas fa-info-circle me-2"></i>Lưu ý:</h5>
+                    <ul>
+                        <li>Vui lòng nhập chính xác nội dung chuyển khoản</li>
+                        <li>Đơn hàng sẽ được xác nhận sau khi chúng tôi nhận được thanh toán</li>
+                        <li>Nếu cần hỗ trợ, vui lòng liên hệ: <strong>support@example.com</strong> hoặc <strong>1900 1234</strong></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="payment-footer">
+                <button class="btn btn-outline-secondary" id="cancelPaymentBtn">
+                    Quay lại
+                </button>
+                <button class="btn btn-primary" id="confirmPaymentBtn"
+                        th:attr="data-order-id=${orderId},data-payment-id=${paymentId}"
+                        data-order-id="5" data-payment-id="5">
+                     Xác nhận đã thanh toán
+                </button>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Modal xác nhận huỷ đơn hàng -->
+<div class="modal fade" id="cancelConfirmModal" tabindex="-1" aria-labelledby="cancelConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cancelConfirmModalLabel">Xác nhận Hủy Đơn Hàng</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body d-flex align-items-center">
+                <div class="me-3 text-dark">
+                    <i class="material-icons" style="font-size:48px; color:black;">error_outline</i>
+                </div>
+                <div>
+                    <p class="mb-0">Bạn chưa hoàn tất thanh toán. Nếu quay lại, đơn hàng sẽ bị hủy và mọi thông tin sẽ bị mất. Bạn có chắc chắn muốn hủy không?</p>
+                </div>
+            </div>
+            <div class="modal-footer border-0 justify-content-center">
+                <button type="button" class="btn btn-primary" id="confirmCancelBtn">Xác nhận</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{admin/fragments/footer :: footer}"></div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/admin/header.js}" type="text/javascript"></script>
+<script th:src="@{/js/admin/layout.js}"></script>
+<script th:src="@{/js/admin/sidebarActiveMenu.js}" defer></script>
+
+<script>
+    // Countdown timer
+    function startTimer(duration, display) {
+        let timer = duration, minutes, seconds;
+        let countdown = setInterval(function () {
+            minutes = parseInt(timer / 60, 10);
+            seconds = parseInt(timer % 60, 10);
+
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+
+            display.textContent = minutes + ":" + seconds;
+
+            if (--timer < 0) {
+                clearInterval(countdown);
+                display.textContent = "00:00";
+                alert("Thời gian thanh toán đã hết. Vui lòng tạo đơn hàng mới.");
+                window.location.href = "/Admin/order";
+            }
+        }, 1000);
+    }
+
+    // Copy to clipboard function
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(function() {
+            alert("Đã sao chép: " + text);
+        }, function() {
+            alert("Không thể sao chép văn bản");
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Start countdown - 10 minutes
+        let tenMinutes = 60 * 10;
+        let display = document.querySelector('#countdown');
+        startTimer(tenMinutes, display);
+
+        // Lấy thông tin đơn hàng và thanh toán từ thuộc tính data
+        const confirmBtn = document.getElementById('confirmPaymentBtn');
+        const orderId = confirmBtn.getAttribute('data-order-id');
+        const paymentId = confirmBtn.getAttribute('data-payment-id');
+
+        console.log('Order ID:', orderId);
+        console.log('Payment ID:', paymentId);
+
+        // Confirm payment button event
+        confirmBtn.addEventListener('click', function() {
+            // Call API to confirm payment
+            fetch('/Admin/payment/confirm-payment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `orderId=${orderId}&paymentId=${paymentId}`
+            })
+                .then(response => {
+                    if (response.ok) {
+                        return response.text().then(text => {
+                            alert("Thanh toán đã được xác nhận thành công!");
+                            window.location.href = "/Admin/order";
+                        });
+                    } else {
+                        return response.text().then(text => {
+                            throw new Error(text);
+                        });
+                    }
+                })
+                .catch(error => {
+                    alert("Lỗi khi xác nhận thanh toán: " + error.message);
+                });
+        });
+
+        // Cancel payment button event
+        const cancelBtn = document.getElementById('cancelPaymentBtn');
+        cancelBtn.addEventListener('click', function() {
+            // Hiển thị modal xác nhận hủy
+            const cancelModal = new bootstrap.Modal(document.getElementById('cancelConfirmModal'));
+            cancelModal.show();
+        });
+
+        // Confirm cancel button event
+        const confirmCancelBtn = document.getElementById('confirmCancelBtn');
+        confirmCancelBtn.addEventListener('click', function() {
+            // Call API to cancel payment
+            fetch('/Admin/payment/cancel-payment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `orderId=${orderId}`
+            })
+                .then(response => {
+                    if (response.ok) {
+                        // Xóa dữ liệu session
+                        sessionStorage.removeItem("selectedProduct");
+                        sessionStorage.removeItem("selectedCustomer");
+                        sessionStorage.removeItem("selectedNewCustomer");
+
+                        // Quay lại trang danh sách đơn hàng
+                        window.location.href = "/Admin/order";
+                    } else {
+                        return response.text().then(text => {
+                            throw new Error(text);
+                        });
+                    }
+                })
+                .catch(error => {
+                    alert("Lỗi khi hủy đơn hàng: " + error.message);
+                });
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,993 @@
+
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tạo Phiếu Nhập Kho</title>
+    <link rel="stylesheet" th:href="@{/css/admin/fragments/sidebar.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/fragments/header.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/fragments/footer.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/layout/layout.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/layout/tablelayout.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        .form-container { background-color: #f8f9fa; padding: 20px; border-radius: 5px; margin-bottom: 20px; }
+        .table-container { background-color: #fff; border-radius: 5px; padding: 15px; margin-bottom: 20px; }
+        .product-table th { background-color: #212529; color: white; padding: 10px; text-align: center; vertical-align: middle;}
+        .product-table td { padding: 8px; vertical-align: middle; }
+        .totals-container { background-color: #f8f9fa; border-radius: 5px; padding: 15px; margin-bottom: 20px; }
+        .btn-action { border-radius: 4px; padding: 10px 20px; font-weight: 600; margin-top: 10px; }
+        .red-bar { background-color: #dc3545; width: 4px; height: 100%; position: absolute; left: 0; top: 0; }
+        .delete-btn { padding: 2px 6px; background-color: #dc3545; color: white; border: none; border-radius: 4px; }
+        .add-product-btn { background-color: #0d6efd; color: white; border: none; border-radius: 4px; padding: 8px 15px; }
+        .validation-message { font-size: 0.875em; margin-top: .25rem; display: block; } /* Use d-none to hide */
+        .text-end { text-align: right !important; }
+        #productModal .table th, #productModal .table td { vertical-align: middle; }
+        #productModal .table th:first-child, #productModal .table td:first-child { text-align: center; }
+    </style>
+</head>
+<body>
+<div th:replace="~{admin/fragments/header :: header}"></div>
+<div th:replace="~{admin/fragments/sidebar :: sidebar}"></div>
+
+<main class="main-content">
+    <div class="wrapper">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="tittle">Tạo Phiếu Nhập Kho</h1>
+            <a th:href="@{/Admin/ware-houses}" class="btn btn-secondary">
+                Quay lại
+            </a>
+        </div>
+
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <form id="warehouseImportForm" th:action="@{/Admin/transactions/submit-import}" method="post" onsubmit="clearDraftBeforeSubmit(event)">
+            <div class="form-container position-relative mb-3">
+                <div class="red-bar"></div>
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label for="receiptCode" class="form-label">Mã Phiếu Nhập</label>
+                        <input type="text" class="form-control" id="receiptCode" name="receiptCode" th:value="${receiptCode}">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="importDate" class="form-label">Ngày Nhập Hàng</label>
+                        <input type="date" class="form-control" id="importDate" name="importDate" th:value="${importDate}">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="supplier" class="form-label">Nhà Cung Cấp</label>
+                        <select class="form-select" id="supplier" name="supplier"
+                                onchange="handleSupplierChange(this.value)">
+                            <option value="">-- Chọn nhà cung cấp --</option>
+                            <option th:each="s : ${suppliers}"
+                                    th:value="${s.supplierID}"
+                                    th:selected="${s.supplierID == selectedSupplier}"
+                                    th:text="${s.supplierName}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="notes" class="form-label">Ghi Chú</label>
+                        <input type="text" class="form-control" id="notes" name="notes" th:value="${notes}">
+                    </div>
+                </div>
+            </div>
+            <div class="table-container position-relative mb-3">
+                <div class="red-bar"></div>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold mb-0">Sản Phẩm</h5>
+                    <button type="button" class="add-product-btn" data-bs-toggle="modal" data-bs-target="#productModal">
+                        <i class="fas fa-plus me-1"></i> Thêm sản phẩm
+                    </button>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered product-table">
+                        <thead>
+                        <tr>
+                            <th width="50">STT</th>
+                            <th width="120">Mã SP</th>
+                            <th>Tên Sản Phẩm</th>
+                            <th>Thương Hiệu</th>
+                            <th width="110">Số Lượng</th>
+                            <th width="150">Đơn Giá (VNĐ)</th>
+                            <th width="160">Thành Tiền (VNĐ)</th>
+                            <th width="50">Xóa</th>
+                        </tr>
+                        </thead>
+                        <tbody id="productContainer">
+                        </tbody>
+                    </table>
+                    <div id="no-products-message" class="text-center text-muted mt-3 d-none">
+                        Chưa có sản phẩm nào được thêm.
+                    </div>
+                </div>
+            </div>
+
+            <div class="totals-container position-relative mb-3">
+                <div class="red-bar"></div>
+                <h5 class="fw-bold mb-3">Giá Trị Nhập</h5>
+                <div class="row mb-2">
+                    <div class="col-md-6">
+                        <label class="form-label">Tổng số lượng nhập:</label>
+                        <strong id="totalQuantity" class="ms-2">0</strong><br>
+                        <label class="form-label">Tổng tiền hàng:</label>
+                        <strong id="totalAmount" class="ms-2">0</strong>
+                    </div>
+                </div>
+                <hr class="my-2">
+                <div class="row g-3 mb-3">
+                    <div class="col-md-4">
+                        <label for="discount" class="form-label">Chiết khấu (VNĐ):</label>
+                        <input type="text" class="form-control text-end" id="discount" name="discount" value="0" oninput="formatInputCurrency(this)" onblur="formatInputCurrency(this)">
+                        <span class="text-danger validation-message d-none">Giá trị không hợp lệ</span>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="vat" class="form-label">Thuế VAT (%):</label>
+                        <input type="text" class="form-control text-end" id="vat" name="vat" min="0" value="0" step="0.1">
+                        <span class="text-danger validation-message d-none">Giá trị không hợp lệ</span>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="additionalFees" class="form-label">Chi Phí Khác (VNĐ):</label>
+                        <input type="text" class="form-control text-end" id="additionalFees" name="additionalFees" value="0" oninput="formatInputCurrency(this)" onblur="formatInputCurrency(this)">
+                        <span class="text-danger validation-message d-none">Giá trị không hợp lệ</span>
+                    </div>
+                </div>
+                <hr class="my-2">
+                <div class="row mb-2">
+                    <div class="col-md-12 text-end">
+                        <label class="form-label fw-bold fs-5">TỔNG GIÁ TRỊ NHẬP HÀNG (VNĐ):</label>
+                        <span id="grandTotal" class="ms-2 fw-bold fs-5 text-danger">0</span>
+                    </div>
+                </div>
+                <hr class="my-2">
+            </div>
+            <div class="d-flex justify-content-end gap-2">
+                <button type="button" id="generatePdfOnlyBtn" class="btn btn-success btn-action">
+                    Lưu phiếu
+                </button>
+                <button type="button" class="btn btn-danger btn-action" id="cancelBtn">
+                    Hủy phiếu
+                </button>
+            </div>
+        </form>
+    </div>
+</main>
+
+<!-- Modal xác nhận lưu -->
+<div class="modal fade" id="saveConfirmModal" tabindex="-1" aria-labelledby="saveConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title" id="saveConfirmModalLabel">Xác nhận lưu phiếu</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body d-flex align-items-center">
+                <div class="me-3 text-dark">
+                    <i class="material-icons" style="font-size:48px; color:black;">error_outline</i>
+                </div>
+                <div>
+                    <p class="mb-0">Xác nhận lưu phiếu nhập kho này? Các thông tin sẽ được cập nhập vào hệ thống sau khi bạn thanh toán </p>
+                </div>
+            </div>
+            <div class="modal-footer border-0 justify-content-center">
+                <button type="button" id="confirmSaveBtn" class="btn btn-primary">Xác nhận</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Hủy</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl"> <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="productModalLabel">Thêm sản phẩm vào phiếu nhập</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm theo Mã hoặc Tên sản phẩm..." oninput="filterProducts()">
+            </div>
+            <div class="table-responsive" style="max-height: 400px; overflow-y: auto;"> <table class="table table-striped table-hover table-sm"> <thead class="table-dark sticky-top"> <tr>
+                <th width="50">
+                    <input type="checkbox" id="selectAll" class="form-check-input" title="Chọn/Bỏ chọn tất cả hiển thị">
+                </th>
+                <th>Mã SP</th>
+                <th>Tên Sản Phẩm</th>
+                <th>Thương Hiệu</th> <th>Đơn Giá Gốc</th>
+                <th>Lượng Tồn</th>
+            </tr>
+            </thead>
+                <tbody id="productList">
+                <tr th:each="p : ${products}" th:id="'modal-product-' + ${p.productID}">
+                    <td class="text-center">
+                        <input type="checkbox"
+                               class="form-check-input product-checkbox"
+                               th:value="${p.productID}"
+                               th:data-code="${p.productCode}"
+                               th:data-name="${p.name}"
+                               th:data-brand="${p.brand?.brandName ?: ''}"
+                               th:data-price="${p.price ?: 0}" /> </td>
+                    <td th:text="${p.productCode}"></td>
+                    <td th:text="${p.name}"></td>
+                    <td th:text="${p.brand?.brandName ?: 'N/A'}"></td> <td class="text-end" th:text="${#numbers.formatDecimal(p.price, 0, 'POINT', 0, 'COMMA')} ?: '0'"></td>
+                    <td class="text-end" th:text="${p.stock ?: 0}"></td>
+                </tr>
+                </tbody>
+            </table>
+                <div id="no-modal-products" class="text-center text-muted mt-3 d-none">
+                    Không tìm thấy sản phẩm nào.
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <span id="selectedCount" class="me-auto text-muted">0 sản phẩm được chọn</span>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            <button type="button" class="btn btn-primary" onclick="addSelectedProducts()">
+                <i class="fas fa-plus me-1"></i> Thêm vào phiếu
+            </button>
+        </div>
+    </div>
+    </div>
+</div>
+<!--Modal xác nhận huỷ phiếu -->
+<div class="modal fade" id="cancelConfirmModal" tabindex="-1" aria-labelledby="cancelConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title" id="cancelConfirmModalLabel">Xác nhận Hủy Phiếu Nhập</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body d-flex align-items-center">
+                <div class="me-3 text-dark">
+                    <i class="material-icons" style="font-size:48px; color:black;">error_outline</i>
+                </div>
+                <div>
+                    <p class="mb-0">Mọi thay đổi trong phiếu nhập này sẽ bị mất và không thể khôi phục. Bạn có chắc chắn muốn hủy?</p>
+                </div>
+            </div>
+            <div class="modal-footer border-0 justify-content-center">
+                <button type="button" class="btn btn-primary" id="confirmCancelBtn">Xác nhận</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Hủy</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{admin/fragments/footer :: footer}"></div>
+
+<script th:src="@{/js/admin/layout.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        // Các biến toàn cục
+        const STORAGE_KEY = 'warehouseImportData';
+        // const savedData = sessionStorage.getItem(STORAGE_KEY);
+        //
+        // if (savedData) {
+        //     const importData = JSON.parse(savedData);
+        //     const receiptCode = importData.header?.receiptCode || '';
+        //
+        //     // Tạo dữ liệu mới chỉ với mã phiếu
+        //     const newData = {
+        //         header: {
+        //             receiptCode: receiptCode,
+        //             importDate: '',
+        //             supplier: '',
+        //             notes: ''
+        //         },
+        //         products: [],
+        //         footer: {
+        //             discount: '0',
+        //             vat: '0',
+        //             additionalFees: '0',
+        //         }
+        //     };
+        //
+        //     // Lưu lại dữ liệu mới
+        //     sessionStorage.setItem(STORAGE_KEY, JSON.stringify(newData));
+        // }
+        const productContainer = $("#productContainer");
+        const noProductsMessage = $('#no-products-message');
+
+        // Khởi tạo ban đầu
+        initializeForm();
+        calculateTotals();
+        toggleNoProductsMessage();
+
+        // Thiết lập các sự kiện
+        setupEventListeners();
+
+        // Lấy mã phiếu nhập tự động nếu chưa có
+        if (!$('#receiptCode').val()) {
+            fetchNextInvoiceCode();
+        }
+
+        /**
+         * Khởi tạo form và các trường dữ liệu
+         */
+        function initializeForm() {
+            // Lấy dữ liệu từ session storage nếu có
+            const savedData = sessionStorage.getItem(STORAGE_KEY);
+            if (savedData) {
+                const importData = JSON.parse(savedData);
+
+                // Điền thông tin header
+                if (importData.header) {
+                    $('#receiptCode').val(importData.header.receiptCode || '');
+                    $('#importDate').val(importData.header.importDate || '');
+                    $('#supplier').val(importData.header.supplier || '');
+                    $('#notes').val(importData.header.notes || '');
+                }
+
+                // Điền thông tin footer
+                if (importData.footer) {
+                    $('#discount').val(importData.footer.discount || '0');
+                    $('#vat').val(importData.footer.vat || '0');
+                    $('#additionalFees').val(importData.footer.additionalFees || '0');
+                }
+
+                // Thêm các sản phẩm
+                if (importData.products && Array.isArray(importData.products)) {
+                    productContainer.empty();
+                    $.each(importData.products, function(index, productData) {
+                        addProductToTable(productData, index);
+                    });
+                }
+            }
+        }
+
+        /**
+         * Thiết lập các sự kiện lắng nghe
+         */
+        function setupEventListeners() {
+            // Sự kiện cho các trường thông tin cơ bản
+            $('#receiptCode, #notes').on('blur', saveDataToSession);
+            $('#importDate').on('change', saveDataToSession);
+            $('#supplier').on('change', handleSupplierChange);
+
+            // Sự kiện cho các trường footer
+            $('#discount, #additionalFees').on('blur', function() {
+                formatInputCurrency(this);
+                calculateTotals();
+                saveDataToSession();
+            });
+
+            $('#vat').on('input', function() {
+                calculateTotals();
+                saveDataToSession();
+            });
+
+            // Sự kiện cho các nút thao tác
+            $('#generatePdfOnlyBtn').on('click', function() {
+                const modal = new bootstrap.Modal(document.getElementById('saveConfirmModal'));
+                modal.show();
+            });
+
+            $('#confirmSaveBtn').on('click', saveInvoice);
+
+            $('#cancelBtn').on('click', function() {
+                const cancelModal = new bootstrap.Modal(document.getElementById('cancelConfirmModal'));
+                cancelModal.show();
+            });
+
+            $('#confirmCancelBtn').on('click', function() {
+                sessionStorage.removeItem(STORAGE_KEY);
+                window.location.href = "/Admin/ware-houses";
+            });
+
+            // Sự kiện cho modal thêm sản phẩm
+            $('#selectAll').on('change', function() {
+                const isChecked = $(this).prop('checked');
+                $('#productList .product-checkbox:visible').prop('checked', isChecked);
+                updateSelectedCount();
+            });
+
+            $('#productList').on('change', '.product-checkbox', updateSelectedCount);
+        }
+
+        /**
+         * Thêm sản phẩm vào bảng
+         */
+        function addProductToTable(productData, index) {
+            const quantityValue = productData.quantity || 1;
+            const priceValue = typeof productData.price === 'string'
+                ? parseInt(productData.price.replace(/[^\d]/g, '')) || 0
+                : productData.price || 0;
+
+            const row = $('<tr></tr>')
+                .attr('id', 'product-row-' + productData.productId);
+
+            const formattedPrice = formatCurrency(priceValue);
+            const rowTotal = quantityValue * priceValue;
+            const formattedRowTotal = formatCurrency(rowTotal);
+
+            row.html(`
+        <td class="stt-column">${index + 1}</td>
+        <td>
+            <input type="hidden" name="products[${index}].productId" value="${productData.productId}">
+            <input type="text" class="form-control bg-light form-control-sm" value="${productData.productCode || ''}" readonly title="${productData.productCode || ''}">
+        </td>
+        <td>
+            <input type="text" class="form-control bg-light form-control-sm" value="${productData.productName || ''}" readonly title="${productData.productName || ''}">
+        </td>
+        <td>
+            <input type="text" class="form-control bg-light form-control-sm" value="${productData.brand || ''}" readonly title="${productData.brand || ''}">
+        </td>
+        <td>
+            <input type="number" name="products[${index}].productQuantity" class="form-control quantity-input form-control-sm text-end"
+                   value="${quantityValue}" required min="1" step="1">
+            <span class="text-danger validation-message d-none"></span>
+        </td>
+        <td>
+            <input type="text" name="products[${index}].productPrice" class="form-control price-input form-control-sm text-end"
+                   value="${formattedPrice}">
+            <span class="text-danger validation-message d-none">Giá trị không hợp lệ</span>
+        </td>
+        <td>
+            <input type="text" class="form-control bg-light row-total form-control-sm text-end"
+                   value="${formattedRowTotal}" readonly>
+        </td>
+        <td class="text-center action-column">
+            <button type="button" class="delete-btn" onclick="removeProduct('${productData.productId}')" title="Xóa sản phẩm này">
+                <i class="fas fa-times"></i>
+            </button>
+        </td>
+    `);
+
+            productContainer.append(row);
+
+            // Bắt sự kiện thay đổi giá trị
+            row.find('.quantity-input, .price-input').on('input', function() {
+                updateRowTotal($(this));
+            });
+        }
+
+        /**
+         * Cập nhật tổng tiền của một dòng
+         */
+        function updateRowTotal(input) {
+            const row = input.closest('tr');
+            if (!row) return;
+
+            const quantityInput = row.find('.quantity-input');
+            const priceInput = row.find('.price-input');
+            const totalField = row.find('.row-total');
+
+            const priceValidation = priceInput.next('.validation-message');
+            const quantityValidation = quantityInput.next('.validation-message');
+
+            let rowHasError = false;
+
+            try {
+                const quantityString = quantityInput.val().replace(/[^\d]/g, '');
+                const priceString = priceInput.val().replace(/[^\d-]/g, '');
+
+                const quantity = parseInt(quantityString);
+                const price = parseInt(priceString);
+
+                if (isNaN(quantity) || quantity <= 0) {
+                    quantityInput.addClass('is-invalid');
+                    quantityValidation.text("SL phải > 0").removeClass('d-none');
+                    rowHasError = true;
+                } else {
+                    quantityInput.removeClass('is-invalid');
+                    quantityValidation.addClass('d-none');
+                }
+
+                if (isNaN(price) || price < 0) {
+                    priceInput.addClass('is-invalid');
+                    priceValidation.text("Giá không được âm").removeClass('d-none');
+                    rowHasError = true;
+                } else {
+                    priceInput.removeClass('is-invalid');
+                    priceValidation.addClass('d-none');
+                }
+
+                if (rowHasError) {
+                    totalField.val(0);
+                } else {
+                    const rowTotal = quantity * price;
+                    totalField.val(formatCurrency(rowTotal));
+                }
+
+                calculateTotals();
+                saveDataToSession();
+
+            } catch (error) {
+                console.error("Error calculating row total:", error);
+                if (input.hasClass('price-input')) {
+                    priceValidation.text("Giá trị không hợp lệ").removeClass('d-none');
+                    priceInput.addClass('is-invalid');
+                } else if (input.hasClass('quantity-input')) {
+                    quantityValidation.text("Giá trị không hợp lệ").removeClass('d-none');
+                    quantityInput.addClass('is-invalid');
+                }
+                totalField.val('Lỗi');
+                calculateTotals();
+            }
+        }
+
+        /**
+         * Tính toán tổng cộng
+         */
+        function calculateTotals() {
+            let totalQuantity = 0;
+            let totalAmount = 0;
+            let hasRowError = false;
+
+            $('#productContainer tr').each(function() {
+                const quantityInput = $(this).find('.quantity-input');
+                const totalField = $(this).find('.row-total');
+
+                if ($(this).find('.is-invalid').length > 0 ||
+                    totalField.val() === 'Lỗi' ||
+                    totalField.val() === 'Không hợp lệ') {
+                    hasRowError = true;
+                    return;
+                }
+
+                try {
+                    const quantity = parseInt(quantityInput.val().replace(/[^\d]/g, '')) || 0;
+                    const rowTotal = parseInt(totalField.val().replace(/[^\d-,]/g, '').replace(/,/g, '')) || 0;
+
+                    if (quantity < 0 || rowTotal < 0) {
+                        hasRowError = true;
+                        return;
+                    }
+
+                    totalQuantity += quantity;
+                    totalAmount += rowTotal;
+
+                } catch (error) {
+                    console.error("Error processing row for totals:", $(this), error);
+                    hasRowError = true;
+                }
+            });
+
+            toggleNoProductsMessage();
+
+            if (hasRowError) {
+                $('#totalQuantity').text('Lỗi');
+                $('#totalAmount').text('Lỗi');
+                $('#grandTotal').text('Lỗi');
+                return;
+            }
+
+            // Tính toán giá trị footer
+            try {
+                const discountInput = $('#discount');
+                const vatInput = $('#vat');
+                const additionalFeesInput = $('#additionalFees');
+
+                const discountStr = discountInput.val().replace(/[^\d-,]/g, '').replace(/,/g, '');
+                const additionalFeesStr = additionalFeesInput.val().replace(/[^\d-,]/g, '').replace(/,/g, '');
+
+                const discount = parseInt(discountStr) || 0;
+                const vatPercent = parseFloat(vatInput.val()) || 0;
+                const additionalFees = parseInt(additionalFeesStr) || 0;
+
+                let footerHasError = false;
+
+                if (discount < 0) {
+                    discountInput.addClass('is-invalid');
+                    footerHasError = true;
+                } else {
+                    discountInput.removeClass('is-invalid');
+                }
+
+                if (vatPercent < 0) {
+                    vatInput.addClass('is-invalid');
+                    footerHasError = true;
+                } else {
+                    vatInput.removeClass('is-invalid');
+                }
+
+                if (additionalFees < 0) {
+                    additionalFeesInput.addClass('is-invalid');
+                    footerHasError = true;
+                } else {
+                    additionalFeesInput.removeClass('is-invalid');
+                }
+
+                if (footerHasError) {
+                    $('#grandTotal').text('Lỗi (giá trị âm)');
+                    return;
+                }
+
+                const amountAfterDiscount = totalAmount - discount;
+                const vatAmount = Math.round(amountAfterDiscount * vatPercent / 100);
+                const grandTotal = amountAfterDiscount + vatAmount + additionalFees;
+
+                $('#totalQuantity').text(totalQuantity.toString());
+                $('#totalAmount').text(formatCurrency(totalAmount));
+                $('#grandTotal').text(formatCurrency(grandTotal < 0 ? 0 : grandTotal));
+
+            } catch (error) {
+                console.error("Error calculating final totals:", error);
+                $('#grandTotal').text('Lỗi');
+            }
+        }
+
+        /**
+         * Lưu dữ liệu vào sessionStorage
+         */
+        function saveDataToSession() {
+            try {
+                const importData = {
+                    header: {
+                        receiptCode: $('#receiptCode').val() || '',
+                        importDate: $('#importDate').val() || '',
+                        supplier: $('#supplier').val() || '',
+                        notes: $('#notes').val() || ''
+                    },
+                    products: [],
+                    footer: {
+                        discount: $('#discount').val().replace(/[^\d-,]/g, '').replace(/,/g, '') || '0',
+                        vat: $('#vat').val() || '0',
+                        additionalFees: $('#additionalFees').val().replace(/[^\d-,]/g, '').replace(/,/g, '') || '0',
+                    }
+                };
+
+                $('#productContainer tr').each(function() {
+                    const productIdInput = $(this).find('input[name$=".productId"]');
+                    const codeInput = $(this).find('td:eq(1) input[readonly]');
+                    const nameInput = $(this).find('td:eq(2) input[readonly]');
+                    const brandInput = $(this).find('td:eq(3) input[readonly]');
+                    const quantityInput = $(this).find('.quantity-input');
+                    const priceInput = $(this).find('.price-input');
+
+                    if (productIdInput.length && quantityInput.length && priceInput.length) {
+                        importData.products.push({
+                            productId: productIdInput.val(),
+                            productCode: codeInput.val() || '',
+                            productName: nameInput.val() || '',
+                            brand: brandInput.val() || '',
+                            quantity: quantityInput.val().replace(/[^\d]/g, '') || '1',
+                            price: priceInput.val().replace(/[^\d-,]/g, '').replace(/,/g, '') || '0'
+                        });
+                    }
+                });
+
+                sessionStorage.setItem(STORAGE_KEY, JSON.stringify(importData));
+            } catch (error) {
+                console.error("Error saving data to session:", error);
+            }
+        }
+
+        /**
+         * Xử lý khi thay đổi nhà cung cấp
+         */
+        function handleSupplierChange() {
+            saveDataToSession();
+            const supplierId = $(this).val();
+            window.location.href = '?supplierId=' + supplierId;
+        }
+
+        /**
+         * Hiển thị/ẩn thông báo không có sản phẩm
+         */
+        function toggleNoProductsMessage() {
+            if (productContainer.children().length === 0) {
+                noProductsMessage.removeClass('d-none');
+            } else {
+                noProductsMessage.addClass('d-none');
+            }
+        }
+
+        /**
+         * Lấy mã phiếu nhập tự động nếu chưa có
+         */
+        function fetchNextInvoiceCode() {
+            const receiptCodeInput = $('#receiptCode');
+
+            // Kiểm tra nếu đã có mã và không phải mặc định thì không cần lấy mã mới
+            if (receiptCodeInput.val() && receiptCodeInput.val() !== '') {
+                return;
+            }
+
+            // Gọi API để lấy mã tiếp theo
+            $.ajax({
+                url: '/api/Admin/invoice/next-code',
+                type: 'GET',
+                success: function(nextCode) {
+                    receiptCodeInput.val(nextCode);
+                    saveDataToSession(); // Lưu lại vào session nếu có
+                },
+                error: function(xhr, status, error) {
+                    console.error("Không thể lấy mã phiếu tự động: " + error);
+                }
+            });
+        }
+
+        /**
+         * Định dạng tiền tệ
+         */
+        function formatCurrency(input) {
+            // Nếu input là null hoặc undefined, trả về 0
+            if (input == null) return '0';
+
+            // Nếu input là chuỗi có dấu phân cách
+            if (typeof input === 'string') {
+                // Loại bỏ tất cả ký tự không phải số
+                input = input.replace(/[^\d]/g, '');
+            }
+
+            // Chuyển đổi sang số nguyên
+            const numValue = Number(input);
+
+            // Kiểm tra nếu giá trị quá nhỏ (đã mất số 0)
+            // Sản phẩm điện thoại thường có giá > 1 triệu
+            if (numValue > 0 && numValue < 100000) {
+                // Nhân thêm 1000 để bù lại số 0 bị mất
+                return new Intl.NumberFormat('vi-VN').format(numValue * 1000);
+            }
+
+            // Định dạng với Intl.NumberFormat
+            return new Intl.NumberFormat('vi-VN').format(numValue);
+        }
+        /**
+         * Định dạng giá trị nhập vào trường tiền tệ
+         */
+        function formatInputCurrency(input) {
+            const value = $(input).val();
+            const formattedValue = formatCurrency(value);
+            $(input).val(formattedValue);
+        }
+
+        /**
+         * Cập nhật số lượng sản phẩm đã chọn trong modal
+         */
+        function updateSelectedCount() {
+            const count = $("#productList .product-checkbox:checked").length;
+            $('#selectedCount').text(count + ' sản phẩm được chọn');
+        }
+
+        /**
+         * Lọc sản phẩm theo từ khóa tìm kiếm
+         */
+        window.filterProducts = function() {
+            const keyword = $("#searchInput").val().toLowerCase().trim();
+            const rows = $("#productList tr");
+            let visibleCount = 0;
+
+            rows.each(function() {
+                const row = $(this);
+                const code = row.find('td:eq(1)').text().toLowerCase() || '';
+                const name = row.find('td:eq(2)').text().toLowerCase() || '';
+                const isVisible = code.includes(keyword) || name.includes(keyword);
+
+                row.toggle(isVisible);
+                if (isVisible) visibleCount++;
+            });
+
+            $('#no-modal-products').toggleClass('d-none', visibleCount > 0);
+        };
+
+        /**
+         * Xử lý thêm các sản phẩm đã chọn
+         */
+        window.addSelectedProducts = function() {
+            const checkboxes = $("#productList .product-checkbox:checked");
+            let added = false;
+            const currentProductIds = new Set(
+                productContainer.find('input[name$=".productId"]').map(function() {
+                    return $(this).val();
+                }).get()
+            );
+
+            checkboxes.each(function() {
+                const checkbox = $(this);
+                const id = checkbox.val();
+
+                if (!currentProductIds.has(id)) {
+                    const code = checkbox.data('code') || '';
+                    const name = checkbox.data('name') || 'N/A';
+                    const brand = checkbox.data('brand') || 'N/A';
+                    const price = checkbox.data('price') || '0';
+
+                    const productData = {
+                        productId: id,
+                        productCode: code,
+                        productName: name,
+                        brand: brand,
+                        price: price,
+                        quantity: 1
+                    };
+
+                    addProductToTable(productData, productContainer.children().length);
+                    added = true;
+                }
+
+                checkbox.prop('checked', false);
+            });
+
+            if (added) {
+                reindexProductRows();
+                calculateTotals();
+            }
+
+            updateSelectedCount();
+            $('#selectAll').prop('checked', false);
+
+            const modal = bootstrap.Modal.getInstance(document.getElementById('productModal'));
+            if (modal) modal.hide();
+
+            toggleNoProductsMessage();
+            saveDataToSession();
+        };
+
+        /**
+         * Xóa sản phẩm khỏi bảng
+         */
+        window.removeProduct = function(id) {
+            const productRow = $('#product-row-' + id);
+
+            if (productRow.length) {
+                productRow.remove();
+                reindexProductRows();
+                calculateTotals();
+                toggleNoProductsMessage();
+                saveDataToSession();
+            }
+        };
+
+        /**
+         * Cập nhật lại chỉ số các dòng sản phẩm
+         */
+        function reindexProductRows() {
+            productContainer.find('tr').each(function(index) {
+                const row = $(this);
+                row.find('.stt-column').text(index + 1);
+
+                row.find('input[name^="products["]').each(function() {
+                    const input = $(this);
+                    input.attr('name', input.attr('name').replace(/products\[\d+\]/, `products[${index}]`));
+                });
+
+                row.find('select[name^="products["]').each(function() {
+                    const select = $(this);
+                    select.attr('name', select.attr('name').replace(/products\[\d+\]/, `products[${index}]`));
+                });
+            });
+        }
+
+        /**
+         * Lưu phiếu nhập
+         */
+        function saveInvoice() {
+            const importData = JSON.parse(sessionStorage.getItem(STORAGE_KEY));
+            if (!importData) {
+                alert("Không tìm thấy dữ liệu trong sessionStorage");
+                return;
+            }
+
+            try {
+                // Hàm để chuyển đổi giá trị tiền tệ từ chuỗi sang số
+                function parseCurrency(currencyStr) {
+                    if (!currencyStr) return 0;
+                    // Loại bỏ tất cả các ký tự không phải số
+                    return parseInt(currencyStr.toString().replace(/[^\d]/g, '')) || 0;
+                }
+
+                const payload = {
+                    receiptCode: importData.header.receiptCode,
+                    importDate: importData.header.importDate,
+                    supplierId: parseInt(importData.header.supplier),
+                    notes: importData.header.notes,
+                    discount: parseCurrency(importData.footer.discount),
+                    vat: parseFloat(importData.footer.vat) || 0,
+                    additionalFees: parseCurrency(importData.footer.additionalFees),
+                    products: importData.products.map(p => ({
+                        productId: parseInt(p.productId),
+                        productCode: p.productCode,
+                        productName: p.productName,
+                        brand: p.brand,
+                        quantity: parseInt(p.quantity),
+                        price: parseCurrency(p.price)
+                    }))
+                };
+
+                console.log("Sending payload:", JSON.stringify(payload));
+
+                $.ajax({
+                    url: '/api/Admin/invoice',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(payload),
+                    success: function(response) {
+                        sessionStorage.removeItem(STORAGE_KEY);
+                        window.location.href = "/Admin/ware-houses/history_warehouse";
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error response:", xhr.responseText);
+                        alert("Lỗi khi lưu phiếu: " + xhr.responseText);
+                    }
+                });
+            } catch (err) {
+                console.error("Exception:", err);
+                alert("Lỗi hệ thống khi lưu phiếu: " + err.message);
+            }
+        }
+    });
+
+    // Các hàm toàn cục
+    function removeProduct(id) {
+        window.removeProduct(id);
+    }
+
+    function filterProducts() {
+        window.filterProducts();
+    }
+
+    function addSelectedProducts() {
+        window.addSelectedProducts();
+    }
+
+    function formatInputCurrency(input) {
+        const value = $(input).val();
+
+        // Hàm định dạng tiền tệ
+        function formatCurrency(input) {
+            try {
+                if (typeof input === 'number') input = input.toString();
+                input = input.toString().trim();
+
+                // Xử lý số dạng scientific notation (ví dụ: 1e7)
+                if (/e[\+\-]?\d+/i.test(input)) {
+                    const numeric = Number(input);
+                    if (isNaN(numeric)) return 'Không hợp lệ';
+
+                    const extended = Math.floor(numeric);
+                    return extended.toLocaleString('vi-VN');
+                }
+
+                // Xử lý trường hợp chuỗi đã định dạng có dấu phẩy
+                if (input.includes('.') || input.includes(',')) {
+                    // Xóa hết ký tự không phải số và dấu phẩy/chấm
+                    const clean = input.replace(/[^\d.,]/g, '');
+
+                    // Chuyển về định dạng số không có dấu phân cách
+                    const normalized = clean.replace(/[.,]/g, '');
+
+                    if (normalized === '') return '0';
+
+                    const value = parseInt(normalized);
+                    return value.toLocaleString('vi-VN');
+                }
+
+                // Trường hợp số nguyên không có dấu phân cách
+                const clean = input.replace(/[^\d]/g, '');
+                if (clean === '') return '0';
+
+                const value = parseInt(clean);
+                return value.toLocaleString('vi-VN');
+            } catch (err) {
+                console.warn('Lỗi formatCurrency:', err, input);
+                return 'Không hợp lệ';
+            }
+        }
+
+        const formattedValue = formatCurrency(value);
+        $(input).val(formattedValue);
+
+        // Kích hoạt tính toán tổng giá trị
+        calculateTotals();
+    }
+</script>
+
+</body>
+</html>

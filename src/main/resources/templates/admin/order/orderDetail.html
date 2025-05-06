@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi Tiết Đơn Hàng</title>
+    <link rel="stylesheet" th:href="@{/css/admin/fragments/sidebar.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/fragments/header.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/fragments/footer.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/layout/layout.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/layout/tablelayout.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        .product-table th {
+            background-color: #212529;
+            color: white;
+            text-align: center;
+        }
+        .product-table td {
+            vertical-align: middle;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{admin/fragments/header :: header}"></div>
+<div th:replace="~{admin/fragments/sidebar :: sidebar}"></div>
+
+<main class="main-content">
+    <div class="wrapper">
+        <!-- Title & Actions -->
+        <div class="d-flex justify-content-start align-items-center mb-3">
+            <h3 class="me-2">Chi Tiết Đơn Hàng - <span th:text="${order?.codeOrder}"></span></h3>
+            <span class="badge px-3 py-2 ms-2"
+                  th:if="${order != null && order.status != null}"
+                  th:classappend="${order.status.name() == 'COMPLETE'} ? 'bg-success' :
+                         (${order.status.name() == 'CANCELLED'} ? 'bg-danger' : 'bg-secondary')"
+                  th:text="${statusMap[order.status.name()]}">
+    </span>
+            <div class="ms-auto">
+                <a th:href="@{/Admin/order}" class="btn btn-secondary me-2">Quay lại</a>
+                <button th:if="${order != null && order.status != null && order.status.name() != 'CANCELLED'}"
+                        class="btn btn-danger"
+                        onclick="printInvoice()">
+                    <i class="fas fa-print me-1"></i> In hóa đơn
+                </button>
+            </div>
+        </div>
+
+        <!-- Thông tin đơn hàng -->
+        <div class="mb-4">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Mã Đơn Hàng</label>
+                    <input type="text" class="form-control" th:value="${order?.codeOrder}" disabled>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Ngày Tạo</label>
+                    <input type="text" class="form-control"
+                           th:value="${order?.createAt != null ? #temporals.format(order.createAt, 'dd/MM/yyyy HH:mm') : ''}"
+                           disabled>
+                </div>
+            </div>
+        </div>
+
+        <!-- Thông tin khách hàng -->
+        <div class="mb-4">
+            <h5 class="fw-bold mb-3">Thông Tin Khách Hàng</h5>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Tên Khách Hàng</label>
+                    <input type="text" class="form-control" th:value="${order?.customer?.customerName}" disabled>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Số Điện Thoại</label>
+                    <input type="text" class="form-control" th:value="${order?.customer?.phoneNumber}" disabled>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Email</label>
+                    <input type="text" class="form-control" th:value="${order?.customer?.email}" disabled>
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label">Địa Chỉ</label>
+                    <input type="text" class="form-control" th:value="${order?.customer?.address}" disabled>
+                </div>
+            </div>
+        </div>
+        <!-- Bảng Sản Phẩm -->
+        <div class="table-responsive mb-4">
+            <table class="table table-bordered product-table">
+                <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>Tên Sản Phẩm</th>
+                    <th>Số Lượng</th>
+                    <th>Đơn Giá</th>
+                    <th>Thành Tiền</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="detail, stat : ${order != null && order.orderDetails != null ? order.orderDetails : {}}">
+                    <td th:text="${stat.index + 1}"></td>
+                    <td th:text="${detail.product != null ? detail.product.name : ''}"></td>
+                    <td th:text="${detail.quantity != null ? detail.quantity : 0}"></td>
+                    <td th:text="${detail.price != null ? #numbers.formatDecimal(detail.price, 0, 'POINT', 0, 'COMMA') + ' VNĐ' : '0 VNĐ'}"></td>
+                    <td th:text="${detail.price != null && detail.quantity != null ? #numbers.formatDecimal(detail.price * detail.quantity, 0, 'POINT', 0, 'COMMA') + ' VNĐ' : '0 VNĐ'}"></td>
+                </tr>
+                <tr th:if="${order == null || order.orderDetails == null || order.orderDetails.isEmpty()}">
+                    <td colspan="5" class="text-center">Không có sản phẩm nào</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Tổng Giá Trị -->
+        <div class="mb-4">
+            <div class="card border">
+                <div class="card-body p-0">
+                    <!-- Phần Thông Tin Tổng Quan -->
+                    <div class="border-start border-5 border-danger">
+                        <div class="p-3 pb-0">
+                            <h5 class="fw-bold">Thông Tin Tổng Quan</h5>
+                        </div>
+                        <hr class="my-2">
+
+                        <div class="p-3">
+                            <div class="row mb-2">
+                                <div class="col-sm-6">
+                                    <span class="text-secondary">Tổng sản phẩm:</span>
+                                </div>
+                                <div class="col-sm-6 text-end">
+                                    <strong th:text="${order?.orderDetails != null ? order.orderDetails.size() : 0}"></strong>
+                                </div>
+                            </div>
+
+                            <div class="row mb-2">
+                                <div class="col-sm-6">
+                                    <span class="text-secondary">Tổng số lượng:</span>
+                                </div>
+                                <div class="col-sm-6 text-end">
+                                    <strong th:text="${order?.orderDetails != null && !order.orderDetails.isEmpty() ? #aggregates.sum(order.orderDetails.?[quantity != null].![quantity]) : 0}"></strong>
+                                </div>
+                            </div>
+
+                            <div class="row mb-2">
+                                <div class="col-sm-6">
+                                    <span class="text-secondary">Giảm giá:</span>
+                                </div>
+                                <div class="col-sm-6 text-end">
+                                    <strong th:text="${order?.discount != null ? #numbers.formatDecimal(order.discount, 0, 'POINT', 0, 'COMMA') + ' VNĐ' : '0 VNĐ'}"></strong>
+                                </div>
+                            </div>
+
+                            <div class="row mb-2">
+                                <div class="col-sm-6">
+                                    <span class="text-secondary">Giảm giá (%):</span>
+                                </div>
+                                <div class="col-sm-6 text-end">
+                                    <strong th:text="${order?.discountPercent != null ? (#numbers.formatInteger(order.discountPercent, 1, 'POINT') + '%') : '0%'}"></strong>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <span class="text-secondary">Phương thức thanh toán:</span>
+                                </div>
+                                <div class="col-sm-6 text-end">
+                                    <strong th:text="${payment != null && payment.paymentMethod != null ? payment.paymentMethod.description : 'Tiền mặt'}"></strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="my-0">
+                    <div class="border-start border-5 border-danger">
+                        <div class="p-3">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <span class="text-secondary">Tổng thanh toán:</span>
+                                </div>
+                                <div class="col-sm-6 text-end">
+                                    <strong class="text-danger fs-5" th:text="${order?.totalPrice != null ? #numbers.formatDecimal(order.totalPrice, 0, 'POINT', 0, 'COMMA') + ' VNĐ' : '0 VNĐ'}"></strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Nút hủy đơn hàng -->
+        <div class="text-end mb-5">
+            <button th:if="${order != null && order.status != null && order.status.name() != 'CANCELLED'}"
+                    type="button"
+                    class="btn btn-danger"
+                    data-bs-toggle="modal"
+                    data-bs-target="#cancelOrderModal">
+                 Hủy Đơn Hàng
+            </button>
+        </div>
+    </div>
+</main>
+
+<!-- Modal hủy đơn hàng -->
+<div class="modal fade" id="cancelOrderModal" tabindex="-1" aria-labelledby="cancelOrderModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title" id="cancelOrderModalLabel">Xác nhận hủy đơn hàng</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-3">Bạn có chắc chắn muốn hủy đơn hàng này không?</p>
+                <p>Sau khi hủy, đơn hàng sẽ không thể khôi phục.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" id="confirmCancelBtn" class="btn btn-danger">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{admin/fragments/footer :: footer}"></div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    function printInvoice() {
+        const url = window.location.href;
+        const orderId = url.substring(url.lastIndexOf('/') + 1);
+        window.location.href = `/Admin/order/downloadInvoicePdf?orderId=${orderId}`;
+    }
+
+    // Thay thế đoạn script ở cuối file HTML của bạn với đoạn code dưới đây
+    document.addEventListener('DOMContentLoaded', function() {
+        const confirmCancelBtn = document.getElementById('confirmCancelBtn');
+        if (confirmCancelBtn) {
+            confirmCancelBtn.addEventListener('click', function() {
+                const url = window.location.href;
+                const orderId = url.substring(url.lastIndexOf('/') + 1);
+
+                // Thêm token CSRF nếu ứng dụng của bạn sử dụng Spring Security
+                const token = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+                const header = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+
+                const headers = {
+                    'Content-Type': 'application/json'
+                };
+
+                // Thêm token CSRF vào header nếu có
+                if (token && header) {
+                    headers[header] = token;
+                }
+
+                fetch(`/Admin/order/cancel/${orderId}`, {
+                    method: 'POST',
+                    headers: headers
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            window.location.href = '/Admin/order';
+                        } else {
+                            alert('Không thể hủy đơn hàng. Vui lòng thử lại sau.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Đã xảy ra lỗi khi hủy đơn hàng.');
+                    });
+            });
+        }
+    });
+</script>
+</body>
+</html>

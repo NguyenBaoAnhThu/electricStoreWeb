@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Nhân Viên</title>
+    <meta name="_csrf" th:content="${_csrf != null ? _csrf.token : ''}"/>
+    <meta name="_csrf_header" th:content="${_csrf != null ? _csrf.headerName : ''}"/>
+    <link rel="stylesheet" th:href="@{/css/admin/fragments/sidebar.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/fragments/header.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/fragments/footer.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/layout/layout.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/layout/tablelayout.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/layout/notification.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .error {
+            color: #dc3545;
+            font-size: 0.875em;
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+<!-- Header Fragment -->
+<div th:replace="~{admin/fragments/header :: header}"></div>
+<!-- Sidebar Fragment -->
+<div th:replace="~{admin/fragments/sidebar :: sidebar}"></div>
+
+<main class="main-content">
+    <div class="wrapper">
+        <h1 class="tittle" onclick="window.location.href='/Admin/employee-manager'">
+            Nhân Viên
+        </h1>
+        <!-- Search and Add Button -->
+        <div class="form-mb-4">
+            <div class="search-container">
+                <form class="search-form" action="/Admin/employee-manager" method="get">
+                    <select class="input-select" name="searchField">
+                        <option value="name" th:selected="${field == 'name'}">Họ và Tên</option>
+                        <option value="phone" th:selected="${field == 'phone'}">Số điện thoại</option>
+                        <option value="code" th:selected="${field == 'code'}">Mã nhân viên</option>
+                    </select>
+                    <input class="form-control" type="search" name="searchInput" th:value="${filterKeyWord}" placeholder="Tìm kiếm nhân viên..." aria-label="Search">
+                    <input type="hidden" name="page" value="1">
+                    <button class="btn" style="background-color: #D10024; color: white;" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
+                    Thêm Nhân Viên
+                </button>
+            </div>
+            <hr style="border: 1px solid #e9ecef; margin: 20px 0;">
+        </div>
+        <div th:replace="~{admin/fragments/alert :: alerts}"></div>
+
+        <!-- Table -->
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+                <thead class="table-dark">
+                <tr>
+                    <th width="40">
+                        <input type="checkbox" id="selectAll" class="form-check-input">
+                    </th>
+                    <th width="60">STT</th>
+                    <th>Mã NV</th>
+                    <th>Tên Nhân Viên</th>
+                    <th>Ngày Sinh</th>
+                    <th>Địa Chỉ</th>
+                    <th>SĐT</th>
+                    <th width="80">Thao tác</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="user, status : ${employees}" th:if="${user.userId >= 2}">
+                    <td class="text-center">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input employeeCheckbox" th:value="${user.userId}" th:id="'employeeCheck-' + ${status.index}">
+                        </div>
+                    </td>
+                    <td th:text="${status.index + 1}"></td>
+                    <td th:text="${user.employeeCode}"></td>
+                    <td th:text="${user.employeeName}"></td>
+                    <td th:text="${#temporals.format(user.employeeBirthday, 'dd/MM/yyyy')}"></td>
+                    <td th:text="${user.employeeAddress}"></td>
+                    <td th:text="${user.employeePhone}"></td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-warning btn-sm editEmployeeBtn"
+                                th:data-id="${user.userId}"
+                                th:data-code="${user.employeeCode}"
+                                th:data-name="${user.employeeName}"
+                                th:data-birthday="${user.employeeBirthday}"
+                                th:data-address="${user.employeeAddress}"
+                                th:data-phone="${user.employeePhone}"
+                                th:data-email="${user.email}"
+                                th:data-username="${user.username}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination and Delete Button -->
+        <div class="d-flex justify-content-between align-items-center mt-4">
+            <button type="button" id="deleteBtn" class="btn btn-danger" title="Xóa">
+                <i class="fas fa-trash-alt me-2"></i> Xóa nhân viên
+            </button>
+
+            <nav aria-label="Page navigation" th:if="${employees.totalPages > 0}">
+                <ul class="pagination m-0">
+                    <!-- First page button -->
+                    <li class="page-item" th:classappend="${employees.number == 0} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/Admin/employee-manager(page=1, searchField=${field}, searchInput=${filterKeyWord})}"
+                           aria-label="First">
+                            <span aria-hidden="true">&laquo;&laquo;</span>
+                        </a>
+                    </li>
+
+                    <!-- Previous page button -->
+                    <li class="page-item" th:classappend="${employees.first} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/Admin/employee-manager(page=${employees.number}, searchField=${field}, searchInput=${filterKeyWord})}"
+                           aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+
+                    <!-- Current page indicator -->
+                    <li class="page-item disabled">
+                        <span class="page-link">
+                          <span th:text="${employees.number + 1}"></span> / <span th:text="${employees.totalPages}"></span>
+                        </span>
+                    </li>
+
+                    <!-- Next page button -->
+                    <li class="page-item" th:classappend="${employees.last} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/Admin/employee-manager(page=${employees.number + 2}, searchField=${field}, searchInput=${filterKeyWord})}"
+                           aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+
+                    <!-- Last page button -->
+                    <li class="page-item" th:classappend="${employees.number == employees.totalPages - 1} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/Admin/employee-manager(page=${employees.totalPages}, searchField=${field}, searchInput=${filterKeyWord})}"
+                           aria-label="Last">
+                            <span aria-hidden="true">&raquo;&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <!-- Modal Thêm Nhân Viên -->
+    <div class="modal fade" id="addEmployeeModal" tabindex="-1" aria-labelledby="addEmployeeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addEmployeeModalLabel">Thêm Nhân Viên Mới</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addEmployeeForm" novalidate>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Mã Nhân Viên</label>
+                                <input type="text" class="form-control" id="employeeCode" name="employeeCode" readonly>
+                                <p class="error text-danger" id="employeeCodeError"></p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Họ và Tên</label>
+                                <input type="text" class="form-control" id="employeeName" name="employeeName">
+                                <p class="error text-danger" id="employeeNameError"></p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Ngày Sinh</label>
+                                <input type="date" class="form-control" id="employeeBirthday" name="employeeBirthday">
+                                <p class="error text-danger" id="employeeBirthdayError"></p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" name="email">
+                                <p class="error text-danger" id="emailError"></p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Số Điện Thoại</label>
+                                <input type="tel" class="form-control" id="employeePhone" name="employeePhone" maxlength="10">
+                                <p class="error text-danger" id="employeePhoneError"></p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Địa Chỉ</label>
+                                <input type="text" class="form-control" id="employeeAddress" name="employeeAddress">
+                                <p class="error text-danger" id="employeeAddressError"></p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Tên Đăng Nhập</label>
+                                <input type="text" class="form-control" id="username" name="username">
+                                <p class="error text-danger" id="usernameError"></p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Mật Khẩu</label>
+                                <input type="password" class="form-control" id="password" name="password">
+                                <p class="error text-danger" id="passwordError"></p>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Vai Trò</label>
+                            <select class="form-select" id="role" name="role">
+                                <option value="ROLE_EMPLOYEE" selected>Nhân Viên</option>
+                                <option value="ROLE_ADMIN">Quản Trị Viên</option>
+                            </select>
+                        </div>
+                        <div class="text-end mt-4">
+                            <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-primary">Lưu nhân viên</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Chỉnh sửa Nhân Viên -->
+    <div class="modal fade" id="editEmployeeModal" tabindex="-1" aria-labelledby="editEmployeeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editEmployeeModalLabel">Chỉnh Sửa Nhân Viên</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editEmployeeForm" novalidate>
+                        <input type="hidden" id="editUserId" name="userId">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Mã Nhân Viên</label>
+                                <input type="text" class="form-control" id="editEmployeeCode" name="employeeCode" readonly>
+                                <p class="error text-danger" id="editEmployeeCodeError"></p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Họ và Tên</label>
+                                <input type="text" class="form-control" id="editEmployeeName" name="employeeName">
+                                <p class="error text-danger" id="editEmployeeNameError"></p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Ngày Sinh</label>
+                                <input type="date" class="form-control" id="editEmployeeBirthday" name="employeeBirthday">
+                                <p class="error text-danger" id="editEmployeeBirthdayError"></p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" id="editEmail" name="email">
+                                <p class="error text-danger" id="editEmailError"></p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Số Điện Thoại</label>
+                                <input type="tel" class="form-control" id="editEmployeePhone" name="employeePhone" maxlength="10">
+                                <p class="error text-danger" id="editEmployeePhoneError"></p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Địa Chỉ</label>
+                                <input type="text" class="form-control" id="editEmployeeAddress" name="employeeAddress">
+                                <p class="error text-danger" id="editEmployeeAddressError"></p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Tên Đăng Nhập</label>
+                                <input type="text" class="form-control" id="editUsername" name="username" readonly>
+                                <p class="error text-danger" id="editUsernameError"></p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Mật Khẩu <span class="fst-italic fs-6">(Nhập nếu muốn thay đổi)</span></label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="editPassword" name="password">
+                                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                        <i class="fas fa-eye" id="togglePasswordIcon"></i>
+                                    </button>
+                                </div>
+                                <p class="error text-danger" id="editPasswordError"></p>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Vai Trò</label>
+                            <select class="form-select" id="editRole" name="role">
+                                <option value="ROLE_EMPLOYEE">Nhân Viên</option>
+                                <option value="ROLE_ADMIN">Quản Trị Viên</option>
+                            </select>
+                        </div>
+                        <div class="text-end mt-4">
+                            <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-primary">Cập nhật</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Thông báo chưa chọn nhân viên -->
+    <div class="modal fade" id="selectEmployeeWarningModal" tabindex="-1" aria-labelledby="selectEmployeeWarningModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title" id="selectEmployeeWarningModalLabel">Thông báo</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body d-flex align-items-center">
+                    <div class="me-3 text-dark">
+                        <i class="fas fa-exclamation-circle" style="font-size:48px; color:#ffc107;"></i>
+                    </div>
+                    <div>
+                        <p class="mb-0">Vui lòng chọn ít nhất một nhân viên để xóa!</p>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 justify-content-center">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Xác nhận xóa nhân viên -->
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title" id="deleteConfirmModalLabel">Xác nhận xóa nhân viên</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body d-flex align-items-center">
+                    <div class="me-3 text-dark">
+                        <i class="fas fa-exclamation-triangle" style="font-size:48px; color:#dc3545;"></i>
+                    </div>
+                    <div>
+                        <p class="mb-0">Bạn có chắc chắn muốn xoá nhân viên này không?</p>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 justify-content-center">
+                    <button type="button" id="confirmDeleteBtn" class="btn btn-primary">Xác nhận</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Hủy</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Footer Fragment -->
+<div th:replace="~{admin/fragments/footer :: footer}"></div>
+<script th:src="@{/js/admin/layout.js}"></script>
+<script th:src="@{/js/admin/header.js}" type="text/javascript"></script>
+<script th:src="@{/js/admin/sidebarActiveMenu.js}" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script th:fragment="sidebarScript">
+    // Toggle sidebar
+    document.getElementById('sidebar-toggle').addEventListener('click', () => {
+        document.body.classList.toggle('sidebar-collapsed');
+    });
+</script>
+<script>
+    $(document).ready(function() {
+        // Khi mở modal thêm nhân viên
+        $('#addEmployeeModal').on('shown.bs.modal', function() {
+            console.log('Modal đã hiển thị, lấy mã nhân viên tự động...');
+
+            // Lấy mã nhân viên mới từ server
+            $.ajax({
+                url: '/Admin/employee-manager/generate-code',
+                type: 'GET',
+                success: function(response) {
+                    console.log('Đã nhận mã: ' + response);
+                    $('#employeeCode').val(response);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Lỗi khi lấy mã nhân viên: ' + error);
+                    // Gán giá trị mặc định nếu có lỗi
+                    $('#employeeCode').val('NV0001');
+                }
+            });
+
+            // Reset form và xóa thông báo lỗi
+            $('#addEmployeeForm')[0].reset();
+            $('.error').text('');
+        });
+
+        // Xử lý nút Edit
+        $('.editEmployeeBtn').on('click', function() {
+            const id = $(this).data('id');
+            const code = $(this).data('code');
+            const name = $(this).data('name');
+            const birthday = $(this).data('birthday');
+            const address = $(this).data('address');
+            const phone = $(this).data('phone');
+            const email = $(this).data('email');
+            const username = $(this).data('username');
+
+            $('#editUserId').val(id);
+            $('#editEmployeeCode').val(code);
+            $('#editEmployeeName').val(name);
+            $('#editEmployeeBirthday').val(birthday);
+            $('#editEmployeeAddress').val(address);
+            $('#editEmployeePhone').val(phone);
+            $('#editEmail').val(email);
+            $('#editUsername').val(username);
+            $('#editPassword').val('');
+
+            // Mở modal
+            $('#editEmployeeModal').modal('show');
+        });
+
+        // Xử lý chọn/bỏ chọn tất cả
+        $('#selectAll').change(function() {
+            const isChecked = $(this).prop('checked');
+            $('.employeeCheckbox').prop('checked', isChecked);
+        });
+
+        // Xử lý nút xóa nhân viên
+        $('#deleteBtn').click(function() {
+            const checkedEmployees = $('.employeeCheckbox:checked');
+            if (checkedEmployees.length === 0) {
+                // Hiển thị modal thông báo chưa chọn nhân viên
+                $('#selectEmployeeWarningModal').modal('show');
+            } else {
+                // Hiển thị modal xác nhận
+                $('#deleteConfirmModal').modal('show');
+            }
+        });
+
+        // Xử lý nút xác nhận xóa trong modal
+        $('#confirmDeleteBtn').click(function() {
+            const checkedEmployees = $('.employeeCheckbox:checked');
+            const employeeIds = Array.from(checkedEmployees).map(checkbox => parseInt(checkbox.value));
+
+            // Lấy CSRF token nếu có
+            const token = $('meta[name="_csrf"]').attr('content');
+            const header = $('meta[name="_csrf_header"]').attr('content');
+
+            // Cấu hình header cho request
+            const headers = {
+                'Content-Type': 'application/json'
+            };
+
+            // Thêm CSRF token vào header nếu có
+            if (token && header) {
+                headers[header] = token;
+            }
+
+            // Gửi request Ajax để xóa nhân viên
+            $.ajax({
+                url: '/Admin/employee-manager/delete',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ userIds: employeeIds }),
+                headers: headers,
+                success: function(response) {
+                    // Đóng modal xác nhận
+                    $('#deleteConfirmModal').modal('hide');
+
+                    // Chuyển hướng với thông báo thành công
+                    window.location.href = '/Admin/employee-manager?successMessage=' + encodeURIComponent('Xóa nhân viên thành công!');
+                },
+                error: function(xhr, status, error) {
+                    // Đóng modal xác nhận
+                    $('#deleteConfirmModal').modal('hide');
+
+                    // Chuyển hướng với thông báo lỗi
+                    window.location.href = '/Admin/employee-manager?errorMessage=' + encodeURIComponent('Có lỗi xảy ra khi xóa nhân viên!');
+                }
+            });
+        });
+
+        // Toggle hiển thị mật khẩu
+        $('#togglePassword').click(function() {
+            const passwordInput = $('#editPassword');
+            const icon = $('#togglePasswordIcon');
+
+            if (passwordInput.attr('type') === 'password') {
+                passwordInput.attr('type', 'text');
+                icon.removeClass('fa-eye');
+                icon.addClass('fa-eye-slash');
+            } else {
+                passwordInput.attr('type', 'password');
+                icon.removeClass('fa-eye-slash');
+                icon.addClass('fa-eye');
+            }
+        });
+
+        // Xử lý form thêm nhân viên
+        $('#addEmployeeForm').submit(function(event) {
+            event.preventDefault();
+
+            // Đảm bảo mã nhân viên được bao gồm trong dữ liệu
+            let employeeData = {
+                employeeCode: $('#employeeCode').val(), // Đảm bảo lấy giá trị này
+                employeeName: $('#employeeName').val(),
+                employeeBirthday: $('#employeeBirthday').val(),
+                email: $('#email').val(),
+                employeeAddress: $('#employeeAddress').val(),
+                employeePhone: $('#employeePhone').val(),
+                username: $('#username').val(),
+                password: $('#password').val(),
+                role: $('#role').val()
+            };
+
+            // Kiểm tra nếu mã nhân viên trống, lấy giá trị từ server
+            if (!employeeData.employeeCode) {
+                $.ajax({
+                    url: '/Admin/employee-manager/generate-code',
+                    type: 'GET',
+                    async: false, // Đợi kết quả trước khi tiếp tục
+                    success: function(response) {
+                        employeeData.employeeCode = response;
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Lỗi khi lấy mã nhân viên: ' + error);
+                    }
+                });
+            }
+
+            // Lấy CSRF token nếu có
+            const token = $('meta[name="_csrf"]').attr('content');
+            const header = $('meta[name="_csrf_header"]').attr('content');
+
+            // Cấu hình header cho request
+            const headers = {
+                'Content-Type': 'application/json'
+            };
+
+            // Thêm CSRF token vào header nếu có
+            if (token && header) {
+                headers[header] = token;
+            }
+
+            console.log("Dữ liệu gửi đi:", employeeData); // Log dữ liệu để debug
+
+            // Gửi request Ajax
+            $.ajax({
+                url: '/Admin/employee-manager/create',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(employeeData),
+                headers: headers,
+                success: function(response) {
+                    // Đóng modal
+                    $('#addEmployeeModal').modal('hide');
+
+                    // Chuyển hướng với thông báo thành công
+                    window.location.href = '/Admin/employee-manager?successMessage=' + encodeURIComponent('Thêm nhân viên thành công!');
+                },
+                error: function(xhr) {
+                    // Xóa thông báo lỗi cũ
+                    $('.error').text('');
+
+                    // Hiển thị lỗi
+                    let errors = xhr.responseJSON;
+                    for (let field in errors) {
+                        $('#' + field + 'Error').text(errors[field]);
+                    }
+                }
+            });
+        });
+
+        // Xử lý form sửa nhân viên
+        $('#editEmployeeForm').submit(function(event) {
+            event.preventDefault();
+
+            // Lấy dữ liệu từ form
+            let employeeData = {
+                userId: $('#editUserId').val(),
+                employeeCode: $('#editEmployeeCode').val(),
+                employeeName: $('#editEmployeeName').val(),
+                employeeBirthday: $('#editEmployeeBirthday').val(),
+                email: $('#editEmail').val(),
+                employeeAddress: $('#editEmployeeAddress').val(),
+                employeePhone: $('#editEmployeePhone').val(),
+                username: $('#editUsername').val(),
+                password: $('#editPassword').val(),
+                role: $('#editRole').val()
+            };
+
+            // Lấy CSRF token nếu có
+            const token = $('meta[name="_csrf"]').attr('content');
+            const header = $('meta[name="_csrf_header"]').attr('content');
+
+            // Cấu hình header cho request
+            const headers = {
+                'Content-Type': 'application/json'
+            };
+
+            // Thêm CSRF token vào header nếu có
+            if (token && header) {
+                headers[header] = token;
+            }
+
+            // Gửi request Ajax
+            $.ajax({
+                url: '/Admin/employee-manager/edit',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(employeeData),
+                headers: headers,
+                success: function(response) {
+                    // Đóng modal
+                    $('#editEmployeeModal').modal('hide');
+
+                    // Chuyển hướng với thông báo thành công
+                    window.location.href = '/Admin/employee-manager?successMessage=' + encodeURIComponent('Cập nhật nhân viên thành công!');
+                },
+                error: function(xhr) {
+                    // Xóa thông báo lỗi cũ
+                    $('.error').text('');
+
+                    // Hiển thị lỗi
+                    let errors = xhr.responseJSON;
+                    for (let field in errors) {
+                        $('#edit' + field.charAt(0).toUpperCase() + field.slice(1) + 'Error').text(errors[field]);
+                    }
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>
