@@ -13,8 +13,8 @@ public class ProductStatisticalDTO {
     private Integer productId;
     private String productName;
     private String brandName;
-    private String category;
-    private String supplier;
+    private String categoryName;
+    private String supplierName;
     private Double price;
     private Long stock;
 }
