@@ -234,14 +234,16 @@
                                         <div class="text-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
                                     </div>
                                 </div>
-
                                 <div class="col-md-4">
                                     <div class="compact-form-group">
                                         <label class="form-label required-field">Ảnh Sản Phẩm</label>
                                         <input type="file" name="files" multiple accept="image/*" class="form-control" id="imageUpload">
-                                        <input type="hidden" name="imagePaths" id="imagePaths" th:field="*{mainImageUrl}">
+                                        <!-- Quan trọng: Luôn giữ URL ảnh hiện tại trong form -->
+                                        <input type="hidden" name="mainImageUrl" id="imagePaths" th:value="${product.mainImageUrl}">
                                         <div id="imagePreview" class="mt-2">
-                                            <img th:src="${mainImageUrl}" class="img-preview">
+                                            <img th:if="${product.mainImageUrl != null && !product.mainImageUrl.isEmpty()}"
+                                                 th:src="${product.mainImageUrl}"
+                                                 class="img-preview">
                                         </div>
                                     </div>
                                 </div>
@@ -432,6 +434,32 @@
 
 <!-- JavaScript Preview Image -->
 <script>
+    document.getElementById("imageUpload").addEventListener("change", function(event) {
+        let previewImg = document.querySelector("#imagePreview img");
+        let imagePathsInput = document.getElementById("imagePaths");
+
+        if (event.target.files.length > 0) {
+            let file = event.target.files[0];
+            if (!file.isEmpty) {
+                let reader = new FileReader();
+
+                reader.onload = function(e) {
+                    if (!previewImg) {
+                        previewImg = document.createElement('img');
+                        previewImg.className = 'img-preview';
+                        document.getElementById("imagePreview").innerHTML = '';
+                        document.getElementById("imagePreview").appendChild(previewImg);
+                    }
+                    previewImg.src = e.target.result;
+
+                    // Không đặt imagePathsInput.value = e.target.result;
+                    // vì chúng ta muốn giữ URL Cloudinary hiện tại cho đến khi form được submit
+                };
+
+                reader.readAsDataURL(file);
+            }
+        }
+    });
     document.getElementById("imageUpload").addEventListener("change", function(event) {
         let previewImg = document.querySelector("#imagePreview img");
         let imagePathsInput = document.getElementById("imagePaths");

@@ -152,15 +152,22 @@ public class ProductController {
             model.addAttribute("mainImageUrl", productDTO.getMainImageUrl());
             return "admin/product_brand_category/editProduct";
         }
+
         // Chuyển đổi từ DTO sang Entity
         Product product = productMapper.toEntity(productDTO);
         product.getProductDetail().setProduct(product);
 
-        //  Lưu sản phẩm vào database với giá nhập
+        // Kiểm tra xem có file ảnh mới được tải lên không
+        boolean hasNewImage = files != null && files.stream().anyMatch(file -> !file.isEmpty());
+
+        // Nếu không có ảnh mới, truyền null vào để giữ nguyên ảnh cũ
+        List<MultipartFile> filesToUpdate = hasNewImage ? files : null;
+
+        // Lưu sản phẩm vào database với giá nhập
         if (importPrice != null && importPrice > 0) {
-            productService.updateProductWithImportPrice(product, importPrice, files);
+            productService.updateProductWithImportPrice(product, importPrice, filesToUpdate);
         } else {
-            productService.updateProduct(product, files);
+            productService.updateProduct(product, filesToUpdate);
         }
 
         return "redirect:/Admin/product-manager";
