@@ -19,13 +19,17 @@ import java.time.LocalDateTime;
 public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "payment_id", nullable = false)
     private Integer paymentID;
 
+    @Column(nullable = false)
     private Integer amount;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private PaymentMethod paymentMethod;
 
+    @Column(name = "create_at", nullable = false)
     private LocalDateTime createAt;
 
     @OneToOne

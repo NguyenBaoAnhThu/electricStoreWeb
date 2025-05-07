@@ -18,11 +18,25 @@ import java.util.List;
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "customer_id")
     private Integer customerId;
+
+    @Column(name = "customer_code", nullable = false, unique = true, length = 255)
+    private String customerCode;
+
+    @Column(name = "customer_name", nullable = false, length = 255)
     private String customerName;
+
+    @Column(name = "phone_number", nullable = false, length = 255)
     private String phoneNumber;
+
+    @Column(name = "address", nullable = false, length = 255)
     private String address;
+
+    @Column(name = "email", nullable = false, length = 255)
     private String email;
+
+    @Column(name = "birth_date", nullable = false)
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private LocalDate birthDate;
 

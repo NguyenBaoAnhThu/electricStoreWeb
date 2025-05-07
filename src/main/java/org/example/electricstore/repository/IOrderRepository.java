@@ -26,7 +26,7 @@ public interface IOrderRepository extends JpaRepository<Order, Integer>, JpaSpec
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE order_products SET total_price = ?2 WHERE orderid = ?1", nativeQuery = true)
+    @Query(value = "UPDATE order_products SET total_price = ?2 WHERE order_id = ?1", nativeQuery = true)
     void updateTotalPrice(Integer orderId, Double totalPrice);
     Order findTopByOrderByOrderIDDesc();
 }

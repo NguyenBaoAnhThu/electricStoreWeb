@@ -4,13 +4,13 @@ import lombok.Data;
 
 @Data
 public class InvoiceItemDTO {
-    private Long id;
-    private Long productId;
+    private Integer id;
+    private Integer productId;
     private String productCode;
     private String productName;
     private String brand;
-    private long quantity;
-    private long price;
+    private double quantity;
+    private double price;
     private String paymentStatus;
-    private long total; // Thành tiền của sản phẩm
+    private double total; // Thành tiền của sản phẩm
 }

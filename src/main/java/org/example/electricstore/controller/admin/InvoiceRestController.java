@@ -82,7 +82,7 @@ public class InvoiceRestController {
     @PostMapping("/cancel")
     @ResponseBody
     public ResponseEntity<String> cancelInvoice(
-            @RequestParam Long invoiceId,
+            @RequestParam Integer invoiceId,
             @RequestParam String reason) {
         try {
             Invoice invoice = invoiceRepo.findByIdWithProducts(invoiceId)
@@ -144,7 +144,7 @@ public class InvoiceRestController {
     }
 
     @GetMapping("/export-pdf/{invoiceId}")
-    public ResponseEntity<byte[]> exportPDF(@PathVariable Long invoiceId) {
+    public ResponseEntity<byte[]> exportPDF(@PathVariable Integer invoiceId) {
         try {
             byte[] pdfBytes = pdfImportService.createImportPDF(invoiceId);
 
@@ -163,7 +163,7 @@ public class InvoiceRestController {
     // API endpoint để xử lý thanh toán
     @PostMapping("/payment-process")
     public ResponseEntity<?> processPayment(
-            @RequestParam Long invoiceId,
+            @RequestParam Integer invoiceId,
             @RequestParam String method,
             @RequestParam Double amount) {
 
@@ -179,24 +179,23 @@ public class InvoiceRestController {
             Invoice invoice = invoiceOpt.get();
 
             // Tính tổng tiền cần thanh toán
-            long totalAmount = 0;
+            double totalAmount = 0;
             for (InvoiceItem item : invoice.getProducts()) {
                 totalAmount += item.getQuantity() * item.getPrice();
             }
 
             // Trừ giảm giá và cộng phí khác
-            // Invoice sử dụng kiểu primitive long nên không cần kiểm tra null
             totalAmount -= invoice.getDiscount();
             totalAmount += invoice.getAdditionalFees();
 
             // Tính tổng tiền đã thanh toán từ lịch sử
-            long previouslyPaid = paymentHistoryRepository.sumAmountByInvoiceId(invoiceId);
+            double previouslyPaid = paymentHistoryRepository.sumAmountByInvoiceId(invoiceId);
 
             // Tính toán số tiền còn nợ
-            long amountDue = totalAmount - previouslyPaid;
+            double amountDue = totalAmount - previouslyPaid;
 
-            // Số tiền đang thanh toán (chuyển đổi từ Double sang Long)
-            long currentPaymentAmount = Math.round(amount);
+            // Số tiền đang thanh toán
+            double currentPaymentAmount = amount;
 
             // Lưu lịch sử thanh toán
             PaymentHistory paymentHistory = PaymentHistory.builder()
@@ -209,7 +208,7 @@ public class InvoiceRestController {
             paymentHistoryRepository.save(paymentHistory);
 
             // Tổng tiền đã thanh toán sau đợt này
-            long totalPaid = previouslyPaid + currentPaymentAmount;
+            double totalPaid = previouslyPaid + currentPaymentAmount;
 
             // Cập nhật trạng thái thanh toán
             System.out.println("Total Amount: " + totalAmount);
@@ -255,7 +254,7 @@ public class InvoiceRestController {
 
     // API endpoint để lấy lịch sử thanh toán
     @GetMapping("/payment-history")
-    public ResponseEntity<?> getPaymentHistory(@RequestParam Long invoiceId) {
+    public ResponseEntity<?> getPaymentHistory(@RequestParam Integer invoiceId) {
         try {
             List<PaymentHistory> historyList = paymentHistoryRepository.findByInvoiceIdOrderByPaidAtDesc(invoiceId);
             return ResponseEntity.ok(historyList);

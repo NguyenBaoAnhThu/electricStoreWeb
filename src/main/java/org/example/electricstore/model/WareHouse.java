@@ -17,10 +17,16 @@ import java.time.LocalDate;
 public class WareHouse {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false)
     private Integer id;
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "product_id")
+
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product;
+
+    @Column(name = "import_date", nullable = false)
     private LocalDate importDate;
+
+    @Column(nullable = false)
     private Double price;
 }

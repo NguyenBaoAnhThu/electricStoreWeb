@@ -19,6 +19,7 @@ import java.util.List;
 public class Brand {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "brand_id")
     private Integer brandID;
 
     @Column(name = "brand_code", unique = true, nullable = false)
@@ -27,6 +28,7 @@ public class Brand {
     @Column(name = "brand_name", nullable = false)
     private String brandName;
 
+    @Column(name = "country", nullable = false)
     private String country;
 
     @Column(name = "create_at", nullable = false)

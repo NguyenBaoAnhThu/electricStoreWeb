@@ -19,6 +19,7 @@ import java.util.List;
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "category_id")
     private Integer categoryID;
 
     @Column(name = "category_code", unique = true, nullable = false)
@@ -28,7 +29,7 @@ public class Category {
     private String categoryName;
 
     @Lob
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String description;
 
     @Column(name = "create_at", nullable = false)

@@ -11,13 +11,13 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
+public interface InvoiceRepository extends JpaRepository<Invoice, Integer> {
 
     @Query("SELECT i FROM Invoice i LEFT JOIN FETCH i.products LEFT JOIN FETCH i.supplier WHERE i.id = :id")
-    Optional<Invoice> findByIdWithProducts(@Param("id") Long id);
+    Optional<Invoice> findByIdWithProducts(@Param("id") Integer id);
 
     @Query("SELECT i FROM Invoice i LEFT JOIN FETCH i.supplier WHERE i.id = :id")
-    Optional<Invoice> findByIdWithSupplier(@Param("id") Long id);
+    Optional<Invoice> findByIdWithSupplier(@Param("id") Integer id);
 
     @Query("SELECT MAX(i.receiptCode) FROM Invoice i WHERE i.receiptCode LIKE 'NK%'")
     String findLatestReceiptCode();

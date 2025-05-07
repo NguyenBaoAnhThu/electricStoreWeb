@@ -19,7 +19,7 @@ public class InvoicePDFController {
     private final PDFImportService pdfImportService;
 
     @GetMapping("/pdf/{id}")
-    public ResponseEntity<byte[]> generateInvoicePDF(@PathVariable Long id) {
+    public ResponseEntity<byte[]> generateInvoicePDF(@PathVariable Integer id) {
         try {
             byte[] pdfBytes = pdfImportService.createImportPDF(id);
 

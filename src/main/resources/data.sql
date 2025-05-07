@@ -6,7 +6,7 @@ VALUES ('ROLE_ADMIN'),
        ('ROLE_EMPLOYEE');
 
 -- Thêm dữ liệu vào User (đã gộp với thông tin Employee)
-INSERT INTO user (username, encryted_password, email, created_at, updated_at,
+INSERT INTO user (username, encryted_password, employee_email, created_at, updated_at,
                   employee_name, employee_birthday, employee_address, employee_phone, employee_code)
 VALUES
     ('admin123', '$2a$10$y/odQPEQIU.RifEy1Steu.5ZuCmTRGQUB3ntp6.bWM/kw/29huOZK', 'admin@gmail.com', NOW(), NOW(),
@@ -75,23 +75,23 @@ VALUES (1, 1),  -- admin123 có role ADMIN
        (15, 2), -- thithanh890 có role EMPLOYEE
        (16, 2); -- vanhung123 có role EMPLOYEE
 # Thêm dữ liệu vào customer
-INSERT INTO customers (customer_name, phone_number, address, email, birth_date)
+INSERT INTO customers (customer_code, customer_name, phone_number, address, email, birth_date)
 VALUES
-    ('Trần Hoài An', '0981828128', '15 Nguyễn Trãi, Thanh Xuân, Hà Nội', 'hoaian@gmail.com', '2002-06-12'),
-    ('Tuấn Khiêm', '0971218291', '28 Lê Duẩn, Hải Châu, Đà Nẵng', 'tuankhiem@gmail.com', '2002-06-12'),
-    ('Nguyễn Văn Đức', '0912118128', '56 Hùng Vương, Phú Nhuận, Huế', 'vanduc@gmail.com', '2002-06-14'),
-    ('Phương Nha', '0989129112', '103 Láng Hạ, Đống Đa, Hà Nội', 'phuongnha@gmail.com', '2001-06-12'),
-    ('Trần Văn Tuấn', '0912991991', '78 Lạch Tray, Ngô Quyền, Hải Phòng', 'vantuan@gmail.com', '2002-12-12'),
-    ('Nguyễn Thị Hoa', '0912345678', '42 Nguyễn Huệ, Quận 1, Hồ Chí Minh', 'hoa.nguyen@gmail.com', '1995-04-15'),
-    ('Lê Văn Minh', '0923456789', '211 Nguyễn Văn Cừ, Ninh Kiều, Cần Thơ', 'minhle@gmail.com', '1990-08-21'),
-    ('Trần Thị Lan', '0934567890', '17 Phan Đình Phùng, Phường 2, Đà Lạt', 'lantran@gmail.com', '1988-11-30'),
-    ('Phạm Quốc Bảo', '0945678901', '24 Trần Phú, Lộc Thọ, Nha Trang', 'baopham@gmail.com', '1993-02-25'),
-    ('Vũ Thị Thu', '0956789012', '89 Trương Công Định, Phường 3, Vũng Tàu', 'thuvu@gmail.com', '1997-07-10'),
-    ('Đỗ Văn Hùng', '0967890123', '125 Trần Hưng Đạo, Hạ Long, Quảng Ninh', 'hungdo@gmail.com', '1985-09-18'),
-    ('Nguyễn Thành Nam', '0978901234', '56 Nguyễn An Ninh, Dĩ An, Bình Dương', 'namnguyen@gmail.com', '1992-12-05'),
-    ('Mai Thị Linh', '0989012345', '38 Trương Định, Hai Bà Trưng, Hà Nội', 'linhmai@gmail.com', '1998-03-22'),
-    ('Hoàng Văn Thắng', '0990123456', '72 Bạch Đằng, Phường Trần Phú, Hải Dương', 'thanghoang@gmail.com', '1994-05-17'),
-    ('Trần Thị Thảo', '0901234567', '19 Lê Lợi, Phường Điện Biên, Thanh Hóa', 'thaotran@gmail.com', '1996-10-08');
+    ('KH0001', 'Trần Hoài An', '0981828128', '15 Nguyễn Trãi, Thanh Xuân, Hà Nội', 'hoaian@gmail.com', '2002-06-12'),
+    ('KH0002', 'Tuấn Khiêm', '0971218291', '28 Lê Duẩn, Hải Châu, Đà Nẵng', 'tuankhiem@gmail.com', '2002-06-12'),
+    ('KH0003', 'Nguyễn Văn Đức', '0912118128', '56 Hùng Vương, Phú Nhuận, Huế', 'vanduc@gmail.com', '2002-06-14'),
+    ('KH0004', 'Phương Nha', '0989129112', '103 Láng Hạ, Đống Đa, Hà Nội', 'phuongnha@gmail.com', '2001-06-12'),
+    ('KH0005', 'Trần Văn Tuấn', '0912991991', '78 Lạch Tray, Ngô Quyền, Hải Phòng', 'vantuan@gmail.com', '2002-12-12'),
+    ('KH0006', 'Nguyễn Thị Hoa', '0912345678', '42 Nguyễn Huệ, Quận 1, Hồ Chí Minh', 'hoa.nguyen@gmail.com', '1995-04-15'),
+    ('KH0007', 'Lê Văn Minh', '0923456789', '211 Nguyễn Văn Cừ, Ninh Kiều, Cần Thơ', 'minhle@gmail.com', '1990-08-21'),
+    ('KH0008', 'Trần Thị Lan', '0934567890', '17 Phan Đình Phùng, Phường 2, Đà Lạt', 'lantran@gmail.com', '1988-11-30'),
+    ('KH0009', 'Phạm Quốc Bảo', '0945678901', '24 Trần Phú, Lộc Thọ, Nha Trang', 'baopham@gmail.com', '1993-02-25'),
+    ('KH0010', 'Vũ Thị Thu', '0956789012', '89 Trương Công Định, Phường 3, Vũng Tàu', 'thuvu@gmail.com', '1997-07-10'),
+    ('KH0011', 'Đỗ Văn Hùng', '0967890123', '125 Trần Hưng Đạo, Hạ Long, Quảng Ninh', 'hungdo@gmail.com', '1985-09-18'),
+    ('KH0012', 'Nguyễn Thành Nam', '0978901234', '56 Nguyễn An Ninh, Dĩ An, Bình Dương', 'namnguyen@gmail.com', '1992-12-05'),
+    ('KH0013', 'Mai Thị Linh', '0989012345', '38 Trương Định, Hai Bà Trưng, Hà Nội', 'linhmai@gmail.com', '1998-03-22'),
+    ('KH0014', 'Hoàng Văn Thắng', '0990123456', '72 Bạch Đằng, Phường Trần Phú, Hải Dương', 'thanghoang@gmail.com', '1994-05-17'),
+    ('KH0015', 'Trần Thị Thảo', '0901234567', '19 Lê Lợi, Phường Điện Biên, Thanh Hóa', 'thaotran@gmail.com', '1996-10-08');
 # Thêm dữ liệu vào categories (chỉ giữ 3 danh mục)
 INSERT INTO categories (category_code, category_name, description, create_at, update_at)
 VALUES ('DM0001', 'Điện thoại', 'Các loại điện thoại di động thông minh', NOW(), NOW()),
@@ -131,36 +131,35 @@ VALUES ('NCC0001', 'Apple Store', 'California, USA', '0981921280', 'apple@gmail.
        ('NCC0009', 'LG Electronics', 'Seoul, Korea', '0981921288', 'lg@gmail.com', NOW(), NOW()),
        ('NCC0010', 'Lenovo Shop', 'Shanghai, China', '0981921289', 'lenovo@gmail.com', NOW(), NOW());
 # Thêm dữ liệu vào products (sửa lại mã sản phẩm theo SP0001, SP0002, ...)
-INSERT INTO products (create_at, description, main_image_url, name, price, stock, update_at, brand_id, category_id, supplier_id, product_code)
+INSERT INTO products (product_id, product_name, main_image_url, description, price, stock, create_at, update_at, brand_id, category_id, supplier_id, product_code)
 VALUES
 -- Smartphones (Danh mục 1: Điện thoại)
-(NOW(), 'Xiaomi Redmi Note 12 Pro - Hiệu năng ổn định', 'https://byvn.net/2qP6', 'Xiaomi Redmi Note 12 Pro', 8990000, 100, NOW(), 6, 1, 4, 'SP0001'),
-(NOW(), 'Realme GT Neo 5 - Sạc siêu nhanh', 'https://byvn.net/kvZe', 'Realme GT Neo 5', 10990000, 80, NOW(), 9, 1, 9, 'SP0002'),
-(NOW(), 'Oppo Find X5 Pro - Thiết kế sang trọng', 'https://byvn.net/XHnW', 'Oppo Find X5 Pro', 19990000, 50, NOW(), 9, 1, 3, 'SP0003'),
-(NOW(), 'Vivo X90 Pro - Camera chuyên nghiệp', 'https://byvn.net/3hgh', 'Vivo X90 Pro', 22990000, 60, NOW(), 1, 1, 1, 'SP0004'),
-(NOW(), 'Honor Magic5 Pro - Công nghệ cao cấp', 'https://byvn.net/rhiq', 'Honor Magic5 Pro', 20990000, 45, NOW(), 1, 1, 1, 'SP0005'),
-(NOW(), 'Samsung Galaxy S23 Ultra - Flagship hàng đầu', 'https://byvn.net/s23u', 'Samsung Galaxy S23 Ultra', 29990000, 40, NOW(), 2, 1, 2, 'SP0006'),
-(NOW(), 'iPhone 15 Pro Max - Đỉnh cao công nghệ', 'https://byvn.net/ip15pm', 'iPhone 15 Pro Max', 33990000, 55, NOW(), 1, 1, 1, 'SP0007'),
-(NOW(), 'Xiaomi 14 Ultra - Camera đỉnh cao', 'https://byvn.net/xm14u', 'Xiaomi 14 Ultra', 25990000, 35, NOW(), 6, 1, 4, 'SP0008'),
+(1, 'Xiaomi Redmi Note 12 Pro', 'https://byvn.net/2qP6', 'Xiaomi Redmi Note 12 Pro - Hiệu năng ổn định', 8990000.0, 100, NOW(), NOW(), 6, 1, 4, 'SP0001'),
+(2, 'Realme GT Neo 5', 'https://byvn.net/kvZe', 'Realme GT Neo 5 - Sạc siêu nhanh', 10990000.0, 80, NOW(), NOW(), 9, 1, 9, 'SP0002'),
+(3, 'Oppo Find X5 Pro', 'https://byvn.net/XHnW', 'Oppo Find X5 Pro - Thiết kế sang trọng', 19990000.0, 50, NOW(), NOW(), 9, 1, 3, 'SP0003'),
+(4, 'Vivo X90 Pro', 'https://byvn.net/3hgh', 'Vivo X90 Pro - Camera chuyên nghiệp', 22990000.0, 60, NOW(), NOW(), 1, 1, 1, 'SP0004'),
+(5, 'Honor Magic5 Pro', 'https://byvn.net/rhiq', 'Honor Magic5 Pro - Công nghệ cao cấp', 20990000.0, 45, NOW(), NOW(), 1, 1, 1, 'SP0005'),
+(6, 'Samsung Galaxy S23 Ultra', 'https://byvn.net/s23u', 'Samsung Galaxy S23 Ultra - Flagship hàng đầu', 29990000.0, 40, NOW(), NOW(), 2, 1, 2, 'SP0006'),
+(7, 'iPhone 15 Pro Max', 'https://byvn.net/ip15pm', 'iPhone 15 Pro Max - Đỉnh cao công nghệ', 33990000.0, 55, NOW(), NOW(), 1, 1, 1, 'SP0007'),
+(8, 'Xiaomi 14 Ultra', 'https://byvn.net/xm14u', 'Xiaomi 14 Ultra - Camera đỉnh cao', 25990000.0, 35, NOW(), NOW(), 6, 1, 4, 'SP0008'),
 
 -- Tablets (Danh mục 2: Máy tính bảng)
-(NOW(), 'Huawei MatePad Pro 11 - Màn hình sắc nét', 'https://byvn.net/U9pt', 'Huawei MatePad Pro 11', 16990000, 70, NOW(), 7, 2, 8, 'SP0009'),
-(NOW(), 'Xiaomi Pad 6 Pro - Hiệu năng mạnh mẽ', 'https://byvn.net/RX3m', 'Xiaomi Pad 6 Pro', 14990000, 65, NOW(), 6, 2, 4, 'SP0010'),
-(NOW(), 'Realme Pad 2 - Giải trí đa năng', 'https://byvn.net/E4HL', 'Realme Pad 2', 8990000, 90, NOW(), 9, 2, 3, 'SP0011'),
-(NOW(), 'iPad Pro M2 12.9 - Hiệu suất vượt trội', 'https://byvn.net/ipadm2', 'iPad Pro M2 12.9', 31990000, 40, NOW(), 1, 2, 1, 'SP0012'),
-(NOW(), 'Samsung Galaxy Tab S9 Ultra - Màn hình lớn', 'https://byvn.net/tabs9u', 'Samsung Galaxy Tab S9 Ultra', 26990000, 30, NOW(), 2, 2, 2, 'SP0013'),
-(NOW(), 'Lenovo Tab P12 Pro - Giải trí đỉnh cao', 'https://byvn.net/lenovop12', 'Lenovo Tab P12 Pro', 17990000, 25, NOW(), 10, 2, 10, 'SP0014'),
+(9, 'Huawei MatePad Pro 11', 'https://byvn.net/U9pt', 'Huawei MatePad Pro 11 - Màn hình sắc nét', 16990000.0, 70, NOW(), NOW(), 7, 2, 8, 'SP0009'),
+(10, 'Xiaomi Pad 6 Pro', 'https://byvn.net/RX3m', 'Xiaomi Pad 6 Pro - Hiệu năng mạnh mẽ', 14990000.0, 65, NOW(), NOW(), 6, 2, 4, 'SP0010'),
+(11, 'Realme Pad 2', 'https://byvn.net/E4HL', 'Realme Pad 2 - Giải trí đa năng', 8990000.0, 90, NOW(), NOW(), 9, 2, 3, 'SP0011'),
+(12, 'iPad Pro M2 12.9', 'https://byvn.net/ipadm2', 'iPad Pro M2 12.9 - Hiệu suất vượt trội', 31990000.0, 40, NOW(), NOW(), 1, 2, 1, 'SP0012'),
+(13, 'Samsung Galaxy Tab S9 Ultra', 'https://byvn.net/tabs9u', 'Samsung Galaxy Tab S9 Ultra - Màn hình lớn', 26990000.0, 30, NOW(), NOW(), 2, 2, 2, 'SP0013'),
+(14, 'Lenovo Tab P12 Pro', 'https://byvn.net/lenovop12', 'Lenovo Tab P12 Pro - Giải trí đỉnh cao', 17990000.0, 25, NOW(), NOW(), 10, 2, 10, 'SP0014'),
 
 -- Laptops (Danh mục 3: Laptop)
-(NOW(), 'HP Spectre x360 - Laptop 2 trong 1', 'https://byvn.net/KNjw', 'HP Spectre x360', 39990000, 40, NOW(), 1, 3, 1, 'SP0015'),
-(NOW(), 'Acer Predator Helios 300 - Gaming', 'https://byvn.net/9cmk', 'Acer Predator Helios 300', 35990000, 50, NOW(), 1, 3, 1, 'SP0016'),
-(NOW(), 'Lenovo ThinkPad X1 Carbon - Doanh nhân', 'https://byvn.net/6Mva', 'Lenovo ThinkPad X1 Carbon', 45990000, 35, NOW(), 10, 3, 10, 'SP0017'),
-(NOW(), 'Microsoft Surface Laptop 5 - Sang trọng', 'https://byvn.net/Ga38', 'Microsoft Surface Laptop 5', 37990000, 45, NOW(), 1, 3, 1, 'SP0018'),
-(NOW(), 'MacBook Pro 16 M3 Max - Mạnh mẽ', 'https://byvn.net/mbpm3', 'MacBook Pro 16 M3 Max', 89990000, 20, NOW(), 1, 3, 1, 'SP0019'),
-(NOW(), 'Dell XPS 15 - Thiết kế cao cấp', 'https://byvn.net/dellxps15', 'Dell XPS 15', 55990000, 30, NOW(), 5, 3, 7, 'SP0020'),
-(NOW(), 'Asus ROG Zephyrus G16 - Gaming cao cấp', 'https://byvn.net/asusrog', 'Asus ROG Zephyrus G16', 49990000, 25, NOW(), 4, 3, 6, 'SP0021'),
-(NOW(), 'MSI Creator Z16 - Dành cho sáng tạo', 'https://byvn.net/msicre', 'MSI Creator Z16', 51990000, 15, NOW(), 1, 3, 1, 'SP0022');
-
+(15, 'HP Spectre x360', 'https://byvn.net/KNjw', 'HP Spectre x360 - Laptop 2 trong 1', 39990000.0, 40, NOW(), NOW(), 1, 3, 1, 'SP0015'),
+(16, 'Acer Predator Helios 300', 'https://byvn.net/9cmk', 'Acer Predator Helios 300 - Gaming', 35990000.0, 50, NOW(), NOW(), 1, 3, 1, 'SP0016'),
+(17, 'Lenovo ThinkPad X1 Carbon', 'https://byvn.net/6Mva', 'Lenovo ThinkPad X1 Carbon - Doanh nhân', 45990000.0, 35, NOW(), NOW(), 10, 3, 10, 'SP0017'),
+(18, 'Microsoft Surface Laptop 5', 'https://byvn.net/Ga38', 'Microsoft Surface Laptop 5 - Sang trọng', 37990000.0, 45, NOW(), NOW(), 1, 3, 1, 'SP0018'),
+(19, 'MacBook Pro 16 M3 Max', 'https://byvn.net/mbpm3', 'MacBook Pro 16 M3 Max - Mạnh mẽ', 89990000.0, 20, NOW(), NOW(), 1, 3, 1, 'SP0019'),
+(20, 'Dell XPS 15', 'https://byvn.net/dellxps15', 'Dell XPS 15 - Thiết kế cao cấp', 55990000.0, 30, NOW(), NOW(), 5, 3, 7, 'SP0020'),
+(21, 'Asus ROG Zephyrus G16', 'https://byvn.net/asusrog', 'Asus ROG Zephyrus G16 - Gaming cao cấp', 49990000.0, 25, NOW(), NOW(), 4, 3, 6, 'SP0021'),
+(22, 'MSI Creator Z16', 'https://byvn.net/msicre', 'MSI Creator Z16 - Dành cho sáng tạo', 51990000.0, 15, NOW(), NOW(), 1, 3, 1, 'SP0022');
 # Thêm dữ liệu vào ProductDetail với cấu trúc mới
 INSERT INTO product_details (screen_size, camera, front_camera, color, description, cpu, gpu, ram, rom, os, os_version, battery, screen_type, screen_resolution, ports, weight, create_at, update_at, product_id)
 VALUES

@@ -6,7 +6,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "payment_history")
+@Table(name = "invoice_history")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,13 +15,22 @@ public class PaymentHistory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(nullable = false)
+    private Integer id;
 
-    private Long invoiceId;
+    @Column(name = "invoice_id", nullable = false)
+    private Integer invoiceId;
 
+    @ManyToOne
+    @JoinColumn(name = "invoice_id", nullable = false, insertable = false, updatable = false)
+    private Invoice invoice;
+
+    @Column(nullable = false)
     private String method;
 
-    private Long amount;
+    @Column(nullable = false)
+    private Double amount;
 
+    @Column(name = "paid_at", nullable = false)
     private LocalDateTime paidAt;
 }

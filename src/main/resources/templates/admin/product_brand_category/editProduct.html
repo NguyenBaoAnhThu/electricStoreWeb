@@ -60,14 +60,6 @@
             background-color: #0069d9;
             border-color: #0062cc;
         }
-        .btn-danger {
-            background-color: #D10024;
-            border-color: #D10024;
-        }
-        .btn-danger:hover {
-            background-color: #bb0000;
-            border-color: #bb0000;
-        }
         #imagePreview {
             display: flex;
             flex-wrap: wrap;
@@ -81,13 +73,6 @@
             border-radius: 4px;
             border: 1px solid #ddd;
             padding: 3px;
-        }
-        .section-title {
-            font-weight: 600;
-            margin: 20px 0 15px 0;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #e9ecef;
-            color: #333;
         }
         .text-danger {
             color: #D10024 !important;
@@ -180,19 +165,28 @@
                                             </div>
                                         </div>
                                     </div>
-
                                     <div class="row">
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <div class="compact-form-group">
-                                                <label class="form-label required-field">Giá</label>
+                                                <label class="form-label required-field">Giá nhập</label>
+                                                <input type="text" class="form-control"
+                                                       th:value="${product.importPrice != null ? #numbers.formatDecimal(product.importPrice, 0, 'COMMA', 0, 'POINT') : ''}"
+                                                       name="importPrice"
+                                                       required placeholder="Nhập giá nhập sản phẩm">
+                                                <div class="text-danger" th:if="${#fields.hasErrors('importPrice')}" th:errors="*{importPrice}"></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="compact-form-group">
+                                                <label class="form-label required-field">Giá bán</label>
                                                 <input type="text" class="form-control"
                                                        th:value="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')}"
                                                        name="price"
-                                                       required placeholder="Nhập giá sản phẩm">
+                                                       required placeholder="Nhập giá bán sản phẩm">
                                                 <div class="text-danger" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <div class="compact-form-group">
                                                 <label class="form-label">Màu sắc</label>
                                                 <input type="text" class="form-control" th:field="*{color}" placeholder="Ví dụ: Đen, Trắng, Xanh">

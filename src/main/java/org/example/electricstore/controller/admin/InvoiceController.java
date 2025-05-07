@@ -3,7 +3,6 @@ package org.example.electricstore.controller.admin;
 import lombok.RequiredArgsConstructor;
 import org.example.electricstore.model.Invoice;
 import org.example.electricstore.repository.InvoiceRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,16 +16,16 @@ public class InvoiceController {
     private final InvoiceRepository invoiceRepository;
 
     @GetMapping("/invoice_form_warehouses/{id}")
-    public String showInvoiceForm(@PathVariable("id") Long id, Model model) {
+    public String showInvoiceForm(@PathVariable("id") Integer id, Model model) {
         Invoice invoice = invoiceRepository.findByIdWithProducts(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy phiếu nhập"));
 
-        long total = invoice.getProducts().stream()
-                .mapToLong(p -> p.getPrice() * p.getQuantity())
+        double total = invoice.getProducts().stream()
+                .mapToDouble(p -> p.getPrice() * p.getQuantity())
                 .sum() - invoice.getDiscount() + invoice.getAdditionalFees();
 
         long totalQuantity = invoice.getProducts().stream()
-                .mapToLong(p -> p.getQuantity())
+                .mapToLong(p -> Math.round(p.getQuantity()))
                 .sum();
         model.addAttribute("invoice", invoice);
         model.addAttribute("total", total);

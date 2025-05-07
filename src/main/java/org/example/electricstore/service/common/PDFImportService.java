@@ -54,7 +54,7 @@ public class PDFImportService {
     @Autowired
     private ISupplierRepository supplierRepository;
 
-    public byte[] createImportPDF(Long invoiceId) throws IOException {
+    public byte[] createImportPDF(Integer invoiceId) throws IOException {
         // Lấy thông tin hóa đơn từ database
         Invoice invoice = invoiceRepository.findByIdWithProducts(invoiceId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy phiếu nhập kho"));
@@ -270,8 +270,8 @@ public class PDFImportService {
                 summaryTable.addCell(vatLabelCell);
 
                 // Tính VAT trên số tiền sau khi giảm giá
-                long amountAfterDiscount = importDTO.getTotalAmount() - importDTO.getDiscount();
-                long vatAmount = Math.round(amountAfterDiscount * importDTO.getVat() / 100);
+                double amountAfterDiscount = importDTO.getTotalAmount() - importDTO.getDiscount();
+                double vatAmount = amountAfterDiscount * importDTO.getVat() / 100;
 
                 Cell vatValueCell = new Cell();
                 vatValueCell.setBorder(Border.NO_BORDER);
@@ -439,7 +439,7 @@ public class PDFImportService {
         dto.setProducts(itemDTOs);
 
         // Tính các giá trị tổng
-        long totalAmount = 0;
+        double totalAmount = 0;
         for (InvoiceItemDTO item : itemDTOs) {
             totalAmount += item.getTotal();
         }
@@ -452,9 +452,9 @@ public class PDFImportService {
         dto.setTotalQuantity(totalQuantity);
 
         // Tính tổng giá trị (sau thuế, chiết khấu, phí)
-        long amountAfterDiscount = totalAmount - invoice.getDiscount();
-        long vatAmount = Math.round(amountAfterDiscount * invoice.getVat() / 100);
-        long grandTotal = amountAfterDiscount + vatAmount + invoice.getAdditionalFees();
+        double amountAfterDiscount = totalAmount - invoice.getDiscount();
+        double vatAmount = amountAfterDiscount * invoice.getVat() / 100;
+        double grandTotal = amountAfterDiscount + vatAmount + invoice.getAdditionalFees();
         dto.setGrandTotal(grandTotal);
 
         return dto;
@@ -475,6 +475,11 @@ public class PDFImportService {
     }
 
     private String formatCurrency(long amount) {
+        NumberFormat currencyFormat = NumberFormat.getNumberInstance(new Locale("vi", "VN"));
+        return currencyFormat.format(amount) + " VNĐ";
+    }
+
+    private String formatCurrency(double amount) {
         NumberFormat currencyFormat = NumberFormat.getNumberInstance(new Locale("vi", "VN"));
         return currencyFormat.format(amount) + " VNĐ";
     }

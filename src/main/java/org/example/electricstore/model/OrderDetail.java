@@ -11,12 +11,17 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "orderDetails")
+@Table(name = "order_details")
 public class OrderDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "order_detailid", nullable = false)
     private Integer orderDetailID;
+
+    @Column(nullable = false)
     private Integer quantity;
+
+    @Column(nullable = false)
     private Double price;
 
     @ManyToOne
@@ -24,7 +29,7 @@ public class OrderDetail {
     private Product product;
 
     @ManyToOne
-    @JoinColumn(name = "order_id", nullable = false )
+    @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
     @Override

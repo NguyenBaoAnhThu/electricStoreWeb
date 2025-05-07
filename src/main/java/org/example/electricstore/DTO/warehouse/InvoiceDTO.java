@@ -10,7 +10,7 @@ import org.example.electricstore.model.Invoice;
 @NoArgsConstructor
 public class InvoiceDTO {
     private Invoice invoice;
-    private long total;
+    private double total;
     private String paymentStatus;
 
     // Thêm phương thức trợ giúp để lấy tên nhà cung cấp

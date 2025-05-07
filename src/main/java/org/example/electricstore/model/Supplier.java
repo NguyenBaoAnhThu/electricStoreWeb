@@ -19,6 +19,7 @@ public class Supplier {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "supplier_id", nullable = false)
     private Integer supplierID;
 
     @Column(name = "supplier_code", unique = true, nullable = false)
@@ -27,19 +28,19 @@ public class Supplier {
     @Column(name = "supplier_name", nullable = false)
     private String supplierName;
 
-    @Column(name = "address")
+    @Column(name = "address", nullable = false)
     private String address;
 
-    @Column(name = "phone", unique = true)
+    @Column(name = "phone", unique = true, nullable = false)
     private String phone;
 
-    @Column(name = "email", unique = true)
+    @Column(name = "email", unique = true, nullable = false)
     private String email;
 
-    @Column(name = "create_at")
+    @Column(name = "create_at", nullable = false)
     private LocalDateTime createAt;
 
-    @Column(name = "update_at")
+    @Column(name = "update_at", nullable = false)
     private LocalDateTime updateAt;
 
 

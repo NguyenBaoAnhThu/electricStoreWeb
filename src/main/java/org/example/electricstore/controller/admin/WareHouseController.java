@@ -133,8 +133,8 @@ public class WareHouseController {
                     dto.setInvoice(invoice);
 
                     // Tính tổng tiền từ tất cả các mục trong invoice
-                    long total = invoice.getProducts().stream()
-                            .mapToLong(item -> item.getQuantity() * item.getPrice())
+                    double total = invoice.getProducts().stream()
+                            .mapToDouble(item -> item.getQuantity() * item.getPrice())
                             .sum();
 
                     // Điều chỉnh thêm/bớt theo chiết khấu và phí khác

@@ -20,17 +20,31 @@ import java.util.List;
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "product_id", nullable = false)
     private Integer productID;
+
+    @Column(name = "product_name", nullable = false)
     private String name;
-    @Column(columnDefinition = "MEDIUMTEXT")
+
+    @Column(columnDefinition = "MEDIUMTEXT", nullable = false)
     private String mainImageUrl;
+
+    @Column(nullable = false)
     private Double price;
-    @Column(columnDefinition = "MEDIUMTEXT")
+
+    @Column(columnDefinition = "MEDIUMTEXT", nullable = false)
     private String description;
+
+    @Column(name = "product_code", nullable = false)
     private String productCode;
 
+    @Column(name = "create_at", nullable = false)
     private LocalDateTime createAt;
+
+    @Column(name = "update_at", nullable = false)
     private LocalDateTime updateAt;
+
+    @Column
     private Integer stock;
 
     @ManyToOne
@@ -54,9 +68,8 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderDetail> orderDetails;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<WareHouse> wareHouses;
-
     @Transient
     private String formattedPrice;
 

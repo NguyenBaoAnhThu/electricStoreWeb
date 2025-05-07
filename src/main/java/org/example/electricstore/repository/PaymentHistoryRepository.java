@@ -7,10 +7,10 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface PaymentHistoryRepository extends JpaRepository<PaymentHistory, Long> {
+public interface PaymentHistoryRepository extends JpaRepository<PaymentHistory, Integer> {
 
-    List<PaymentHistory> findByInvoiceIdOrderByPaidAtDesc(Long invoiceId);
+    List<PaymentHistory> findByInvoiceIdOrderByPaidAtDesc(Integer invoiceId);
 
     @Query("SELECT COALESCE(SUM(p.amount), 0) FROM PaymentHistory p WHERE p.invoiceId = :invoiceId")
-    long sumAmountByInvoiceId(@Param("invoiceId") Long invoiceId);
+    double sumAmountByInvoiceId(@Param("invoiceId") Integer invoiceId);
 }

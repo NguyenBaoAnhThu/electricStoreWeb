@@ -84,7 +84,7 @@ public class InvoiceService {
     }
 
     @Transactional
-    public boolean cancelInvoice(Long invoiceId, String reason) {
+    public boolean cancelInvoice(Integer invoiceId, String reason) {
         Optional<Invoice> invoiceOpt = invoiceRepository.findById(invoiceId);
         if (!invoiceOpt.isPresent()) {
             return false;
@@ -134,9 +134,7 @@ public class InvoiceService {
     }
 
     // Thêm phương thức để lấy phiếu nhập theo id
-    public Optional<Invoice> getInvoiceById(Long id) {
+    public Optional<Invoice> getInvoiceById(Integer id) {
         return invoiceRepository.findById(id);
     }
-
-    // Các phương thức khác trong service
 }
