@@ -156,8 +156,16 @@
                         <div class="tab-pane active" id="basic-info">
                             <div class="row mb-3">
                                 <div class="col-md-8">
+                                    <!-- Modifica esta sección en tu archivo editProduct.html -->
                                     <div class="row">
-                                        <div class="col-md-12">
+                                        <div class="col-md-6">
+                                            <div class="compact-form-group">
+                                                <label class="form-label">Mã Sản Phẩm</label>
+                                                <input type="text" class="form-control" th:value="*{productCode}" readonly>
+                                                <input type="hidden" th:field="*{productCode}">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
                                             <div class="compact-form-group">
                                                 <label class="form-label required-field">Tên Sản Phẩm</label>
                                                 <input type="text" class="form-control" th:field="*{name}" required placeholder="Nhập tên sản phẩm">

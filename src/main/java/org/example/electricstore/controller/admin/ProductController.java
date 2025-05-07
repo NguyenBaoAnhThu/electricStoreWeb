@@ -173,9 +173,16 @@ public class ProductController {
         return "redirect:/Admin/product-manager";
     }
 
+
     @GetMapping("/add")
     public String showAddProductForm(Model model) {
-        model.addAttribute("product", new ProductDTO());
+        ProductDTO productDTO = new ProductDTO();
+
+        // Generate a preview of the next product code (just for display)
+        String nextCode = productService.generateProductCode();
+        productDTO.setProductCode(nextCode);
+
+        model.addAttribute("product", productDTO);
         model.addAttribute("categories", categoryService.getAllCategories());
         model.addAttribute("brands", brandService.getAllBrands());
         model.addAttribute("suppliers", supplierService.getAllSuppliers());
@@ -190,6 +197,11 @@ public class ProductController {
             @RequestParam("files") List<MultipartFile> files,
             @RequestParam(value = "importPrice", required = false) Double importPrice,
             Model model) {
+
+        // Generate product code automatically
+        String generatedCode = productService.generateProductCode();
+        productDTO.setProductCode(generatedCode);
+
         String imgLink = productDTO.getMainImageUrl();
 
         if (bindingResult.hasErrors()) {
@@ -218,7 +230,7 @@ public class ProductController {
         //  Lưu sản phẩm vào database với giá nhập
         productService.saveProductWithImportPrice(product, product.getProductDetail(), importPrice, files);
 
-        return "redirect:/Admin/product-manager"; // Chuyển hướng khi thêm thành công
+        return "redirect:/Admin/product-manager";
     }
 
     @PostMapping("/delete")

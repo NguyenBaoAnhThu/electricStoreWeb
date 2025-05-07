@@ -369,4 +369,29 @@ public class ProductService implements IProductService {
         Pageable pageable = PageRequest.of(page, size);
         return productRepository.findBySupplierSupplierID(supplierId, pageable);
     }
+    public String generateProductCode() {
+        String prefix = "SP";
+        int maxNumber = 0;
+        List<Product> products = productRepository.findByProductCodeStartingWith(prefix);
+        for (Product product : products) {
+            String code = product.getProductCode();
+
+            try {
+                if (code != null && code.startsWith(prefix) && code.length() > prefix.length()) {
+                    String numberStr = code.substring(prefix.length());
+                    int number = Integer.parseInt(numberStr);
+
+                    if (number > maxNumber) {
+                        maxNumber = number;
+                    }
+                }
+            } catch (NumberFormatException e) {
+                continue;
+            }
+        }
+
+        int nextNumber = maxNumber + 1;
+
+        return prefix + String.format("%04d", nextNumber);
+    }
 }
