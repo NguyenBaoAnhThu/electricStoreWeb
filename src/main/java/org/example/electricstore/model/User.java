@@ -63,7 +63,9 @@ public class User {
 
     @PrePersist
     protected void dateBeforeCreate() {
-        this.createdAt = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now();
+        this.createdAt = now;
+        this.updatedAt = now;
     }
 
     @PreUpdate

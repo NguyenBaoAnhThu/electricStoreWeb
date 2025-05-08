@@ -1,79 +1,238 @@
-// Validate số điện thoại chỉ cho phép nhập số và giới hạn 10 số
-document.getElementById("employeePhone").addEventListener("input", function(e) {
-    const value = e.target.value;
+document.addEventListener('DOMContentLoaded', function() {
+    const phoneInputs = document.querySelectorAll("#employeePhone, #editEmployeePhone");
 
-    // Chỉ cho phép số
-    if (!/^\d*$/.test(value)) {
-        e.target.value = value.replace(/\D/g, '');
-    }
+    phoneInputs.forEach(input => {
+        if (input) {
+            // Xử lý khi nhập số điện thoại
+            input.addEventListener("input", function(e) {
+                const value = e.target.value;
 
-    // Giới hạn độ dài
-    if (value.length > 10) {
-        e.target.value = value.slice(0, 10);
-    }
-});
+                // Chỉ cho phép số
+                if (!/^\d*$/.test(value)) {
+                    e.target.value = value.replace(/\D/g, '');
+                }
 
-// Xử lý khi paste số điện thoại
-document.getElementById("employeePhone").addEventListener('paste', function(e) {
-    setTimeout(() => {
-        const currentValue = this.value;
+                // Giới hạn độ dài
+                if (value.length > 10) {
+                    e.target.value = value.slice(0, 10);
+                }
+            });
 
-        // Lọc ký tự không phải số
-        const filteredValue = currentValue.replace(/\D/g, '');
+            // Xử lý khi paste số điện thoại
+            input.addEventListener('paste', function(e) {
+                setTimeout(() => {
+                    const currentValue = this.value;
 
-        // Giới hạn độ dài
-        if (filteredValue.length > 10) {
-            this.value = filteredValue.substring(0, 10);
-        } else {
-            this.value = filteredValue;
+                    // Lọc ký tự không phải số
+                    const filteredValue = currentValue.replace(/\D/g, '');
+
+                    // Giới hạn độ dài
+                    if (filteredValue.length > 10) {
+                        this.value = filteredValue.substring(0, 10);
+                    } else {
+                        this.value = filteredValue;
+                    }
+                }, 0);
+            });
         }
-    }, 0);
-});
+    });
 
-// Validate tên nhân viên chỉ cho phép nhập chữ, số và khoảng trắng
-document.getElementById("employeeName").addEventListener("input", function(e) {
-    const value = e.target.value;
+    // === VALIDATE TÊN NHÂN VIÊN ===
+    const nameInputs = document.querySelectorAll("#employeeName, #editEmployeeName");
 
-    // Chỉ cho phép chữ cái, số và khoảng trắng
-    if (!/^[A-Za-z0-9À-ỹ\s]*$/.test(value)) {
-        e.target.value = value.replace(/[^A-Za-z0-9À-ỹ\s]/g, '');
-    }
+    nameInputs.forEach(input => {
+        if (input) {
+            // Thêm id cho thông báo giới hạn ký tự
+            let errorId = input.id === 'employeeName' ? 'employeeNameError' : 'editEmployeeNameError';
+            let charLimitMsg = document.getElementById(errorId);
 
-    // Giới hạn độ dài
-    if (value.length > 50) {
-        e.target.value = value.slice(0, 50);
-    }
-});
+            // Xử lý khi nhập tên nhân viên
+            input.addEventListener("input", function(e) {
+                const value = e.target.value;
 
-// Xử lý khi paste tên nhân viên
-document.getElementById("employeeName").addEventListener('paste', function(e) {
-    setTimeout(() => {
-        const MAX_LENGTH = 50;
-        const currentValue = this.value;
+                // Chỉ cho phép chữ cái, số và khoảng trắng
+                if (!/^[A-Za-z0-9À-ỹ\s]*$/.test(value)) {
+                    e.target.value = value.replace(/[^A-Za-z0-9À-ỹ\s]/g, '');
+                }
 
-        // Lọc ký tự không hợp lệ
-        const filteredValue = currentValue.replace(/[^A-Za-z0-9À-ỹ\s]/g, '');
+                // Giới hạn độ dài
+                if (value.length > 50) {
+                    e.target.value = value.slice(0, 50);
 
-        // Giới hạn độ dài
-        if (filteredValue.length > MAX_LENGTH) {
-            this.value = filteredValue.substring(0, MAX_LENGTH);
-        } else {
-            this.value = filteredValue;
+                    // Hiển thị thông báo giới hạn
+                    if (charLimitMsg) {
+                        charLimitMsg.textContent = 'Đã đạt giới hạn ký tự tên nhân viên';
+                        charLimitMsg.style.display = 'block';
+
+                        setTimeout(() => {
+                            charLimitMsg.style.display = 'none';
+                        }, 3000);
+                    }
+                }
+            });
+
+            // Xử lý khi paste tên nhân viên
+            input.addEventListener('paste', function(e) {
+                setTimeout(() => {
+                    const MAX_LENGTH = 50;
+                    const currentValue = this.value;
+
+                    // Lọc ký tự không hợp lệ
+                    const filteredValue = currentValue.replace(/[^A-Za-z0-9À-ỹ\s]/g, '');
+
+                    // Giới hạn độ dài
+                    if (filteredValue.length > MAX_LENGTH) {
+                        this.value = filteredValue.substring(0, MAX_LENGTH);
+
+                        // Hiển thị thông báo
+                        if (charLimitMsg) {
+                            charLimitMsg.textContent = 'Đã đạt giới hạn 50 ký tự cho tên nhân viên';
+                            charLimitMsg.style.display = 'block';
+
+                            setTimeout(() => {
+                                charLimitMsg.style.display = 'none';
+                            }, 3000);
+                        }
+                    } else {
+                        this.value = filteredValue;
+                    }
+                }, 0);
+            });
         }
-    }, 0);
-});
+    });
 
-// Validate ngày sinh để đảm bảo tuổi > 15
-document.getElementById("employeeBirthday").addEventListener("change", function(e) {
-    const birthDate = new Date(this.value);
-    const today = new Date();
-    const ageDate = new Date(today - birthDate);
-    const age = Math.abs(ageDate.getUTCFullYear() - 1970);
+    // === VALIDATE ĐỊA CHỈ ===
+    const addressInputs = document.querySelectorAll("#employeeAddress, #editEmployeeAddress");
 
-    if (age <= 15) {
-        document.getElementById("dobError").textContent = "Tuổi phải lớn hơn 15";
-        document.getElementById("dobError").style.display = "block";
-    } else {
-        document.getElementById("dobError").style.display = "none";
+    addressInputs.forEach(input => {
+        if (input) {
+            let errorId = input.id === 'employeeAddress' ? 'employeeAddressError' : 'editEmployeeAddressError';
+            let charLimitMsg = document.getElementById(errorId);
+
+            // Xử lý khi nhập địa chỉ
+            input.addEventListener("input", function(e) {
+                const value = e.target.value;
+
+                // Chỉ cho phép chữ cái, số, khoảng trắng và các ký tự đặc biệt cho phép
+                if (!/^[A-Za-z0-9À-ỹ,\s.-]*$/.test(value)) {
+                    e.target.value = value.replace(/[^A-Za-z0-9À-ỹ,\s.-]/g, '');
+                }
+
+                // Giới hạn độ dài
+                if (value.length > 200) {
+                    e.target.value = value.slice(0, 200);
+
+                    if (charLimitMsg) {
+                        charLimitMsg.textContent = 'Đã đạt giới hạn 200 ký tự cho địa chỉ';
+                        charLimitMsg.style.display = 'block';
+
+                        setTimeout(() => {
+                            charLimitMsg.style.display = 'none';
+                        }, 3000);
+                    }
+                }
+            });
+
+            // Xử lý khi paste địa chỉ
+            input.addEventListener('paste', function(e) {
+                setTimeout(() => {
+                    const MAX_LENGTH = 200;
+                    const currentValue = this.value;
+
+                    // Lọc ký tự không hợp lệ
+                    const filteredValue = currentValue.replace(/[^A-Za-z0-9À-ỹ,\s.-]/g, '');
+
+                    // Giới hạn độ dài
+                    if (filteredValue.length > MAX_LENGTH) {
+                        this.value = filteredValue.substring(0, MAX_LENGTH);
+
+                        if (charLimitMsg) {
+                            charLimitMsg.textContent = 'Đã đạt giới hạn 200 ký tự cho địa chỉ';
+                            charLimitMsg.style.display = 'block';
+
+                            setTimeout(() => {
+                                charLimitMsg.style.display = 'none';
+                            }, 3000);
+                        }
+                    } else {
+                        this.value = filteredValue;
+                    }
+                }, 0);
+            });
+        }
+    });
+
+    // === VALIDATE EMAIL ===
+    const emailInputs = document.querySelectorAll("#email, #editEmail");
+
+    emailInputs.forEach(input => {
+        if (input) {
+            let errorId = input.id === 'email' ? 'emailError' : 'editEmailError';
+            let charLimitMsg = document.getElementById(errorId);
+
+            // Xử lý khi nhập email
+            input.addEventListener("input", function(e) {
+                const value = e.target.value;
+
+                // Giới hạn độ dài
+                if (value.length > 100) {
+                    e.target.value = value.slice(0, 100);
+
+                    if (charLimitMsg) {
+                        charLimitMsg.textContent = 'Đã đạt giới hạn 100 ký tự cho email';
+                        charLimitMsg.style.display = 'block';
+
+                        setTimeout(() => {
+                            charLimitMsg.style.display = 'none';
+                        }, 3000);
+                    }
+                }
+            });
+        }
+    });
+
+    // === VALIDATE NGÀY SINH ===
+    const birthdayInputs = document.querySelectorAll("#employeeBirthday, #editEmployeeBirthday");
+
+    birthdayInputs.forEach(input => {
+        if (input) {
+            let errorId = input.id === 'employeeBirthday' ? 'employeeBirthdayError' : 'editEmployeeBirthdayError';
+            let errorMsg = document.getElementById(errorId);
+
+            input.addEventListener("change", function(e) {
+                const birthDate = new Date(this.value);
+                const today = new Date();
+                const ageDate = new Date(today - birthDate);
+                const age = Math.abs(ageDate.getUTCFullYear() - 1970);
+
+                if (age <= 15) {
+                    if (errorMsg) {
+                        errorMsg.textContent = "Tuổi phải lớn hơn 15";
+                        errorMsg.style.display = "block";
+                    }
+                } else {
+                    if (errorMsg) {
+                        errorMsg.textContent = "";
+                        errorMsg.style.display = "none";
+                    }
+                }
+            });
+        }
+    });
+
+    // === VALIDATE FORM TRƯỚC KHI SUBMIT ===
+    const addEmployeeForm = document.getElementById('addEmployeeForm');
+    const editEmployeeForm = document.getElementById('editEmployeeForm');
+
+    if (addEmployeeForm) {
+        addEmployeeForm.addEventListener('submit', function(e) {
+            // Xác thực form trước khi submit - tự xử lý ở server
+        });
+    }
+
+    if (editEmployeeForm) {
+        editEmployeeForm.addEventListener('submit', function(e) {
+            // Xác thực form trước khi submit - tự xử lý ở server
+        });
     }
 });

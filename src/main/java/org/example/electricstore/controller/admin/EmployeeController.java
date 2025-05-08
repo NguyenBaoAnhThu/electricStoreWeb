@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/Admin")
@@ -71,10 +72,18 @@ public class EmployeeController {
 
         if (bindingResult.hasErrors()) {
             for (FieldError error : bindingResult.getFieldErrors()) {
-                errors.put(error.getField(), error.getDefaultMessage());
+                if (error.getCode().equals("NotBlank") || error.getCode().equals("NotNull")) {
+                    errors.put(error.getField(), error.getDefaultMessage());
+                } else {
+                    // Nếu trường đã có giá trị nhưng có lỗi validate khác
+                    if (!errors.containsKey(error.getField())) {
+                        errors.put(error.getField(), error.getDefaultMessage());
+                    }
+                }
             }
             return ResponseEntity.badRequest().body(errors);
         }
+
 
         try {
             if (this.userRepository.existsByEmail(userDTO.getEmail())) {
@@ -118,11 +127,38 @@ public class EmployeeController {
     public ResponseEntity<?> editEmployee(@Valid @RequestBody UserDTO userDTO, BindingResult bindingResult) {
         Map<String, String> errors = new HashMap<>();
 
-        if (bindingResult.hasErrors()) {
+        // Xử lý đặc biệt cho trường mật khẩu trong form sửa
+        // Nếu có lỗi liên quan đến mật khẩu và mật khẩu đang trống, bỏ qua lỗi này
+        if (bindingResult.hasFieldErrors("password") &&
+                (userDTO.getPassword() == null || userDTO.getPassword().isEmpty())) {
+
+            // Lọc bỏ lỗi liên quan đến mật khẩu
+            List<FieldError> filteredErrors = bindingResult.getFieldErrors().stream()
+                    .filter(error -> !error.getField().equals("password"))
+                    .collect(Collectors.toList());
+
+            // Kiểm tra còn lỗi nào khác không
+            if (!filteredErrors.isEmpty()) {
+                for (FieldError error : filteredErrors) {
+                    errors.put(error.getField(), error.getDefaultMessage());
+                }
+                return ResponseEntity.badRequest().body(errors);
+            }
+        }
+        // Xử lý các lỗi khác (không liên quan đến mật khẩu)
+        else if (bindingResult.hasErrors()) {
             for (FieldError error : bindingResult.getFieldErrors()) {
+                // Bỏ qua lỗi mật khẩu nếu đang trống
+                if (error.getField().equals("password") &&
+                        (userDTO.getPassword() == null || userDTO.getPassword().isEmpty())) {
+                    continue;
+                }
                 errors.put(error.getField(), error.getDefaultMessage());
             }
-            return ResponseEntity.badRequest().body(errors);
+
+            if (!errors.isEmpty()) {
+                return ResponseEntity.badRequest().body(errors);
+            }
         }
 
         try {

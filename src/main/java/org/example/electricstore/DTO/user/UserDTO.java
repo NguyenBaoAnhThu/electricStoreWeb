@@ -60,9 +60,6 @@ public class UserDTO {
             message = "Số điện thoại phải đủ 10 số")
     private String employeePhone;
 
-    @NotBlank(message = "Công việc không được để trống")
-    private String job;
-
     @NotBlank(message = "Vai trò không được để trống")
     private String role;
 
@@ -77,7 +74,6 @@ public class UserDTO {
                 ", employeeBirthday=" + employeeBirthday +
                 ", employeeAddress='" + employeeAddress + '\'' +
                 ", employeePhone='" + employeePhone + '\'' +
-                ", job='" + job + '\'' +
                 ", role='" + role + '\'' +
                 '}';
     }
