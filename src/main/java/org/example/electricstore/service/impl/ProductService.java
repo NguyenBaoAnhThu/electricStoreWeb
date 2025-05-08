@@ -2,6 +2,8 @@ package org.example.electricstore.service.impl;
 
 import org.example.electricstore.DTO.order.ProductChosen;
 import org.example.electricstore.DTO.order.ProductOrderChoiceDTO;
+import org.example.electricstore.exception.product.ProductError;
+import org.example.electricstore.exception.product.ProductException;
 import org.example.electricstore.mapper.product.ProductMapper;
 import org.example.electricstore.model.*;
 import org.example.electricstore.repository.*;
@@ -134,6 +136,7 @@ public class ProductService implements IProductService {
     // Thêm phương thức mới để cập nhật sản phẩm kèm theo giá nhập
     @Transactional
     public void updateProductWithImportPrice(Product product, Double importPrice, List<MultipartFile> files) {
+        validateProduct(product, importPrice, files);
         Optional<Product> existingProductOpt = productRepository.findById(product.getProductID());
         if (existingProductOpt.isPresent()) {
             Product existingProduct = existingProductOpt.get();
@@ -287,6 +290,7 @@ public class ProductService implements IProductService {
     // Thêm phương thức mới để lưu sản phẩm kèm theo giá nhập
     @Transactional
     public Product saveProductWithImportPrice(Product product, ProductDetail productDetail, Double importPrice, List<MultipartFile> files) {
+        validateProduct(product, importPrice, files);
         try {
             // ✅ 1. Cập nhật thời gian trước khi lưu
             LocalDateTime now = LocalDateTime.now();
@@ -393,5 +397,75 @@ public class ProductService implements IProductService {
         int nextNumber = maxNumber + 1;
 
         return prefix + String.format("%04d", nextNumber);
+    }
+    private void validateProduct(Product product, Double importPrice, List<MultipartFile> files) {
+        // Validate tên sản phẩm
+        if (product.getName() == null || product.getName().trim().isEmpty()) {
+            throw new ProductException(ProductError.EMPTY_PRODUCT_NAME);
+        }
+
+        if (product.getName().length() > 100) {
+            throw new ProductException(ProductError.INVALID_PRODUCT_NAME_LENGTH);
+        }
+
+        if (!product.getName().matches("^[\\p{L}0-9\\s-]+$")) {
+            throw new ProductException(ProductError.INVALID_PRODUCT_NAME_FORMAT);
+        }
+
+        // Validate giá sản phẩm
+        if (product.getPrice() == null) {
+            throw new ProductException(ProductError.EMPTY_PRODUCT_PRICE);
+        }
+
+        // Validate giá nhập
+        if (importPrice == null) {
+            throw new ProductException(ProductError.EMPTY_IMPORT_PRICE);
+        }
+
+        // Validate mô tả
+        if (product.getDescription() == null || product.getDescription().trim().isEmpty()) {
+            throw new ProductException(ProductError.EMPTY_DESCRIPTION);
+        }
+
+        // Validate danh mục
+        if (product.getCategory() == null || product.getCategory().getCategoryID() == null) {
+            throw new ProductException(ProductError.EMPTY_CATEGORY);
+        }
+
+        // Validate thương hiệu
+        if (product.getBrand() == null || product.getBrand().getBrandID() == null) {
+            throw new ProductException(ProductError.EMPTY_BRAND);
+        }
+
+        // Validate nhà cung cấp
+        if (product.getSupplier() == null || product.getSupplier().getSupplierID() == null) {
+            throw new ProductException(ProductError.EMPTY_SUPPLIER);
+        }
+
+        // Validate ảnh sản phẩm (chỉ khi thêm mới và id chưa có)
+        if (product.getProductID() == null && (files == null || files.isEmpty() || files.stream().allMatch(file -> file.isEmpty()))) {
+            throw new ProductException(ProductError.EMPTY_PRODUCT_IMAGE);
+        }
+
+        // Validate các trường đặc biệt trong productDetail nếu có
+        if (product.getProductDetail() != null) {
+            // Kiểm tra format RAM
+            String ram = product.getProductDetail().getRam();
+            if (ram != null && !ram.isEmpty() && !ram.matches("^([1-9][0-9]*GB)$")) {
+                throw new ProductException(ProductError.INVALID_RAM_FORMAT);
+            }
+
+            // Kiểm tra format ROM
+            String rom = product.getProductDetail().getRom();
+            if (rom != null && !rom.isEmpty() && !rom.matches("^([1-9][0-9]*GB)$")) {
+                throw new ProductException(ProductError.INVALID_ROM_FORMAT);
+            }
+
+            // Kiểm tra format Pin
+            String battery = product.getProductDetail().getBattery();
+            if (battery != null && !battery.isEmpty() && !battery.matches("^([1-9][0-9]*mAh)$")) {
+                throw new ProductException(ProductError.INVALID_BATTERY_FORMAT);
+            }
+        }
     }
 }

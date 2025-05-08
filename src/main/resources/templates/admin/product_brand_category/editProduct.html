@@ -146,6 +146,7 @@
                 </div>
             </div>
             <div class="card-body">
+                <div class="alert alert-danger mt-3" th:if="${error}" th:text="${error}"></div>
                 <form id="editProductForm" th:action="@{/Admin/product-manager/edit}" method="post" th:object="${product}" enctype="multipart/form-data">
                     <input type="hidden" th:field="*{productID}">
                     <input type="hidden" th:field="*{productCode}">

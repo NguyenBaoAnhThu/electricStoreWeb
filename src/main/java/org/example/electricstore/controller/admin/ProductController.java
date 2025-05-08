@@ -153,8 +153,21 @@ public class ProductController {
             return "admin/product_brand_category/editProduct";
         }
 
+        // Fetch the existing product from the database to get the create_at value
+        Optional<Product> existingProductOpt = productService.getProductById(productDTO.getProductID());
+        if (!existingProductOpt.isPresent()) {
+            return "redirect:/Admin/product-manager?message=Không tìm thấy sản phẩm!";
+        }
+
+        Product existingProduct = existingProductOpt.get();
+
         // Chuyển đổi từ DTO sang Entity
         Product product = productMapper.toEntity(productDTO);
+
+        // IMPORTANT: Preserve the create_at value from the existing product
+        product.setCreateAt(existingProduct.getCreateAt());
+
+        // Set the relationship
         product.getProductDetail().setProduct(product);
 
         // Kiểm tra xem có file ảnh mới được tải lên không
