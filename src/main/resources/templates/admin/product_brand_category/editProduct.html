@@ -122,14 +122,16 @@
 <div th:replace="~{admin/fragments/sidebar :: sidebar}"></div>
 <main class="main-content" th:fragment="content">
     <div class="wrapper">
-        <h1 class="tittle">Chỉnh Sửa Sản Phẩm</h1>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="tittle">Chỉnh sửa sản phẩm</h1>
+            <a th:href="@{/Admin/product-manager}" class="btn btn-secondary">
+                Quay lại
+            </a>
+        </div>
 
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0 text-white"><i class="fas fa-box me-2"></i> Thông tin sản phẩm</h5>
-                <a th:href="@{/Admin/product-manager}" class="btn btn-sm btn-light">
-                    Quay lại
-                </a>
+                <h5 class="mb-0 text-white"> Thông tin sản phẩm</h5>
             </div>
             <div class="d-flex border-bottom">
                 <div class="card-tab active" data-tab="basic-info">

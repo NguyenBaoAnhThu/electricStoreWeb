@@ -1,5 +1,6 @@
 package org.example.electricstore.service.impl;
 
+import io.micrometer.core.instrument.config.validate.ValidationException;
 import org.example.electricstore.DTO.order.ProductChosen;
 import org.example.electricstore.DTO.order.ProductOrderChoiceDTO;
 import org.example.electricstore.exception.product.ProductError;
@@ -399,52 +400,14 @@ public class ProductService implements IProductService {
         return prefix + String.format("%04d", nextNumber);
     }
     private void validateProduct(Product product, Double importPrice, List<MultipartFile> files) {
-        // Validate tên sản phẩm
-        if (product.getName() == null || product.getName().trim().isEmpty()) {
-            throw new ProductException(ProductError.EMPTY_PRODUCT_NAME);
-        }
-
-        if (product.getName().length() > 100) {
-            throw new ProductException(ProductError.INVALID_PRODUCT_NAME_LENGTH);
-        }
-
-        if (!product.getName().matches("^[\\p{L}0-9\\s-]+$")) {
-            throw new ProductException(ProductError.INVALID_PRODUCT_NAME_FORMAT);
-        }
-
-        // Validate giá sản phẩm
-        if (product.getPrice() == null) {
-            throw new ProductException(ProductError.EMPTY_PRODUCT_PRICE);
-        }
-
-        // Validate giá nhập
-        if (importPrice == null) {
-            throw new ProductException(ProductError.EMPTY_IMPORT_PRICE);
-        }
-
-        // Validate mô tả
-        if (product.getDescription() == null || product.getDescription().trim().isEmpty()) {
-            throw new ProductException(ProductError.EMPTY_DESCRIPTION);
-        }
-
-        // Validate danh mục
-        if (product.getCategory() == null || product.getCategory().getCategoryID() == null) {
-            throw new ProductException(ProductError.EMPTY_CATEGORY);
-        }
-
-        // Validate thương hiệu
-        if (product.getBrand() == null || product.getBrand().getBrandID() == null) {
-            throw new ProductException(ProductError.EMPTY_BRAND);
-        }
-
-        // Validate nhà cung cấp
-        if (product.getSupplier() == null || product.getSupplier().getSupplierID() == null) {
-            throw new ProductException(ProductError.EMPTY_SUPPLIER);
-        }
+        // Validate định dạng đặc biệt cho các trường khác ngoài empty checks
+        // Kiểm tra các định dạng phức tạp mà validation annotation không thể xử lý
 
         // Validate ảnh sản phẩm (chỉ khi thêm mới và id chưa có)
         if (product.getProductID() == null && (files == null || files.isEmpty() || files.stream().allMatch(file -> file.isEmpty()))) {
-            throw new ProductException(ProductError.EMPTY_PRODUCT_IMAGE);
+            throw new IllegalArgumentException("Vui lòng chọn ít nhất một ảnh cho sản phẩm");
+            // Hoặc có thể dùng:
+            // throw new jakarta.validation.ValidationException("Vui lòng chọn ít nhất một ảnh cho sản phẩm");
         }
 
         // Validate các trường đặc biệt trong productDetail nếu có

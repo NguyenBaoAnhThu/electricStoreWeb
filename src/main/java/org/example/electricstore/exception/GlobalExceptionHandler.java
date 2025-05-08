@@ -3,7 +3,6 @@ package org.example.electricstore.exception;
 import org.example.electricstore.DTO.customer.CustomerDTO;
 import org.example.electricstore.DTO.product.ProductDTO;
 import org.example.electricstore.exception.customer.CustomerException;
-import org.example.electricstore.exception.product.ProductError;
 import org.example.electricstore.exception.product.ProductException;
 import org.example.electricstore.service.impl.BrandService;
 import org.example.electricstore.service.impl.CategoryService;
@@ -153,28 +152,9 @@ public class GlobalExceptionHandler {
 
         // Xác định trường lỗi cụ thể dựa trên loại lỗi
         switch (ex.getErrorCode()) {
-            case EMPTY_PRODUCT_NAME:
             case INVALID_PRODUCT_NAME_LENGTH:
             case INVALID_PRODUCT_NAME_FORMAT:
                 modelAndView.addObject("nameError", ex.getMessage());
-                break;
-            case EMPTY_PRODUCT_PRICE:
-                modelAndView.addObject("priceError", ex.getMessage());
-                break;
-            case EMPTY_IMPORT_PRICE:
-                modelAndView.addObject("importPriceError", ex.getMessage());
-                break;
-            case EMPTY_DESCRIPTION:
-                modelAndView.addObject("descriptionError", ex.getMessage());
-                break;
-            case EMPTY_CATEGORY:
-                modelAndView.addObject("categoryError", ex.getMessage());
-                break;
-            case EMPTY_BRAND:
-                modelAndView.addObject("brandError", ex.getMessage());
-                break;
-            case EMPTY_SUPPLIER:
-                modelAndView.addObject("supplierError", ex.getMessage());
                 break;
             case INVALID_RAM_FORMAT:
                 modelAndView.addObject("ramError", ex.getMessage());
@@ -185,14 +165,10 @@ public class GlobalExceptionHandler {
             case INVALID_BATTERY_FORMAT:
                 modelAndView.addObject("batteryError", ex.getMessage());
                 break;
-            case EMPTY_PRODUCT_IMAGE:
-                modelAndView.addObject("imageError", ex.getMessage());
-                break;
             default:
                 modelAndView.addObject("error", ex.getMessage());
                 break;
         }
-
         modelAndView.addObject("categories", categoryService.getAllCategories());
         modelAndView.addObject("brands", brandService.getAllBrands());
         modelAndView.addObject("suppliers", supplierService.getAllSuppliers());
