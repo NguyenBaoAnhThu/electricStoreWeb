@@ -153,8 +153,21 @@ public class ProductController {
             return "admin/product_brand_category/editProduct";
         }
 
+        // Fetch the existing product from the database to get the create_at value
+        Optional<Product> existingProductOpt = productService.getProductById(productDTO.getProductID());
+        if (!existingProductOpt.isPresent()) {
+            return "redirect:/Admin/product-manager?message=Không tìm thấy sản phẩm!";
+        }
+
+        Product existingProduct = existingProductOpt.get();
+
         // Chuyển đổi từ DTO sang Entity
         Product product = productMapper.toEntity(productDTO);
+
+        // IMPORTANT: Preserve the create_at value from the existing product
+        product.setCreateAt(existingProduct.getCreateAt());
+
+        // Set the relationship
         product.getProductDetail().setProduct(product);
 
         // Kiểm tra xem có file ảnh mới được tải lên không
@@ -173,9 +186,16 @@ public class ProductController {
         return "redirect:/Admin/product-manager";
     }
 
+
     @GetMapping("/add")
     public String showAddProductForm(Model model) {
-        model.addAttribute("product", new ProductDTO());
+        ProductDTO productDTO = new ProductDTO();
+
+        // Generate a preview of the next product code (just for display)
+        String nextCode = productService.generateProductCode();
+        productDTO.setProductCode(nextCode);
+
+        model.addAttribute("product", productDTO);
         model.addAttribute("categories", categoryService.getAllCategories());
         model.addAttribute("brands", brandService.getAllBrands());
         model.addAttribute("suppliers", supplierService.getAllSuppliers());
@@ -190,6 +210,11 @@ public class ProductController {
             @RequestParam("files") List<MultipartFile> files,
             @RequestParam(value = "importPrice", required = false) Double importPrice,
             Model model) {
+
+        // Generate product code automatically
+        String generatedCode = productService.generateProductCode();
+        productDTO.setProductCode(generatedCode);
+
         String imgLink = productDTO.getMainImageUrl();
 
         if (bindingResult.hasErrors()) {
@@ -218,7 +243,7 @@ public class ProductController {
         //  Lưu sản phẩm vào database với giá nhập
         productService.saveProductWithImportPrice(product, product.getProductDetail(), importPrice, files);
 
-        return "redirect:/Admin/product-manager"; // Chuyển hướng khi thêm thành công
+        return "redirect:/Admin/product-manager";
     }
 
     @PostMapping("/delete")

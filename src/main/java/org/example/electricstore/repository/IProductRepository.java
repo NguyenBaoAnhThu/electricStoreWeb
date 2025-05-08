@@ -36,4 +36,5 @@ public interface IProductRepository extends JpaRepository<Product, Integer> {
 
     @Query("SELECT p FROM Product p WHERE p.supplier.supplierID = :supplierId")
     List<Product> getProductsBySupplierId(@Param("supplierId") Integer supplierId);
+    List<Product> findByProductCodeStartingWith(String prefix);
 }

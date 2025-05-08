@@ -45,8 +45,6 @@ public class CustomerDTO {
             message = "Email phải theo định dạng chuẩn (ví dụ: example@domain.com)")
     private String email;
 
-//    public CustomerDTO(Customer customer) {
-//    }
 
     @Override
     public String toString() {

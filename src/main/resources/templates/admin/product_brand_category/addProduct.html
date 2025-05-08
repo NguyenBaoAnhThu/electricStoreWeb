@@ -74,13 +74,6 @@
             border: 1px solid #ddd;
             padding: 3px;
         }
-        .section-title {
-            font-weight: 600;
-            margin: 20px 0 15px 0;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #e9ecef;
-            color: #333;
-        }
         .text-danger {
             color: #D10024 !important;
         }
@@ -153,8 +146,8 @@
                 </div>
             </div>
             <div class="card-body">
+                <div class="alert alert-danger mt-3" th:if="${error}" th:text="${error}"></div>
                 <form th:action="@{/Admin/product-manager/add}" method="post" th:object="${product}" enctype="multipart/form-data">
-
                     <!-- Tab content -->
                     <div class="tab-content">
                         <!-- Tab: Thông tin cơ bản -->
@@ -164,16 +157,18 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="compact-form-group">
-                                                <label class="form-label required-field">Tên Sản Phẩm</label>
-                                                <input type="text" class="form-control" th:field="*{name}" placeholder="Nhập tên sản phẩm">
-                                                <div class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                                                <label class="form-label">Mã Sản Phẩm</label>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" th:field="*{productCode}" readonly
+                                                           placeholder="Mã sẽ được tạo tự động (SP0001)">
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="compact-form-group">
-                                                <label class="form-label required-field">Mã Sản Phẩm</label>
-                                                <input type="text" class="form-control" th:field="*{productCode}" placeholder="Nhập mã sản phẩm (SKU)">
-                                                <div class="text-danger" th:if="${#fields.hasErrors('productCode')}" th:errors="*{productCode}"></div>
+                                                <label class="form-label required-field">Tên Sản Phẩm</label>
+                                                <input type="text" class="form-control" th:field="*{name}" placeholder="Nhập tên sản phẩm">
+                                                <div class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -182,14 +177,14 @@
                                         <div class="col-md-6">
                                             <div class="compact-form-group">
                                                 <label class="form-label required-field">Giá Nhập</label>
-                                                <input id="importPrice" type="number" class="form-control" name="importPrice" placeholder="Nhập giá nhập sản phẩm">
+                                                <input id="importPrice" type="text" class="form-control" name="importPrice" placeholder="Nhập giá nhập sản phẩm">
                                                 <div class="text-danger" th:if="${#fields.hasErrors('importPrice')}" th:errors="*{importPrice}"></div>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="compact-form-group">
                                                 <label class="form-label required-field">Giá</label>
-                                                <input id="productPrice_01" type="number" class="form-control" th:field="*{price}" placeholder="Nhập giá sản phẩm">
+                                                <input id="productPrice_01" type="text" class="form-control" th:field="*{price}" placeholder="Nhập giá sản phẩm">
                                                 <div class="text-danger" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
                                             </div>
                                         </div>
@@ -237,7 +232,7 @@
 
                                     <div class="compact-form-group">
                                         <label class="form-label required-field">Mô tả sản phẩm</label>
-                                        <textarea class="form-control" th:field="*{description}" rows="3" required placeholder="Mô tả sản phẩm"></textarea>
+                                        <textarea class="form-control" th:field="*{description}" rows="3" placeholder="Mô tả sản phẩm"></textarea>
                                         <div class="text-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
                                     </div>
                                 </div>
@@ -247,6 +242,7 @@
                                         <label class="form-label required-field">Ảnh Sản Phẩm</label>
                                         <input type="file" name="files" multiple accept="image/*" class="form-control" id="imageUpload">
                                         <input type="hidden" name="imagePaths" id="imagePaths" th:field="*{mainImageUrl}">
+                                        <div class="text-danger" th:if="${imageError}" th:text="${imageError}"></div>
                                         <div id="imagePreview" class="mt-2">
                                             <img th:src="${mainImageUrl}" class="img-preview">
                                         </div>
