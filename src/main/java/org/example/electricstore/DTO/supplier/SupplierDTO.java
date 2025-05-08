@@ -13,13 +13,8 @@ import java.time.LocalDateTime;
 @Setter
 public class SupplierDTO {
 
-    @jakarta.validation.constraints.Min(value = 1, message = "ID phải là số dương")
-    private Long id;
+    private Integer id;
 
-    @NotBlank(message = "Mã nhà cung cấp không được để trống")
-    @Size(min = 3, max = 20, message = "Mã nhà cung cấp phải có độ dài từ 3 đến 20 ký tự")
-    @Pattern(regexp = "^NCC[0-9]{4}$",
-            message = "Mã nhà cung cấp phải có định dạng NCCxxxx (x là số)")
     private String supplierCode;
 
     @NotBlank(message = "Tên nhà cung cấp không được để trống")
@@ -30,8 +25,6 @@ public class SupplierDTO {
 
     @NotBlank(message = "Địa chỉ không được để trống")
     @Size(min = 5, max = 200, message = "Địa chỉ phải có độ dài từ 5 đến 200 ký tự")
-    @Pattern(regexp = "^[A-Za-z0-9À-ỹ,\\s\\.\\-\\/\\#\\&\\(\\)]+$",
-            message = "Địa chỉ chứa ký tự không hợp lệ")
     private String address;
 
     @NotBlank(message = "Số điện thoại không được để trống")

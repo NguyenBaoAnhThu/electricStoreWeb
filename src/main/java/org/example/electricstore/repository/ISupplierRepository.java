@@ -29,4 +29,9 @@ public interface ISupplierRepository extends JpaRepository<Supplier, Integer> {
             String phone,
             String email,
             Pageable pageable);
+    boolean existsByPhone(String phone);
+    boolean existsByEmail(String email);
+    boolean existsBySupplierCode(String supplierCode);
+    boolean existsByPhoneAndSupplierIDNot(String phone, Integer id);
+    boolean existsByEmailAndSupplierIDNot(String email, Integer id);
 }

@@ -1,6 +1,8 @@
 package org.example.electricstore.controller.admin;
 
 import org.example.electricstore.DTO.supplier.SupplierDTO;
+import org.example.electricstore.exception.supplier.SupplierError;
+import org.example.electricstore.exception.supplier.SupplierException;
 import org.example.electricstore.model.Product;
 import org.example.electricstore.model.Supplier;
 import org.example.electricstore.service.impl.SupplierService;
@@ -10,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/Admin/suppliers-manager")
@@ -153,7 +157,7 @@ public class SupplierController {
         if (supplier.isPresent()) {
             Supplier s = supplier.get();
             SupplierDTO dto = new SupplierDTO();
-            dto.setId(s.getSupplierID().longValue());
+            dto.setId(s.getSupplierID().intValue());
             dto.setSupplierCode(s.getSupplierCode());
             dto.setSupplierName(s.getSupplierName());
             dto.setAddress(s.getAddress());
@@ -170,11 +174,32 @@ public class SupplierController {
     @ResponseBody
     public ResponseEntity<?> addSupplier(@Valid @RequestBody SupplierDTO supplierDTO,
                                          BindingResult bindingResult) {
+        Map<String, String> errors = new HashMap<>();
+
         if (bindingResult.hasErrors()) {
-            Map<String, String> errors = new HashMap<>();
-            for (FieldError error : bindingResult.getFieldErrors()) {
+            List<FieldError> emptyFieldErrors = bindingResult.getFieldErrors().stream()
+                    .filter(error -> {
+                        String code = error.getCode();
+                        return code != null && (
+                                code.contains("NotBlank") ||
+                                        code.contains("NotNull") ||
+                                        error.getDefaultMessage().contains("không được để trống")
+                        );
+                    })
+                    .collect(Collectors.toList());
+
+            // Đưa các lỗi "không được để trống" vào map errors
+            for (FieldError error : emptyFieldErrors) {
                 errors.put(error.getField(), error.getDefaultMessage());
             }
+
+            // Thêm các lỗi validate khác cho các trường chưa có lỗi "không được để trống"
+            for (FieldError error : bindingResult.getFieldErrors()) {
+                if (!errors.containsKey(error.getField())) {
+                    errors.put(error.getField(), error.getDefaultMessage());
+                }
+            }
+
             return ResponseEntity.badRequest().body(errors);
         }
 
@@ -188,10 +213,12 @@ public class SupplierController {
             supplierService.addSupplier(supplier);
 
             return ResponseEntity.ok("Thêm nhà cung cấp thành công");
+        } catch (SupplierException ex) {
+            errors.put(mapErrorCodeToField(ex.getErrorCode()), ex.getMessage());
+            return ResponseEntity.badRequest().body(errors);
         } catch (Exception e) {
-            Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("error", "Lỗi khi thêm nhà cung cấp: " + e.getMessage());
-            return ResponseEntity.badRequest().body(errorResponse);
+            errors.put("globalError", "Lỗi khi thêm nhà cung cấp: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errors);
         }
     }
 
@@ -199,8 +226,9 @@ public class SupplierController {
     @ResponseBody
     public ResponseEntity<?> updateSupplier(@Valid @RequestBody SupplierDTO supplierDTO,
                                             BindingResult bindingResult) {
+        Map<String, String> errors = new HashMap<>();
+
         if (bindingResult.hasErrors()) {
-            Map<String, String> errors = new HashMap<>();
             for (FieldError error : bindingResult.getFieldErrors()) {
                 errors.put(error.getField(), error.getDefaultMessage());
             }
@@ -218,10 +246,12 @@ public class SupplierController {
 
             supplierService.updateSupplier(supplier.getSupplierID(), supplier);
             return ResponseEntity.ok("Cập nhật nhà cung cấp thành công");
+        } catch (SupplierException ex) {
+            errors.put(mapErrorCodeToField(ex.getErrorCode()), ex.getMessage());
+            return ResponseEntity.badRequest().body(errors);
         } catch (Exception e) {
-            Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("error", "Lỗi khi cập nhật nhà cung cấp: " + e.getMessage());
-            return ResponseEntity.badRequest().body(errorResponse);
+            errors.put("globalError", "Lỗi khi cập nhật nhà cung cấp: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errors);
         }
     }
 
@@ -250,6 +280,26 @@ public class SupplierController {
             response.put("success", false);
             response.put("message", "Lỗi khi xóa nhà cung cấp!");
             return ResponseEntity.badRequest().body(response);
+        }
+    }
+    private String mapErrorCodeToField(SupplierError errorCode) {
+        switch (errorCode) {
+            case INVALID_NAME_FORMAT:
+                return "supplierName";
+            case INVALID_PHONE_FORMAT:
+                return "phone";
+            case INVALID_EMAIL_FORMAT:
+                return "email";
+            case INVALID_ADDRESS_FORMAT:
+                return "address";
+            case DUPLICATE_PHONE:
+                return "phone";
+            case DUPLICATE_EMAIL:
+                return "email";
+            case DUPLICATE_SUPPLIER_CODE:
+                return "supplierCode";
+            default:
+                return "globalError";
         }
     }
 }
