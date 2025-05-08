@@ -1,6 +1,8 @@
 package org.example.electricstore.controller.admin;
 
 import org.example.electricstore.DTO.user.UserDTO;
+import org.example.electricstore.exception.user.UserException;
+import org.example.electricstore.exception.user.UserError;
 import org.example.electricstore.model.User;
 import org.example.electricstore.repository.IUserRepository;
 import org.example.electricstore.service.interfaces.IUserService;
@@ -101,12 +103,17 @@ public class EmployeeController {
             this.userService.save(userDTO);
 
             return ResponseEntity.ok("Thêm nhân viên thành công!");
+        } catch (UserException ex) {
+            // Xử lý UserException từ UserService.validate()
+            errors.put(mapErrorCodeToField(ex.getErrorCode()), ex.getMessage());
+            return ResponseEntity.badRequest().body(errors);
         } catch (Exception e) {
             e.printStackTrace(); // In stack trace để debug
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Collections.singletonMap("globalError", "Đã có lỗi xảy ra: " + e.getMessage()));
         }
     }
+
     @PostMapping("/employee-manager/edit")
     public ResponseEntity<?> editEmployee(@Valid @RequestBody UserDTO userDTO, BindingResult bindingResult) {
         Map<String, String> errors = new HashMap<>();
@@ -138,6 +145,10 @@ public class EmployeeController {
             userService.update(userDTO, bindingResult);
 
             return ResponseEntity.ok("Cập nhật nhân viên thành công!");
+        } catch (UserException ex) {
+            // Xử lý UserException từ UserService.validate()
+            errors.put(mapErrorCodeToField(ex.getErrorCode()), ex.getMessage());
+            return ResponseEntity.badRequest().body(errors);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -166,11 +177,13 @@ public class EmployeeController {
                     .body(Map.of("success", false, "message", "Lỗi: " + e.getMessage()));
         }
     }
+
     @GetMapping("/employee-manager/generate-code")
     @ResponseBody
     public String generateEmployeeCode() {
         return userService.generateNextEmployeeCode();
     }
+
     @GetMapping("/employee-manager/check-email")
     @ResponseBody
     public ResponseEntity<?> checkEmailExists(@RequestParam String email, @RequestParam(required = false) Integer id) {
@@ -194,4 +207,21 @@ public class EmployeeController {
         return ResponseEntity.ok(response);
     }
 
+    // Hàm helper để map ErrorCode sang tên field
+    private String mapErrorCodeToField(UserError errorCode) {
+        switch (errorCode) {
+            case INVALID_NAME_FORMAT:
+                return "employeeName";
+            case INVALID_PHONE_FORMAT:
+                return "employeePhone";
+            case INVALID_AGE:
+                return "employeeBirthday";
+            case INVALID_USERNAME_LENGTH:
+                return "username";
+            case INVALID_EMAIL_FORMAT:
+                return "email";
+            default:
+                return "globalError";
+        }
+    }
 }

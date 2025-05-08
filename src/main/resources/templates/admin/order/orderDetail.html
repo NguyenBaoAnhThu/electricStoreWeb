@@ -208,16 +208,20 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-dark text-white">
-                <h5 class="modal-title" id="cancelOrderModalLabel">Xác nhận hủy đơn hàng</h5>
+                <h5 class="modal-title" id="cancelOrderModalLabel">Xác nhận Hủy Đơn Hàng</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <p class="mb-3">Bạn có chắc chắn muốn hủy đơn hàng này không?</p>
-                <p>Sau khi hủy, đơn hàng sẽ không thể khôi phục.</p>
+            <div class="modal-body d-flex align-items-center">
+                <div class="me-3 text-dark">
+                    <i class="material-icons" style="font-size:48px; color:black;">error_outline</i>
+                </div>
+                <div>
+                    <p class="mb-0">Đơn hàng sẽ bị hủy và không thể khôi phục. Bạn có chắc chắn muốn hủy đơn hàng này?</p>
+                </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                <button type="button" id="confirmCancelBtn" class="btn btn-danger">Xác nhận</button>
+            <div class="modal-footer border-0 justify-content-center">
+                <button type="button" class="btn btn-primary" id="confirmCancelBtn">Xác nhận</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Hủy</button>
             </div>
         </div>
     </div>

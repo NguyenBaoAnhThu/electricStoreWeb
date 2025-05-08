@@ -1,9 +1,12 @@
 package org.example.electricstore.exception;
 
+import jdk.jshell.spi.ExecutionControl;
 import org.example.electricstore.DTO.customer.CustomerDTO;
 import org.example.electricstore.DTO.product.ProductDTO;
+import org.example.electricstore.DTO.user.UserDTO;
 import org.example.electricstore.exception.customer.CustomerException;
 import org.example.electricstore.exception.product.ProductException;
+import org.example.electricstore.exception.user.UserException;
 import org.example.electricstore.service.impl.BrandService;
 import org.example.electricstore.service.impl.CategoryService;
 import org.example.electricstore.service.impl.CustomerService;
@@ -18,6 +21,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+
+import static org.example.electricstore.exception.user.UserError.*;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -172,6 +177,63 @@ public class GlobalExceptionHandler {
         modelAndView.addObject("brands", brandService.getAllBrands());
         modelAndView.addObject("suppliers", supplierService.getAllSuppliers());
 
+        return modelAndView;
+    }
+    @ExceptionHandler(UserException.class)
+    public ModelAndView handleUserException(HttpServletRequest request, UserException ex) { // Thay đổi loại parameter
+        ModelAndView modelAndView;
+        Integer id = request.getParameter("userId") != null
+                ? Integer.parseInt(request.getParameter("userId"))
+                : null;
+
+        // Lấy giá trị từ request
+        UserDTO userDTO = UserDTO.builder()
+                .userId(id)
+                .username(request.getParameter("username"))
+                .email(request.getParameter("email"))
+                .employeeCode(request.getParameter("employeeCode"))
+                .employeeName(request.getParameter("employeeName"))
+                .employeeBirthday(request.getParameter("employeeBirthday") != null
+                        ? LocalDate.parse(request.getParameter("employeeBirthday"))
+                        : null)
+                .employeeAddress(request.getParameter("employeeAddress"))
+                .employeePhone(request.getParameter("employeePhone"))
+                .role(request.getParameter("role"))
+                .build();
+
+        // Đặt view dựa trên URL
+        if (request.getRequestURI().contains("/edit")) {
+            modelAndView = new ModelAndView("admin/user/editUser");
+        } else if (request.getRequestURI().contains("/add")) {
+            modelAndView = new ModelAndView("admin/user/addUser");
+        } else {
+            modelAndView = new ModelAndView("admin/user/listUser");
+        }
+
+        // Thêm đối tượng DTO vào model
+        modelAndView.addObject("user", userDTO);
+
+        // Xác định trường lỗi cụ thể dựa trên loại lỗi
+        switch (ex.getErrorCode()) {
+            case INVALID_NAME_FORMAT:
+                modelAndView.addObject("nameError", ex.getMessage());
+                break;
+            case INVALID_PHONE_FORMAT:
+                modelAndView.addObject("phoneError", ex.getMessage());
+                break;
+            case INVALID_AGE:
+                modelAndView.addObject("dobError", ex.getMessage());
+                break;
+            case INVALID_USERNAME_LENGTH:
+                modelAndView.addObject("usernameError", ex.getMessage());
+                break;
+            case INVALID_EMAIL_FORMAT:
+                modelAndView.addObject("emailError", ex.getMessage());
+                break;
+            default:
+                modelAndView.addObject("error", ex.getMessage());
+                break;
+        }
         return modelAndView;
     }
 }

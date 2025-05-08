@@ -409,7 +409,7 @@ public class ProductController {
     public ResponseEntity<?> deleteProducts(@RequestBody List<Integer> productIds, HttpSession session) {
         try {
             productService.deleteProduct(productIds);
-            session.setAttribute("successMessage", "Xóa sản phẩm thành công.");
+            session.setAttribute("successMessage", "Sản phẩm đã được xoá thành công.");
             return ResponseEntity.ok().body("{\"success\": true}");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("{\"success\": false, \"message\": \"Lỗi khi xóa sản phẩm!\"}");
