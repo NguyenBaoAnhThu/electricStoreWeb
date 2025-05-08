@@ -167,6 +167,7 @@
                                                 <label class="form-label required-field">Tên Sản Phẩm</label>
                                                 <input type="text" class="form-control" th:field="*{name}" placeholder="Nhập tên sản phẩm">
                                                 <div class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                                                <!-- JavaScript sẽ tự động thêm thông báo lỗi ở đây khi người dùng nhập ký tự đặc biệt -->
                                             </div>
                                         </div>
                                     </div>
@@ -239,10 +240,10 @@
                                     <div class="compact-form-group">
                                         <label class="form-label required-field">Ảnh Sản Phẩm</label>
                                         <input type="file" name="files" multiple accept="image/*" class="form-control" id="imageUpload">
-                                        <input type="hidden" name="imagePaths" id="imagePaths" th:field="*{mainImageUrl}">
-                                        <div class="text-danger" th:if="${imageError}" th:text="${imageError}"></div>
+                                        <input type="hidden" name="mainImageUrl" id="imagePaths" th:field="*{mainImageUrl}">
+                                        <div class="text-danger" th:if="${#fields.hasErrors('mainImageUrl')}" th:errors="*{mainImageUrl}"></div>
                                         <div id="imagePreview" class="mt-2">
-                                            <img th:src="${mainImageUrl}" class="img-preview">
+                                            <img th:if="${mainImageUrl != null && mainImageUrl != ''}" th:src="${mainImageUrl}" class="img-preview">
                                         </div>
                                     </div>
                                 </div>
@@ -492,6 +493,77 @@
                 $(this).val(value);
             }
         });
+    });
+</script>
+<script>
+    // Hàm để kiểm tra và xử lý input tên sản phẩm
+    document.addEventListener("DOMContentLoaded", function() {
+        const productNameInput = document.querySelector('input[name="name"]');
+        if (productNameInput) {
+            // Tạo trước thẻ hiển thị thông báo giới hạn ký tự
+            let charLimitMsg = document.createElement('div');
+            charLimitMsg.id = 'char-limit-message';
+            charLimitMsg.className = 'text-danger small mt-1';
+            charLimitMsg.style.display = 'none';
+            productNameInput.parentNode.appendChild(charLimitMsg);
+
+            productNameInput.addEventListener('input', function(e) {
+                const MAX_LENGTH = 100; // Giới hạn 100 ký tự
+                let currentValue = this.value;
+
+                // 1. Loại bỏ ký tự đặc biệt ngay khi nhập (không hiển thị thông báo)
+                const filteredValue = currentValue.replace(/[^\p{L}0-9\s]/gu, '');
+                if (currentValue !== filteredValue) {
+                    this.value = filteredValue;
+                    currentValue = filteredValue;
+                }
+
+                // 2. Kiểm tra và xử lý giới hạn ký tự
+                if (currentValue.length >= MAX_LENGTH) {
+                    // Cắt bỏ phần thừa
+                    this.value = currentValue.substring(0, MAX_LENGTH);
+
+                    // Hiển thị thông báo đã đạt giới hạn
+                    charLimitMsg.textContent = 'Đã đạt giới hạn ký tự tên sản phẩm';
+                    charLimitMsg.style.display = 'block';
+
+                    // Tự động ẩn thông báo sau 3 giây
+                    setTimeout(() => {
+                        charLimitMsg.style.display = 'none';
+                    }, 3000);
+                } else {
+                    // Ẩn thông báo nếu chưa đạt giới hạn
+                    charLimitMsg.style.display = 'none';
+                }
+            });
+
+            // Thêm cả sự kiện paste để xử lý khi người dùng dán văn bản
+            productNameInput.addEventListener('paste', function(e) {
+                // Xử lý sau khi dán để đảm bảo đúng quy tắc
+                setTimeout(() => {
+                    const MAX_LENGTH = 100;
+                    let currentValue = this.value;
+
+                    // Lọc ký tự đặc biệt
+                    const filteredValue = currentValue.replace(/[^\p{L}0-9\s]/gu, '');
+
+                    // Giới hạn độ dài
+                    if (filteredValue.length > MAX_LENGTH) {
+                        this.value = filteredValue.substring(0, MAX_LENGTH);
+
+                        // Hiển thị thông báo
+                        charLimitMsg.textContent = 'Đã đạt giới hạn ký tự tên sản phẩm';
+                        charLimitMsg.style.display = 'block';
+
+                        setTimeout(() => {
+                            charLimitMsg.style.display = 'none';
+                        }, 3000);
+                    } else {
+                        this.value = filteredValue;
+                    }
+                }, 0);
+            });
+        }
     });
 </script>
 </body>

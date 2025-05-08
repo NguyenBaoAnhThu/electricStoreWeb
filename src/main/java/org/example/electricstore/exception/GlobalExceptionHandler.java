@@ -153,7 +153,6 @@ public class GlobalExceptionHandler {
         // Xác định trường lỗi cụ thể dựa trên loại lỗi
         switch (ex.getErrorCode()) {
             case INVALID_PRODUCT_NAME_LENGTH:
-            case INVALID_PRODUCT_NAME_FORMAT:
                 modelAndView.addObject("nameError", ex.getMessage());
                 break;
             case INVALID_RAM_FORMAT:

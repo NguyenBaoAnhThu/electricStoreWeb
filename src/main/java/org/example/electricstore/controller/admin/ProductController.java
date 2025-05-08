@@ -23,7 +23,10 @@ import java.beans.PropertyEditorSupport;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -119,6 +122,11 @@ public class ProductController {
             model.addAttribute("categories", categoryService.getAllCategories());
             model.addAttribute("brands", brandService.getAllBrands());
             model.addAttribute("suppliers", supplierService.getAllSuppliers());
+
+            // Thêm các thuộc tính cho validation
+            model.addAttribute("imageError", null); // Để hiển thị lỗi ảnh nếu có
+            model.addAttribute("validationErrors", new HashMap<String, String>()); // Lưu trữ lỗi validation
+
             return "admin/product_brand_category/editProduct";
         } else {
             return "redirect:/Admin/product-manager?message=Không tìm thấy sản phẩm!";
@@ -145,6 +153,20 @@ public class ProductController {
             @RequestParam(value = "files", required = false) List<MultipartFile> files,
             @RequestParam(value = "importPrice", required = false) Double importPrice,
             Model model) {
+
+        // Xử lý vấn đề mã sản phẩm bị nhân lên
+        Optional<Product> existingProductOpt = productService.getProductById(productDTO.getProductID());
+        if (existingProductOpt.isPresent()) {
+            // Lấy mã sản phẩm từ database
+            String originalProductCode = existingProductOpt.get().getProductCode();
+
+            // Nếu mã sản phẩm trong request chứa dấu phẩy, reset về giá trị gốc
+            if (productDTO.getProductCode() != null && productDTO.getProductCode().contains(",")) {
+                productDTO.setProductCode(originalProductCode);
+            }
+        }
+
+        // Kiểm tra lỗi validation từ @Valid
         if (bindingResult.hasErrors()) {
             model.addAttribute("categories", categoryService.getAllCategories());
             model.addAttribute("brands", brandService.getAllBrands());
@@ -153,8 +175,16 @@ public class ProductController {
             return "admin/product_brand_category/editProduct";
         }
 
+        // Kiểm tra tên sản phẩm có ký tự đặc biệt không (bổ sung thêm)
+        if (productDTO.getName() != null && !productDTO.getName().matches("^[\\p{L}0-9\\s]+$")) {
+            bindingResult.rejectValue("name", "error.product", "Tên sản phẩm không được chứa ký tự đặc biệt");
+            model.addAttribute("categories", categoryService.getAllCategories());
+            model.addAttribute("brands", brandService.getAllBrands());
+            model.addAttribute("suppliers", supplierService.getAllSuppliers());
+            return "admin/product_brand_category/editProduct";
+        }
+
         // Fetch the existing product from the database to get the create_at value
-        Optional<Product> existingProductOpt = productService.getProductById(productDTO.getProductID());
         if (!existingProductOpt.isPresent()) {
             return "redirect:/Admin/product-manager?message=Không tìm thấy sản phẩm!";
         }
@@ -177,37 +207,51 @@ public class ProductController {
         List<MultipartFile> filesToUpdate = hasNewImage ? files : null;
 
         // Lưu sản phẩm vào database với giá nhập
-        if (importPrice != null && importPrice > 0) {
-            productService.updateProductWithImportPrice(product, importPrice, filesToUpdate);
-        } else {
-            productService.updateProduct(product, filesToUpdate);
+        try {
+            if (importPrice != null && importPrice > 0) {
+                productService.updateProductWithImportPrice(product, importPrice, filesToUpdate);
+            } else {
+                productService.updateProduct(product, filesToUpdate);
+            }
+            return "redirect:/Admin/product-manager?message=Cập nhật sản phẩm thành công!";
+        } catch (Exception e) {
+            model.addAttribute("categories", categoryService.getAllCategories());
+            model.addAttribute("brands", brandService.getAllBrands());
+            model.addAttribute("suppliers", supplierService.getAllSuppliers());
+            model.addAttribute("errorMessage", "Lỗi khi cập nhật sản phẩm: " + e.getMessage());
+            return "admin/product_brand_category/editProduct";
         }
-
-        return "redirect:/Admin/product-manager";
     }
-
 
     @GetMapping("/add")
     public String showAddProductForm(Model model) {
         ProductDTO productDTO = new ProductDTO();
-
         // Generate a preview of the next product code (just for display)
         String nextCode = productService.generateProductCode();
         productDTO.setProductCode(nextCode);
 
+        // Thiết lập các giá trị mặc định nếu cần
+        productDTO.setCreateAt(LocalDateTime.now());
+        productDTO.setUpdateAt(LocalDateTime.now());
+
+        // Thêm các thuộc tính cần thiết vào model
         model.addAttribute("product", productDTO);
         model.addAttribute("categories", categoryService.getAllCategories());
         model.addAttribute("brands", brandService.getAllBrands());
         model.addAttribute("suppliers", supplierService.getAllSuppliers());
+
+        // Thêm các thuộc tính cho validation
+        model.addAttribute("imageError", null); // Để hiển thị lỗi ảnh nếu có
+        model.addAttribute("validationErrors", new HashMap<String, String>()); // Lưu trữ lỗi validation
+
         return "admin/product_brand_category/addProduct";
     }
 
-    // 🔹 Modified to handle import price
     @PostMapping("/add")
     public String addProduct(
             @Valid @ModelAttribute("product") ProductDTO productDTO,
             BindingResult bindingResult,
-            @RequestParam("files") List<MultipartFile> files,
+            @RequestParam(value = "files", required = false) List<MultipartFile> files,
             @RequestParam(value = "importPrice", required = false) Double importPrice,
             Model model) {
 
@@ -215,35 +259,41 @@ public class ProductController {
         String generatedCode = productService.generateProductCode();
         productDTO.setProductCode(generatedCode);
 
-        String imgLink = productDTO.getMainImageUrl();
-
+        // Validate basic fields
         if (bindingResult.hasErrors()) {
             model.addAttribute("categories", categoryService.getAllCategories());
             model.addAttribute("brands", brandService.getAllBrands());
             model.addAttribute("suppliers", supplierService.getAllSuppliers());
-            model.addAttribute("mainImageUrl", productDTO.getMainImageUrl());
             return "admin/product_brand_category/addProduct";
         }
-
-        //  Kiểm tra ảnh có được tải lên không
-        if (files == null || files.isEmpty()) {
-            bindingResult.rejectValue("mainImageUrl", "error.product", "Vui lòng chọn ít nhất một ảnh!");
+        // Kiểm tra ảnh có được tải lên không
+        if (files == null || files.isEmpty() || files.stream().allMatch(file -> file.isEmpty())) {
+            model.addAttribute("imageError", "Ảnh sản phẩm không được để trống");
             model.addAttribute("categories", categoryService.getAllCategories());
             model.addAttribute("brands", brandService.getAllBrands());
             model.addAttribute("suppliers", supplierService.getAllSuppliers());
             return "admin/product_brand_category/addProduct";
         }
 
-        // Chuyển đổi từ DTO sang Entity
-        Product product = productMapper.toEntity(productDTO);
+        try {
+            // Chuyển đổi từ DTO sang Entity
+            Product product = productMapper.toEntity(productDTO);
 
-        // Thiết lập mối quan hệ giữa product và productDetail
-        product.getProductDetail().setProduct(product);
+            // Thiết lập mối quan hệ giữa product và productDetail
+            product.getProductDetail().setProduct(product);
 
-        //  Lưu sản phẩm vào database với giá nhập
-        productService.saveProductWithImportPrice(product, product.getProductDetail(), importPrice, files);
+            // Lưu sản phẩm vào database với giá nhập
+            productService.saveProductWithImportPrice(product, product.getProductDetail(), importPrice, files);
 
-        return "redirect:/Admin/product-manager";
+            return "redirect:/Admin/product-manager?message=Thêm sản phẩm thành công!";
+        } catch (Exception e) {
+            // Xử lý các lỗi không mong đợi
+            model.addAttribute("errorMessage", "Lỗi khi thêm sản phẩm: " + e.getMessage());
+            model.addAttribute("categories", categoryService.getAllCategories());
+            model.addAttribute("brands", brandService.getAllBrands());
+            model.addAttribute("suppliers", supplierService.getAllSuppliers());
+            return "admin/product_brand_category/addProduct";
+        }
     }
 
     @PostMapping("/delete")

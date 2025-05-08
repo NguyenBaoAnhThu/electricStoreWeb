@@ -16,7 +16,6 @@ public class ProductDTO {
 
     @NotBlank(message = "Tên sản phẩm không được để trống")
     @Size(max = 100, message = "Tên sản phẩm không được dài quá 100 ký tự")
-    @Pattern(regexp = "^[\\p{L}0-9\\s-]+$", message = "Tên sản phẩm không được chứa ký tự đặc biệt")
     private String name;
 
     private String productCode;

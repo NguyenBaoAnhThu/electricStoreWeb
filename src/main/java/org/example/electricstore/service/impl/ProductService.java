@@ -400,14 +400,9 @@ public class ProductService implements IProductService {
         return prefix + String.format("%04d", nextNumber);
     }
     private void validateProduct(Product product, Double importPrice, List<MultipartFile> files) {
-        // Validate định dạng đặc biệt cho các trường khác ngoài empty checks
-        // Kiểm tra các định dạng phức tạp mà validation annotation không thể xử lý
-
         // Validate ảnh sản phẩm (chỉ khi thêm mới và id chưa có)
         if (product.getProductID() == null && (files == null || files.isEmpty() || files.stream().allMatch(file -> file.isEmpty()))) {
-            throw new IllegalArgumentException("Vui lòng chọn ít nhất một ảnh cho sản phẩm");
-            // Hoặc có thể dùng:
-            // throw new jakarta.validation.ValidationException("Vui lòng chọn ít nhất một ảnh cho sản phẩm");
+            throw new ProductException(ProductError.PRODUCT_IMAGE_REQUIRED);
         }
 
         // Validate các trường đặc biệt trong productDetail nếu có
