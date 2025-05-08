@@ -20,10 +20,13 @@ public class ProductDTO {
     private String name;
 
     private String productCode;
-    @NotNull(message = "Ảnh sản phẩm không được để trống")
+
+    @NotBlank(message = "Ảnh sản phẩm không được để trống")
     private String mainImageUrl;
 
     @NotNull(message = "Giá sản phẩm không được để trống")
+    @DecimalMin(value = "1000.0", message = "Giá sản phẩm phải lớn hơn 1000 VND")
+    @Digits(integer = 10, fraction = 2, message = "Giá sản phẩm không hợp lệ")
     private Double price;
 
     @NotNull(message = "Giá nhập không được để trống")
@@ -53,8 +56,9 @@ public class ProductDTO {
     private Integer camera;
     private Integer frontCamera;
 
-    @NotNull(message = "Màu không được để trống")
+    @NotBlank(message = "Màu không được để trống")
     private String color;
+
     private String cpu;
     private String gpu;
 
