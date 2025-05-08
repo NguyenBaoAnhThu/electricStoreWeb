@@ -120,7 +120,7 @@ public class CategoryController {
 
             Map<String, String> response = new HashMap<>();
             response.put("success", "true");
-            response.put("message", "Thêm danh mục thành công");
+            response.put("message", "Thêm danh mục thành công.");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             Map<String, String> errorResponse = new HashMap<>();
@@ -159,7 +159,7 @@ public class CategoryController {
 
                 Map<String, String> response = new HashMap<>();
                 response.put("success", "true");
-                response.put("message", "Cập nhật danh mục thành công");
+                response.put("message", "Cập nhật danh mục thành công.");
                 return ResponseEntity.ok(response);
             } else {
                 Map<String, String> errorResponse = new HashMap<>();
@@ -181,14 +181,14 @@ public class CategoryController {
             if (categoryService.hasRelatedProducts(categoryIds)) {
                 Map<String, Object> response = new HashMap<>();
                 response.put("success", false);
-                response.put("message", "Không thể xóa danh mục có sản phẩm liên quan!");
+                response.put("message", "Không thể xóa danh mục có sản phẩm liên quan.");
                 return ResponseEntity.badRequest().body(response);
             }
 
             categoryService.deleteCategory(categoryIds);
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
-            response.put("message", "Danh mục đã được xóa thành công!");
+            response.put("message", "Danh mục đã được xóa thành công.");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             Map<String, Object> response = new HashMap<>();

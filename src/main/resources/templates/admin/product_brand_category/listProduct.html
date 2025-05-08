@@ -4,7 +4,6 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Quản lý Sản phẩm</title>
-        <!-- CSRF Token dành cho các request AJAX -->
         <meta name="_csrf" th:content="${_csrf != null ? _csrf.token : ''}"/>
         <meta name="_csrf_header" th:content="${_csrf != null ? _csrf.headerName : ''}"/>
         <link rel="stylesheet" th:href="@{/css/admin/fragments/sidebar.css}">
@@ -12,71 +11,16 @@
         <link rel="stylesheet" th:href="@{/css/admin/fragments/footer.css}">
         <link rel="stylesheet" th:href="@{/css/admin/layout/layout.css}">
         <link rel="stylesheet" th:href="@{/css/admin/layout/tablelayout.css}">
+        <link rel="stylesheet" th:href="@{/css/admin/layout/notification.css}">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
         <style>
-            .alert {
-                padding: 12px 20px;
-                border-radius: 8px;
-                font-size: 16px;
-                font-weight: 500;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-                transition: all 0.3s ease-in-out;
-                margin-bottom: 20px;
-            }
-
-            .alert p {
-                margin: 0;
-            }
-
-            .alert.alert-success {
-                background-color: #d4edda;
-                color: #155724;
-                border-left: 5px solid #28a745;
-            }
-
-            .alert.alert-danger {
-                background-color: #f8d7da;
-                color: #721c24;
-                border-left: 5px solid #dc3545;
-            }
-
-            .alert.alert-warning {
-                background-color: #fff3cd;
-                color: #856404;
-                border-left: 5px solid #ffc107;
-            }
-
-            .close-btn {
-                background: none;
-                border: none;
-                font-size: 18px;
-                cursor: pointer;
-                color: inherit;
-            }
-
-            .close-btn:hover {
-                opacity: 0.7;
-            }
-
-            /* Điều chỉnh kích thước ảnh sản phẩm */
             .product-image {
                 max-width: 80px;
                 max-height: 80px;
                 object-fit: contain;
             }
-
-            /* Định dạng cho các nút */
-            .btn-action {
-                padding: 0.25rem 0.5rem;
-                font-size: 0.875rem;
-            }
-
-            /* Định dạng cho container tìm kiếm */
             .search-container {
                 display: flex;
                 align-items: center;
@@ -92,7 +36,9 @@
     <div th:replace="~{admin/fragments/sidebar :: sidebar}"></div>
     <main class="main-content" th:fragment="content">
         <div class="wrapper">
-            <h1 class="tittle">Quản lý sản phẩm</h1>
+            <h1 class="tittle" onclick="window.location.href='/Admin/product-manager'">
+                Sản Phẩm
+            </h1>
             <div class="product-manager-search mb-4">
                 <div class="search-container p-4 bg-white rounded-3 shadow">
                     <form class="row g-3 align-items-end" method="GET" action="/Admin/product-manager">
@@ -141,34 +87,7 @@
                 </div>
                 <hr class="mt-4 mb-3 border-2 border-secondary opacity-25">
             </div>
-
-            <!-- Alert Messages - Hợp nhất xử lý để chỉ hiển thị một thông báo -->
-            <div th:if="${message != null}" class="alert alert-success" style="border-left: 5px solid #28a745;">
-                <p th:text="${message}"></p>
-                <button class="close-btn" onclick="this.parentElement.style.display='none'">&times;</button>
-            </div>
-
-            <div th:if="${message == null && param.message != null}" class="alert alert-success" style="border-left: 5px solid #28a745;">
-                <p th:text="${param.message}"></p>
-                <button class="close-btn" onclick="this.parentElement.style.display='none'">&times;</button>
-            </div>
-
-            <div th:if="${errorMessage != null}" class="alert alert-danger" style="border-left: 5px solid #dc3545;">
-                <p th:text="${errorMessage}"></p>
-                <button class="close-btn" onclick="this.parentElement.style.display='none'">&times;</button>
-            </div>
-
-            <div th:if="${errorMessage == null && param.errorMessage != null}" class="alert alert-danger" style="border-left: 5px solid #dc3545;">
-                <p th:text="${param.errorMessage}"></p>
-                <button class="close-btn" onclick="this.parentElement.style.display='none'">&times;</button>
-            </div>
-
-            <!-- Hiển thị thông báo không tìm thấy sản phẩm -->
-            <div th:if="${emptyMessage}" class="alert alert-warning" style="border-left: 5px solid #ffc107;">
-                <p th:text="${emptyMessage}"></p>
-                <button class="close-btn" onclick="this.parentElement.style.display='none'">&times;</button>
-            </div>
-
+            <div th:replace="~{admin/fragments/alert :: alerts}"></div>
             <div class="table-responsive">
                 <table class="table table-striped table-bordered">
                     <thead class="table-dark">
@@ -421,12 +340,11 @@
 
                             if (data.success) {
                                 // Tạo thông báo xóa thành công
-                                const message = "Xóa sản phẩm " + productCodes.join(", ") + " thành công.";
-
-                                // Thêm thông báo thành công vào URL và reload trang
-                                window.location.href = '/Admin/product-manager?message=' + encodeURIComponent(message);
+                                const message = "Xóa sản phẩm thành công.";
+                                // Thêm thông báo thành công vào URL
+                                window.location.href = '/Admin/product-manager?successMessage=' + encodeURIComponent(message);
                             } else {
-                                // Thêm thông báo lỗi vào URL và reload trang
+                                // Thêm thông báo lỗi vào URL
                                 window.location.href = '/Admin/product-manager?errorMessage=' + encodeURIComponent(data.message || 'Có lỗi xảy ra khi xóa sản phẩm');
                             }
                         })

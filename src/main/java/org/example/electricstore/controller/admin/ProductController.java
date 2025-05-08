@@ -1,5 +1,6 @@
 package org.example.electricstore.controller.admin;
 
+import jakarta.servlet.http.HttpSession;
 import org.example.electricstore.DTO.product.ProductDTO;
 import org.example.electricstore.mapper.product.ProductMapper;
 import org.example.electricstore.model.Product;
@@ -9,6 +10,8 @@ import org.example.electricstore.service.impl.CategoryService;
 import org.example.electricstore.service.impl.ProductService;
 import org.example.electricstore.service.impl.SupplierService;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +21,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.beans.PropertyEditorSupport;
 import java.net.URLEncoder;
@@ -33,16 +37,23 @@ import java.util.Optional;
 @RequestMapping("/Admin/product-manager")
 public class ProductController {
 
+    private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
+
     @Autowired
     private ProductService productService;
+
     @Autowired
     private BrandService brandService;
+
     @Autowired
     private CategoryService categoryService;
+
     @Autowired
     private ProductMapper productMapper;
+
     @Autowired
     private SupplierService supplierService;
+
     @Autowired
     private CloudinaryService cloudinaryService;
 
@@ -54,7 +65,6 @@ public class ProductController {
             @RequestParam(name = "category", required = false) Integer categoryId,
             @RequestParam(name = "page", required = false, defaultValue = "1") int page,
             @RequestParam(name = "size", required = false, defaultValue = "10") int size,
-            @RequestParam(name = "message", required = false) String message,
             Model model) {
 
         Page<Product> productPage = productService.searchProducts(keyword, minPrice, maxPrice, categoryId, page - 1, size);
@@ -81,40 +91,54 @@ public class ProductController {
         model.addAttribute("brands", brandService.getAllBrands());
         model.addAttribute("suppliers", supplierService.getAllSuppliers());
 
-        // ⚠ Xử lý nếu trang hiện tại vượt quá số trang thực tế
         if (page > productPage.getTotalPages() && productPage.getTotalPages() > 0) {
             int newPage = Math.max(1, productPage.getTotalPages()); // Quay về trang hợp lệ cuối cùng
-            return "redirect:/Admin/product-manager?page=" + newPage +
-                    (keyword != null ? "&keyword=" + URLEncoder.encode(keyword, StandardCharsets.UTF_8) : "") +
-                    (minPrice != null ? "&minPrice=" + minPrice : "") +
-                    (maxPrice != null ? "&maxPrice=" + maxPrice : "") +
-                    (categoryId != null ? "&category=" + categoryId : "");
+            StringBuilder redirectUrl = new StringBuilder("redirect:/Admin/product-manager?page=" + newPage);
+
+            if (keyword != null) {
+                redirectUrl.append("&keyword=").append(encodeParam(keyword));
+            }
+            if (minPrice != null) {
+                redirectUrl.append("&minPrice=").append(minPrice);
+            }
+            if (maxPrice != null) {
+                redirectUrl.append("&maxPrice=").append(maxPrice);
+            }
+            if (categoryId != null) {
+                redirectUrl.append("&category=").append(categoryId);
+            }
+
+            return redirectUrl.toString();
         }
 
-        // ⚠ Nếu tất cả dữ liệu bị xóa, quay về trang đầu tiên
         if (productPage.getTotalElements() == 0 && page > 1) {
-            return "redirect:/Admin/product-manager?page=1" +
-                    (keyword != null ? "&keyword=" + URLEncoder.encode(keyword, StandardCharsets.UTF_8) : "") +
-                    (minPrice != null ? "&minPrice=" + minPrice : "") +
-                    (maxPrice != null ? "&maxPrice=" + maxPrice : "") +
-                    (categoryId != null ? "&category=" + categoryId : "");
+            StringBuilder redirectUrl = new StringBuilder("redirect:/Admin/product-manager?page=1");
+
+            if (keyword != null) {
+                redirectUrl.append("&keyword=").append(encodeParam(keyword));
+            }
+            if (minPrice != null) {
+                redirectUrl.append("&minPrice=").append(minPrice);
+            }
+            if (maxPrice != null) {
+                redirectUrl.append("&maxPrice=").append(maxPrice);
+            }
+            if (categoryId != null) {
+                redirectUrl.append("&category=").append(categoryId);
+            }
+
+            return redirectUrl.toString();
         }
 
-        // Thêm thông báo nếu có
-        if (message != null) {
-            model.addAttribute("message", message);
-        }
-
-        // Thêm thông báo khi không tìm thấy sản phẩm
         if (products.isEmpty() && (keyword != null || minPrice != null || maxPrice != null || categoryId != null)) {
-            model.addAttribute("emptyMessage", "Không tìm thấy sản phẩm phù hợp với dữ liệu tìm kiếm!");
+            model.addAttribute("noResultMessage", "Không tìm thấy kết quả phù hợp với dữ liệu tìm kiếm.");
         }
 
         return "admin/product_brand_category/listProduct";
     }
 
     @GetMapping("/edit/{id}")
-    public String editProductForm(@PathVariable Integer id, Model model) {
+    public String editProductForm(@PathVariable Integer id, Model model, RedirectAttributes redirectAttributes) {
         Optional<Product> product = productService.getProductById(id);
         if (product.isPresent()) {
             ProductDTO productDTO = productMapper.toDTO(product.get());
@@ -122,6 +146,7 @@ public class ProductController {
             model.addAttribute("categories", categoryService.getAllCategories());
             model.addAttribute("brands", brandService.getAllBrands());
             model.addAttribute("suppliers", supplierService.getAllSuppliers());
+            model.addAttribute("mainImageUrl", productDTO.getMainImageUrl());
 
             // Thêm các thuộc tính cho validation
             model.addAttribute("imageError", null); // Để hiển thị lỗi ảnh nếu có
@@ -129,7 +154,8 @@ public class ProductController {
 
             return "admin/product_brand_category/editProduct";
         } else {
-            return "redirect:/Admin/product-manager?message=Không tìm thấy sản phẩm!";
+            redirectAttributes.addFlashAttribute("errorMessage", "Không tìm thấy sản phẩm!");
+            return "redirect:/Admin/product-manager";
         }
     }
 
@@ -139,8 +165,20 @@ public class ProductController {
             @Override
             public void setAsText(String text) {
                 if (text != null && !text.isEmpty()) {
-                    // Xóa dấu phẩy trước khi convert
-                    setValue(Double.parseDouble(text.replace(",", "")));
+                    try {
+                        // Xóa tất cả các ký tự không phải số
+                        String cleanedText = text.replaceAll("[^0-9]", "");
+                        if (!cleanedText.isEmpty()) {
+                            setValue(Double.parseDouble(cleanedText));
+                        } else {
+                            setValue(null);
+                        }
+                    } catch (NumberFormatException e) {
+                        logger.error("Lỗi chuyển đổi giá: {}", text, e);
+                        setValue(null);
+                    }
+                } else {
+                    setValue(null);
                 }
             }
         });
@@ -152,7 +190,10 @@ public class ProductController {
             BindingResult bindingResult,
             @RequestParam(value = "files", required = false) List<MultipartFile> files,
             @RequestParam(value = "importPrice", required = false) Double importPrice,
-            Model model) {
+            Model model,
+            RedirectAttributes redirectAttributes) {
+
+        logger.info("Bắt đầu cập nhật sản phẩm ID: {}", productDTO.getProductID());
 
         // Xử lý vấn đề mã sản phẩm bị nhân lên
         Optional<Product> existingProductOpt = productService.getProductById(productDTO.getProductID());
@@ -166,8 +207,11 @@ public class ProductController {
             }
         }
 
-        // Kiểm tra lỗi validation từ @Valid
-        if (bindingResult.hasErrors()) {
+        // Kiểm tra lỗi validation từ @Valid (ngoại trừ mainImageUrl nếu có ảnh)
+        if (bindingResult.hasErrors() && (bindingResult.getFieldError("mainImageUrl") == null ||
+                files == null || files.isEmpty() || files.stream().allMatch(f -> f.isEmpty()))) {
+
+            logger.warn("Dữ liệu không hợp lệ khi cập nhật sản phẩm: {}", bindingResult.getAllErrors());
             model.addAttribute("categories", categoryService.getAllCategories());
             model.addAttribute("brands", brandService.getAllBrands());
             model.addAttribute("suppliers", supplierService.getAllSuppliers());
@@ -175,7 +219,7 @@ public class ProductController {
             return "admin/product_brand_category/editProduct";
         }
 
-        // Kiểm tra tên sản phẩm có ký tự đặc biệt không (bổ sung thêm)
+        // Kiểm tra tên sản phẩm có ký tự đặc biệt không
         if (productDTO.getName() != null && !productDTO.getName().matches("^[\\p{L}0-9\\s]+$")) {
             bindingResult.rejectValue("name", "error.product", "Tên sản phẩm không được chứa ký tự đặc biệt");
             model.addAttribute("categories", categoryService.getAllCategories());
@@ -184,9 +228,11 @@ public class ProductController {
             return "admin/product_brand_category/editProduct";
         }
 
-        // Fetch the existing product from the database to get the create_at value
+        // Kiểm tra sản phẩm có tồn tại không
         if (!existingProductOpt.isPresent()) {
-            return "redirect:/Admin/product-manager?message=Không tìm thấy sản phẩm!";
+            logger.error("Không tìm thấy sản phẩm ID: {}", productDTO.getProductID());
+            redirectAttributes.addFlashAttribute("errorMessage", "Không tìm thấy sản phẩm!");
+            return "redirect:/Admin/product-manager";
         }
 
         Product existingProduct = existingProductOpt.get();
@@ -194,11 +240,24 @@ public class ProductController {
         // Chuyển đổi từ DTO sang Entity
         Product product = productMapper.toEntity(productDTO);
 
-        // IMPORTANT: Preserve the create_at value from the existing product
+        // Giữ giá trị create_at từ sản phẩm hiện có
         product.setCreateAt(existingProduct.getCreateAt());
 
-        // Set the relationship
+        // Thiết lập mối quan hệ
         product.getProductDetail().setProduct(product);
+
+        // Kiểm tra thông tin file ảnh
+        if (files != null && !files.isEmpty()) {
+            logger.info("Nhận được {} files khi cập nhật sản phẩm", files.size());
+            for (int i = 0; i < files.size(); i++) {
+                MultipartFile file = files.get(i);
+                if (!file.isEmpty()) {
+                    logger.info("File {}: {}, kích thước: {}", i+1, file.getOriginalFilename(), file.getSize());
+                }
+            }
+        } else {
+            logger.info("Không có files mới khi cập nhật sản phẩm");
+        }
 
         // Kiểm tra xem có file ảnh mới được tải lên không
         boolean hasNewImage = files != null && files.stream().anyMatch(file -> !file.isEmpty());
@@ -209,12 +268,17 @@ public class ProductController {
         // Lưu sản phẩm vào database với giá nhập
         try {
             if (importPrice != null && importPrice > 0) {
+                logger.info("Cập nhật sản phẩm với giá nhập: {}", importPrice);
                 productService.updateProductWithImportPrice(product, importPrice, filesToUpdate);
             } else {
+                logger.info("Cập nhật sản phẩm không có giá nhập");
                 productService.updateProduct(product, filesToUpdate);
             }
-            return "redirect:/Admin/product-manager?message=Cập nhật sản phẩm thành công!";
+            logger.info("Cập nhật sản phẩm thành công");
+            redirectAttributes.addFlashAttribute("successMessage", "Cập nhật sản phẩm thành công.");
+            return "redirect:/Admin/product-manager";
         } catch (Exception e) {
+            logger.error("Lỗi khi cập nhật sản phẩm: {}", e.getMessage(), e);
             model.addAttribute("categories", categoryService.getAllCategories());
             model.addAttribute("brands", brandService.getAllBrands());
             model.addAttribute("suppliers", supplierService.getAllSuppliers());
@@ -226,23 +290,23 @@ public class ProductController {
     @GetMapping("/add")
     public String showAddProductForm(Model model) {
         ProductDTO productDTO = new ProductDTO();
-        // Generate a preview of the next product code (just for display)
+        // Tạo mã sản phẩm mới
         String nextCode = productService.generateProductCode();
         productDTO.setProductCode(nextCode);
 
-        // Thiết lập các giá trị mặc định nếu cần
+        // Thiết lập các giá trị mặc định
         productDTO.setCreateAt(LocalDateTime.now());
         productDTO.setUpdateAt(LocalDateTime.now());
 
-        // Thêm các thuộc tính cần thiết vào model
+        // Thêm các thuộc tính vào model
         model.addAttribute("product", productDTO);
         model.addAttribute("categories", categoryService.getAllCategories());
         model.addAttribute("brands", brandService.getAllBrands());
         model.addAttribute("suppliers", supplierService.getAllSuppliers());
 
         // Thêm các thuộc tính cho validation
-        model.addAttribute("imageError", null); // Để hiển thị lỗi ảnh nếu có
-        model.addAttribute("validationErrors", new HashMap<String, String>()); // Lưu trữ lỗi validation
+        model.addAttribute("imageError", null);
+        model.addAttribute("validationErrors", new HashMap<String, String>());
 
         return "admin/product_brand_category/addProduct";
     }
@@ -253,41 +317,86 @@ public class ProductController {
             BindingResult bindingResult,
             @RequestParam(value = "files", required = false) List<MultipartFile> files,
             @RequestParam(value = "importPrice", required = false) Double importPrice,
-            Model model) {
+            Model model,
+            RedirectAttributes redirectAttributes) {
 
-        // Generate product code automatically
+        logger.info("Bắt đầu thêm sản phẩm mới");
+
+        // Tạo mã sản phẩm tự động
         String generatedCode = productService.generateProductCode();
         productDTO.setProductCode(generatedCode);
+        logger.info("Mã sản phẩm tự động: {}", generatedCode);
 
-        // Validate basic fields
-        if (bindingResult.hasErrors()) {
+        // Log thông tin sản phẩm
+        logger.info("Thông tin sản phẩm: Tên={}, Giá={}, Danh mục={}, Thương hiệu={}, Nhà cung cấp={}",
+                productDTO.getName(),
+                productDTO.getPrice(),
+                productDTO.getCategoryId(),
+                productDTO.getBrandId(),
+                productDTO.getId());
+
+        // Kiểm tra lỗi validation (trừ lỗi mainImageUrl nếu có ảnh)
+        if (bindingResult.hasErrors() && (bindingResult.getFieldError("mainImageUrl") == null ||
+                files == null || files.isEmpty())) {
+            logger.warn("Dữ liệu không hợp lệ khi thêm sản phẩm: {}", bindingResult.getAllErrors());
             model.addAttribute("categories", categoryService.getAllCategories());
             model.addAttribute("brands", brandService.getAllBrands());
             model.addAttribute("suppliers", supplierService.getAllSuppliers());
             return "admin/product_brand_category/addProduct";
         }
-        // Kiểm tra ảnh có được tải lên không
-        if (files == null || files.isEmpty() || files.stream().allMatch(file -> file.isEmpty())) {
-            model.addAttribute("imageError", "Ảnh sản phẩm không được để trống");
+
+        // Kiểm tra file ảnh
+        if (files == null || files.isEmpty()) {
+            logger.error("Không nhận được file ảnh");
             model.addAttribute("categories", categoryService.getAllCategories());
             model.addAttribute("brands", brandService.getAllBrands());
             model.addAttribute("suppliers", supplierService.getAllSuppliers());
             return "admin/product_brand_category/addProduct";
+        } else {
+            boolean hasValidImage = false;
+            for (MultipartFile file : files) {
+                if (!file.isEmpty()) {
+                    hasValidImage = true;
+                    logger.info("File ảnh: tên={}, kích thước={}, loại={}",
+                            file.getOriginalFilename(), file.getSize(), file.getContentType());
+                }
+            }
+
+            if (!hasValidImage) {
+                logger.error("Tất cả file ảnh đều trống");
+                model.addAttribute("imageError", "Vui lòng chọn ít nhất một ảnh hợp lệ");
+                model.addAttribute("categories", categoryService.getAllCategories());
+                model.addAttribute("brands", brandService.getAllBrands());
+                model.addAttribute("suppliers", supplierService.getAllSuppliers());
+                return "admin/product_brand_category/addProduct";
+            }
         }
 
         try {
             // Chuyển đổi từ DTO sang Entity
             Product product = productMapper.toEntity(productDTO);
+            logger.info("Đã chuyển đổi từ DTO sang Entity");
 
             // Thiết lập mối quan hệ giữa product và productDetail
-            product.getProductDetail().setProduct(product);
+            if (product.getProductDetail() != null) {
+                product.getProductDetail().setProduct(product);
+            }
+
+            // Format lại giá nhập nếu cần
+            if (importPrice != null) {
+                logger.info("Giá nhập ban đầu: {}", importPrice);
+            }
 
             // Lưu sản phẩm vào database với giá nhập
-            productService.saveProductWithImportPrice(product, product.getProductDetail(), importPrice, files);
+            logger.info("Bắt đầu lưu sản phẩm với ảnh và giá nhập");
+            Product savedProduct = productService.saveProductWithImportPrice(product, product.getProductDetail(), importPrice, files);
+            logger.info("Đã lưu sản phẩm thành công với ID: {}", savedProduct.getProductID());
 
-            return "redirect:/Admin/product-manager?message=Thêm sản phẩm thành công!";
+            redirectAttributes.addFlashAttribute("successMessage", "Thêm sản phẩm thành công.");
+            return "redirect:/Admin/product-manager";
         } catch (Exception e) {
             // Xử lý các lỗi không mong đợi
+            logger.error("Lỗi khi thêm sản phẩm: {}", e.getMessage(), e);
             model.addAttribute("errorMessage", "Lỗi khi thêm sản phẩm: " + e.getMessage());
             model.addAttribute("categories", categoryService.getAllCategories());
             model.addAttribute("brands", brandService.getAllBrands());
@@ -297,12 +406,23 @@ public class ProductController {
     }
 
     @PostMapping("/delete")
-    public ResponseEntity<?> deleteProducts(@RequestBody List<Integer> productIds) {
+    public ResponseEntity<?> deleteProducts(@RequestBody List<Integer> productIds, HttpSession session) {
         try {
             productService.deleteProduct(productIds);
-            return ResponseEntity.ok().body("{\"success\": true, \"message\": \"Sản phẩm đã được xóa thành công!\"}");
+            session.setAttribute("successMessage", "Xóa sản phẩm thành công.");
+            return ResponseEntity.ok().body("{\"success\": true}");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("{\"success\": false, \"message\": \"Lỗi khi xóa sản phẩm!\"}");
+        }
+    }
+
+    // Phương thức tiện ích để encode parameter URL an toàn
+    private String encodeParam(String param) {
+        try {
+            return URLEncoder.encode(param, StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            logger.error("Lỗi khi encode tham số: {}", param, e);
+            return "";
         }
     }
 }
