@@ -6,12 +6,14 @@ import org.example.electricstore.DTO.statistical.*;
 import org.example.electricstore.model.Order;
 import org.example.electricstore.service.impl.StatisticalService;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.time.LocalDate;
@@ -204,46 +206,53 @@ public class StatisticalController {
                                    @RequestParam(required = false) Integer month,
                                    @RequestParam(required = false) Integer year,
                                    @RequestParam(required = false, defaultValue = "1") Integer page,
-                                   @RequestParam(required = false, defaultValue = "10   ") Integer size,
+                                   @RequestParam(required = false, defaultValue = "10") Integer size,
                                    Model model) {
 
         Page<RevenueDetailDTO> revenueDetailDTOS = null;
         List<RevenueDetailDTO> revenueDetailDTOList = null;
-        List<Order> orders ;
-        switch (type.toLowerCase()) {
-            case "day":
-                orders = this.statisticalService.getListOrdersByDate(day, month, year) ;
-                revenueDetailDTOList = this.statisticalService.getAllRevenueDetail(orders) ;
-                revenueDetailDTOS = this.statisticalService.getRevenueDetail
-                        (orders, page, size);
-                break;
-            case "month":
-                orders = this.statisticalService.getListOrdersByDate(0, month, year) ;
-                revenueDetailDTOList = this.statisticalService.getAllRevenueDetail(orders) ;
-                revenueDetailDTOS = this.statisticalService.getRevenueDetail
-                        (orders, page, size);
-                break;
-            case "year":
-                orders = this.statisticalService.getListOrdersByDate(0, 0, year) ;
-                revenueDetailDTOList = this.statisticalService.getAllRevenueDetail(orders) ;
-                revenueDetailDTOS = this.statisticalService.getRevenueDetail
-                        (orders, page, size);
-                break;
+        List<Order> orders;
+        try {
+            switch (type.toLowerCase()) {
+                case "day":
+                    orders = this.statisticalService.getListOrdersByDate(day, month, year);
+                    revenueDetailDTOList = this.statisticalService.getAllRevenueDetail(orders);
+                    revenueDetailDTOS = this.statisticalService.getRevenueDetail(orders, page, size);
+                    break;
+                case "month":
+                    orders = this.statisticalService.getListOrdersByDate(0, month, year);
+                    revenueDetailDTOList = this.statisticalService.getAllRevenueDetail(orders);
+                    revenueDetailDTOS = this.statisticalService.getRevenueDetail(orders, page, size);
+                    break;
+                case "year":
+                    orders = this.statisticalService.getListOrdersByDate(0, 0, year);
+                    revenueDetailDTOList = this.statisticalService.getAllRevenueDetail(orders);
+                    revenueDetailDTOS = this.statisticalService.getRevenueDetail(orders, page, size);
+                    break;
+                default:
+                    revenueDetailDTOList = new ArrayList<>();
+                    revenueDetailDTOS = new PageImpl<>(new ArrayList<>(), PageRequest.of(page - 1, size), 0);
+            }
+
+            assert revenueDetailDTOList != null;
+            HashMap<String, Double> map = this.statisticalService.getTotalDetailRevenue(revenueDetailDTOList);
+            model.addAttribute("page", page);
+            model.addAttribute("size", size);
+            model.addAttribute("type", type);
+            model.addAttribute("totalRevenue", map.get("totalSellingPrice"));
+            model.addAttribute("totalCost", map.get("totalImportCost"));
+            model.addAttribute("netProfit", map.get("profit"));
+            model.addAttribute("profitRate", map.get("profitRate"));
+            model.addAttribute("revenues", revenueDetailDTOS);
+            model.addAttribute("day", day);
+            model.addAttribute("month", month);
+            model.addAttribute("year", year);
+        } catch (Exception e) {
+            // Ghi log và xử lý lỗi
+            e.printStackTrace();
+            model.addAttribute("errorMessage", "Đã xảy ra lỗi khi xử lý dữ liệu: " + e.getMessage());
         }
 
-        assert revenueDetailDTOList != null;
-        HashMap<String , Double> map = this.statisticalService.getTotalDetailRevenue(revenueDetailDTOList) ;
-        model.addAttribute("page", page);
-        model.addAttribute("size", size);
-        model.addAttribute("type", type);
-        model.addAttribute("totalRevenue", map.get("totalSellingPrice"));
-        model.addAttribute("totalCost", map.get("totalImportCost"));
-        model.addAttribute("netProfit", map.get("totalSellingPrice") - map.get("totalImportCost"));
-        model.addAttribute("profitRate", map.get("profitRate") / revenueDetailDTOList.size());
-        model.addAttribute("revenues", revenueDetailDTOS);
-        model.addAttribute("day", day);
-        model.addAttribute("month", month);
-        model.addAttribute("year", year);
         return "admin/statistical/revenue-detail";
     }
 }

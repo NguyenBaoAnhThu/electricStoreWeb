@@ -76,6 +76,7 @@ public class StatisticalService implements IStatisticalService {
     public List<Order> getAllOrders() {
         return this.irevenueRepository.findAllOrders();
     }
+
     @Override
     public Page<OrderDetailRevenueDTO> getOrderDetailRevenue(List<Order> orderList, int page, int size) {
         Pageable pageable = PageRequest.of(page - 1, size );
@@ -143,12 +144,51 @@ public class StatisticalService implements IStatisticalService {
     }
 
 
-
     @Override
     public List<RevenueDetailDTO> getAllRevenueDetail(List<Order> orderList) {
-        return this.statisticalMapper.convertToRevenueDetailDTO(orderList);
+        // Lấy dữ liệu thô từ mapper
+        List<RevenueDetailDTO> rawRevenueDetails = this.statisticalMapper.convertToRevenueDetailDTO(orderList);
+
+        // Gộp dữ liệu theo productId để tránh trùng lặp
+        Map<Integer, RevenueDetailDTO> consolidatedMap = new HashMap<>();
+
+        for (RevenueDetailDTO dto : rawRevenueDetails) {
+            consolidatedMap.merge(dto.getId(), dto, (existing, newDto) -> {
+                existing.setQuantitySold(existing.getQuantitySold() + newDto.getQuantitySold());
+                existing.setTotalImportCost(existing.getTotalImportCost() + newDto.getTotalImportCost());
+                existing.setTotalSellingPrice(existing.getTotalSellingPrice() + newDto.getTotalSellingPrice());
+                existing.setProfit(existing.getProfit() + newDto.getProfit());
+
+                // Cập nhật lại tỷ lệ lợi nhuận
+                if (existing.getTotalImportCost() > 0) {
+                    double profitRate = (existing.getProfit() / existing.getTotalImportCost()) * 100;
+                    existing.setProfitRate(profitRate);
+                } else {
+                    existing.setProfitRate(0.0);
+                }
+                return existing;
+            });
+        }
+
+        return new ArrayList<>(consolidatedMap.values());
     }
 
+    @Override
+    public HashMap<String, Double> getTotalDetailRevenue(List<RevenueDetailDTO> revenueDetailDTOS) {
+        HashMap<String, Double> map = new HashMap<>();
+        double totalSellingPrice = revenueDetailDTOS.stream().mapToDouble(RevenueDetailDTO::getTotalSellingPrice).sum();
+        double totalImportCost = revenueDetailDTOS.stream().mapToDouble(RevenueDetailDTO::getTotalImportCost).sum();
+        double profit = revenueDetailDTOS.stream().mapToDouble(RevenueDetailDTO::getProfit).sum();
+
+        // Tính tỷ lệ lợi nhuận đúng cách
+        double profitRate = totalImportCost > 0 ? (profit / totalImportCost) * 100 : 0;
+
+        map.put("totalSellingPrice", totalSellingPrice);
+        map.put("totalImportCost", totalImportCost);
+        map.put("profit", profit);
+        map.put("profitRate", profitRate);
+        return map;
+    }
 
     @Override
     public Integer getTotalProductsSales(List<Order> orderList) {
@@ -160,19 +200,10 @@ public class StatisticalService implements IStatisticalService {
 
     @Override
     public Integer getStockProducts(List<Order> orderList) {
-        return (int) orderList.stream().flatMap(order -> order.getOrderDetails().stream())
+        return (int) orderList.stream()
+                .flatMap(order -> order.getOrderDetails().stream())
                 .map(orderDetail -> orderDetail.getProduct().getProductID())
                 .distinct()
                 .count();
-    }
-    @Override
-    public HashMap<String, Double> getTotalDetailRevenue(List<RevenueDetailDTO> revenueDetailDTOS) {
-
-        HashMap<String, Double> map = new HashMap<>();
-        map.put("totalSellingPrice" , revenueDetailDTOS.stream().mapToDouble(RevenueDetailDTO::getTotalSellingPrice).sum()) ;
-        map.put("totalImportCost" , revenueDetailDTOS.stream().mapToDouble(RevenueDetailDTO::getTotalImportCost).sum()) ;
-        map.put("profit" , revenueDetailDTOS.stream().mapToDouble(RevenueDetailDTO::getProfit).sum()) ;
-        map.put("profitRate" , revenueDetailDTOS.stream().mapToDouble(RevenueDetailDTO::getProfitRate).sum()) ;
-        return map;
     }
 }
