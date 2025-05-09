@@ -977,3 +977,119 @@ INSERT INTO payments (amount, payment_method, create_at, order_id) VALUES
 (28490000, 'ONLINE_BANKING', '2025-06-26 13:10:00', 198),
 (16140000, 'CASH', '2025-06-28 16:45:00', 199),
 (138670000, 'ONLINE_BANKING', '2025-06-30 09:30:00', 200);
+
+-- Thêm dữ liệu vào bảng invoices (phiếu nhập kho)
+INSERT INTO invoices (invoice_code, import_date, supplier_id, notes, discount, vat, additional_fees, cancel_reason)
+VALUES
+    ('NK0001', '2024-01-05', 1, 'Đơn hàng Apple đầu năm 2024', 5.0, 10.0, 50000, NULL),
+    ('NK0002', '2024-01-15', 2, 'Nhập Samsung quý 1/2024', 3.0, 10.0, 30000, NULL),
+    ('NK0003', '2024-01-25', 3, 'Nhập Oppo tháng 1/2024', 2.0, 10.0, 25000, NULL),
+    ('NK0004', '2024-02-05', 4, 'Nhập Xiaomi đợt 1 tháng 2', 4.0, 10.0, 35000, NULL),
+    ('NK0005', '2024-02-15', 5, 'Đơn hàng Sony quý 1', 3.5, 10.0, 40000, NULL),
+    ('NK0006', '2024-02-25', 6, 'Nhập Asus tháng 2/2024', 2.5, 10.0, 30000, NULL),
+    ('NK0007', '2024-03-05', 7, 'Nhập Dell đợt 1 tháng 3', 5.0, 10.0, 45000, NULL),
+    ('NK0008', '2024-03-15', 8, 'Nhập Huawei tháng 3/2024', 3.0, 10.0, 35000, NULL),
+    ('NK0009', '2024-03-25', 9, 'Đơn hàng LG tháng 3', 2.0, 10.0, 25000, NULL),
+    ('NK0010', '2024-04-05', 10, 'Nhập Lenovo đợt 1 tháng 4', 4.0, 10.0, 40000, NULL),
+    ('NK0011', '2024-04-10', 1, 'Nhập Apple bổ sung tháng 4', 5.0, 10.0, 50000, NULL),
+    ('NK0012', '2024-04-15', 2, 'Nhập Samsung bổ sung quý 2', 3.0, 10.0, 35000, NULL),
+    ('NK0013', '2024-04-20', 3, 'Nhập Oppo tháng 4/2024', 2.5, 10.0, 30000, NULL),
+    ('NK0014', '2024-04-25', 4, 'Nhập Xiaomi đợt 2 tháng 4', 4.0, 10.0, 40000, NULL),
+    ('NK0015', '2024-04-30', 5, 'Đơn hàng Sony cuối tháng 4', 3.5, 10.0, 45000, NULL);
+
+-- Thêm dữ liệu vào bảng invoice_item (chi tiết phiếu nhập)
+INSERT INTO invoice_item (product_id, product_code, product_name, brand, quantity, price, payment_status, invoice_id)
+VALUES
+    -- Phiếu NK0001
+    (7, 'SP0007', 'iPhone 15 Pro Max', 'Apple', 20, 27990000, 'ĐÃ THANH TOÁN', 1),
+    (19, 'SP0019', 'MacBook Pro 16 M3 Max', 'Apple', 10, 75990000, 'ĐÃ THANH TOÁN', 1),
+    (12, 'SP0012', 'iPad Pro M2 12.9', 'Apple', 15, 26990000, 'ĐÃ THANH TOÁN', 1),
+
+    -- Phiếu NK0002
+    (6, 'SP0006', 'Samsung Galaxy S23 Ultra', 'Samsung', 15, 23990000, 'ĐÃ THANH TOÁN', 2),
+    (13, 'SP0013', 'Samsung Galaxy Tab S9 Ultra', 'Samsung', 10, 21990000, 'ĐÃ THANH TOÁN', 2),
+
+    -- Phiếu NK0003
+    (3, 'SP0003', 'Oppo Find X5 Pro', 'Oppo', 15, 15990000, 'ĐÃ THANH TOÁN', 3),
+
+    -- Phiếu NK0004
+    (1, 'SP0001', 'Xiaomi Redmi Note 12 Pro', 'Xiaomi', 30, 6990000, 'ĐÃ THANH TOÁN', 4),
+    (8, 'SP0008', 'Xiaomi 14 Ultra', 'Xiaomi', 15, 20990000, 'ĐÃ THANH TOÁN', 4),
+    (10, 'SP0010', 'Xiaomi Pad 6 Pro', 'Xiaomi', 20, 11990000, 'ĐÃ THANH TOÁN', 4),
+
+    -- Phiếu NK0005
+    (4, 'SP0004', 'Vivo X90 Pro', 'Vivo', 20, 17990000, 'ĐÃ THANH TOÁN', 5),
+
+    -- Phiếu NK0006
+    (21, 'SP0021', 'Asus ROG Zephyrus G16', 'Asus', 10, 41990000, 'ĐÃ THANH TOÁN', 6),
+
+    -- Phiếu NK0007
+    (20, 'SP0020', 'Dell XPS 15', 'Dell', 12, 46990000, 'ĐÃ THANH TOÁN', 7),
+
+    -- Phiếu NK0008
+    (9, 'SP0009', 'Huawei MatePad Pro 11', 'Huawei', 15, 13490000, 'ĐÃ THANH TOÁN', 8),
+
+    -- Phiếu NK0009
+    (5, 'SP0005', 'Honor Magic5 Pro', 'Honor', 15, 16990000, 'CHỜ THANH TOÁN', 9),
+
+    -- Phiếu NK0010
+    (14, 'SP0014', 'Lenovo Tab P12 Pro', 'Lenovo', 15, 14490000, 'ĐÃ THANH TOÁN', 10),
+    (17, 'SP0017', 'Lenovo ThinkPad X1 Carbon', 'Lenovo', 10, 38990000, 'ĐÃ THANH TOÁN', 10),
+
+    -- Phiếu NK0011
+    (7, 'SP0007', 'iPhone 15 Pro Max', 'Apple', 15, 27990000, 'ĐÃ THANH TOÁN', 11),
+
+    -- Phiếu NK0012
+    (6, 'SP0006', 'Samsung Galaxy S23 Ultra', 'Samsung', 10, 23990000, 'ĐÃ THANH TOÁN', 12),
+
+    -- Phiếu NK0013
+    (3, 'SP0003', 'Oppo Find X5 Pro', 'Oppo', 10, 15990000, 'CHỜ THANH TOÁN', 13),
+    (11, 'SP0011', 'Realme Pad 2', 'Realme', 20, 6990000, 'CHỜ THANH TOÁN', 13),
+
+    -- Phiếu NK0014
+    (1, 'SP0001', 'Xiaomi Redmi Note 12 Pro', 'Xiaomi', 25, 6990000, 'CHỜ THANH TOÁN', 14),
+
+    -- Phiếu NK0015
+    (15, 'SP0015', 'HP Spectre x360', 'HP', 8, 32990000, 'CHỜ THANH TOÁN', 15),
+    (16, 'SP0016', 'Acer Predator Helios 300', 'Acer', 8, 29990000, 'CHỜ THANH TOÁN', 15);
+
+-- Thêm dữ liệu vào bảng invoice_history (lịch sử thanh toán)
+INSERT INTO invoice_history (invoice_id, method, amount, paid_at)
+VALUES
+    -- Thanh toán cho phiếu NK0001
+    (1, 'Chuyển khoản', 559800000 * 0.5, '2024-01-05 14:30:00'),
+    (1, 'Chuyển khoản', 559800000 * 0.5, '2024-01-20 10:15:00'),
+
+    -- Thanh toán cho phiếu NK0002
+    (2, 'Chuyển khoản', 359850000 * 0.7, '2024-01-15 11:45:00'),
+    (2, 'Tiền mặt', 359850000 * 0.3, '2024-01-30 16:20:00'),
+
+    -- Thanh toán cho phiếu NK0003
+    (3, 'Chuyển khoản', 239850000, '2024-01-25 09:30:00'),
+
+    -- Thanh toán cho phiếu NK0004
+    (4, 'Chuyển khoản', 209700000 * 0.3, '2024-02-05 13:15:00'),
+    (4, 'Chuyển khoản', 209700000 * 0.7, '2024-02-15 14:40:00'),
+
+    -- Thanh toán cho phiếu NK0005
+    (5, 'Tiền mặt', 359800000, '2024-02-15 10:10:00'),
+
+    -- Thanh toán cho phiếu NK0006
+    (6, 'Chuyển khoản', 419900000, '2024-02-28 15:30:00'),
+
+    -- Thanh toán cho phiếu NK0007
+    (7, 'Chuyển khoản', 563880000 * 0.6, '2024-03-07 09:45:00'),
+    (7, 'Tiền mặt', 563880000 * 0.4, '2024-03-20 14:15:00'),
+
+    -- Thanh toán cho phiếu NK0008
+    (8, 'Chuyển khoản', 202350000, '2024-03-18 11:20:00'),
+
+    -- Thanh toán cho phiếu NK0010
+    (10, 'Chuyển khoản', 217350000 * 0.4, '2024-04-06 10:30:00'),
+    (10, 'Chuyển khoản', 217350000 * 0.6, '2024-04-15 16:45:00'),
+
+    -- Thanh toán cho phiếu NK0011
+    (11, 'Tiền mặt', 419850000, '2024-04-12 13:10:00'),
+
+    -- Thanh toán cho phiếu NK0012
+    (12, 'Chuyển khoản', 239900000, '2024-04-18 14:25:00');
