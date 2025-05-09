@@ -21,7 +21,7 @@ import java.util.List;
 @Builder
 public class OrderDTO {
     private Integer id;
-    private String invoiceNumber;  // Mã đơn hàng (HD00001)
+    private String invoiceNumber;
 
     @Valid
     private List<ProductOrderDTO> productOrderDTOList = new ArrayList<>();
@@ -42,7 +42,6 @@ public class OrderDTO {
 
     private Double discountAmount;
     private Double discountPercent;
-    // Thêm trạng thái đơn hàng
     private OrderStatus status;
 
     public OrderDTO() {

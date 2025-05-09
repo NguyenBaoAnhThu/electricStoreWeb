@@ -46,12 +46,8 @@
             <hr style="border: 1px solid #e9ecef; margin: 20px 0;">
         </div>
 
-        <!-- Thông báo khi không có đơn hàng -->
+        <!-- Thông báo sử dụng fragment -->
         <div th:replace="~{admin/fragments/alert :: alerts}"></div>
-        <div th:if="${message}" class="alert alert-warning" style="border-left: 5px solid #fd7e14;">
-            <p th:text="${message}"></p>
-            <button class="close-btn" onclick="this.parentElement.style.display='none'">&times;</button>
-        </div>
 
         <!-- Bảng Danh Sách Đơn Hàng -->
         <div class="table-responsive">
@@ -87,20 +83,26 @@
                         <a class="btn btn-sm btn-info text-white" th:href="@{/Admin/order/view/{id}(id=${order.orderID})}" title="Xem chi tiết">
                             <i class="fas fa-eye"></i>
                         </a>
-                        <button th:if="${order.status.name() != 'CANCELLED' && order.status.name() != 'COMPLETE'}"
-                                class="btn btn-sm btn-danger ms-2"
-                                onclick="confirmCancelOrder([[${order.orderID}]])"
-                                title="Hủy đơn hàng">
-                            <i class="fas fa-ban"></i>
-                        </button>
+                        <form th:if="${order.status.name() != 'CANCELLED' && order.status.name() != 'COMPLETE'}"
+                              th:action="@{/Admin/order/cancel/{id}(id=${order.orderID})}" method="post" class="ms-2">
+                            <button type="submit" class="btn btn-sm btn-danger"
+                                    title="Hủy đơn hàng" onclick="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này?')">
+                                <i class="fas fa-ban"></i>
+                            </button>
+                        </form>
                     </td>
                 </tr>
                 </tbody>
             </table>
         </div>
 
+        <!-- Hiển thị thông báo nếu không có dữ liệu -->
+        <div th:if="${orders.size() == 0 && noResultMessage == null}" class="alert alert-info" style="border-left: 5px solid #17a2b8;">
+            <p>Không có đơn hàng nào được tìm thấy.</p>
+        </div>
+
         <!-- Phân trang -->
-        <div class="d-flex justify-content-end align-items-center mt-4">
+        <div class="d-flex justify-content-end align-items-center mt-4" th:if="${orders.size() > 0}">
             <nav aria-label="Page navigation">
                 <ul class="pagination m-0">
                     <!-- Nút trang đầu tiên -->
@@ -150,28 +152,6 @@
     </div>
 </main>
 
-<!-- Modal Hủy Đơn Hàng -->
-<div class="modal fade" id="cancelOrderModal" tabindex="-1" aria-labelledby="cancelOrderModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="cancelOrderModalLabel">Xác Nhận Hủy Đơn Hàng</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <p>Bạn có chắc chắn muốn hủy đơn hàng này không?</p>
-                <form id="cancelOrderForm" method="POST">
-                    <input type="hidden" id="orderIdToCancel" name="orderIdToCancel">
-                    <div class="text-end mt-4">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                        <button type="submit" class="btn btn-danger">Xác Nhận Hủy</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
 <div th:replace="~{admin/fragments/footer :: footer}"></div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -179,18 +159,42 @@
 <script th:src="@{/js/admin/layout.js}"></script>
 <script th:src="@{/js/admin/header.js}" type="text/javascript"></script>
 <script th:src="@{/js/admin/sidebarActiveMenu.js}" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-    function confirmCancelOrder(orderId) {
-        document.getElementById('orderIdToCancel').value = orderId;
-        document.getElementById('cancelOrderForm').action = '/Admin/order/cancel/' + orderId;
-        const modal = new bootstrap.Modal(document.getElementById('cancelOrderModal'));
-        modal.show();
-    }
+    // Tự động ẩn thông báo sau 5 giây
+    setTimeout(function() {
+        document.querySelectorAll('.alert').forEach(function(alert) {
+            alert.style.display = 'none';
+        });
+    }, 5000);
 
-    document.getElementById('sidebar-toggle').addEventListener('click', () => {
-        document.body.classList.toggle('sidebar-collapsed');
+    // JavaScript để xử lý thông báo sau khi thêm đơn hàng thành công
+    document.addEventListener('DOMContentLoaded', function() {
+        // Kiểm tra xem có thông báo về thêm đơn hàng thành công không
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('success') === 'added') {
+            // Hiển thị thông báo
+            const alertContainer = document.createElement('div');
+            alertContainer.className = 'alert alert-success';
+            alertContainer.style.borderLeft = '5px solid #28a745';
+            alertContainer.innerHTML = `
+                <p>Thêm đơn hàng mới thành công!</p>
+                <button class="close-btn" onclick="this.parentElement.style.display='none'">&times;</button>
+            `;
+
+            // Thêm vào đầu .wrapper
+            const wrapper = document.querySelector('.wrapper');
+            const formMb4 = document.querySelector('.form-mb-4');
+            wrapper.insertBefore(alertContainer, formMb4.nextSibling);
+
+            // Tự động ẩn sau 5 giây
+            setTimeout(function() {
+                alertContainer.style.display = 'none';
+            }, 5000);
+
+            // Xóa tham số từ URL để tránh hiển thị lại khi làm mới trang
+            history.replaceState(null, '', '/Admin/order');
+        }
     });
 </script>
 

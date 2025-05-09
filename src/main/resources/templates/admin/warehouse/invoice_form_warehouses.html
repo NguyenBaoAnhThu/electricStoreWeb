@@ -63,24 +63,25 @@
       <!-- Thông Tin Tab -->
       <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
         <div class="row g-3">
-          <div class="col-md-3">
+          <div class="col-md-4">
             <label class="form-label">Mã Phiếu Nhập</label>
             <input type="text" class="form-control" th:value="${invoice.receiptCode}" disabled>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-4">
             <label class="form-label">Ngày Nhập Kho</label>
             <input type="date" class="form-control" th:value="${invoice.getImportDate()}" disabled>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-4">
             <label class="form-label">Nhà Cung Cấp</label>
             <input type="text" class="form-control" th:value="${invoice.supplier != null ? invoice.supplier.supplierName : ''}" placeholder="Nhập tên NCC" disabled>
           </div>
-          <div class="col-md-3">
+          <!-- Ghi chú xuống dòng và chiếm toàn bộ chiều rộng -->
+          <div class="col-md-12">
             <label class="form-label">Ghi Chú</label>
-            <input type="text" class="form-control" th:value="${invoice.getNotes()}" disabled>
+            <textarea class="form-control" rows="3" th:text="${invoice.getNotes()}" disabled></textarea>
           </div>
         </div>
-      </div>
+    </div>
 
       <!-- Lịch Sử Thanh Toán Tab -->
       <div class="tab-pane fade" id="payment" role="tabpanel" aria-labelledby="payment-tab">

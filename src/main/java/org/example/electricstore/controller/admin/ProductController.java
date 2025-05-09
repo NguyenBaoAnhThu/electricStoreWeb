@@ -92,7 +92,7 @@ public class ProductController {
         model.addAttribute("suppliers", supplierService.getAllSuppliers());
 
         if (page > productPage.getTotalPages() && productPage.getTotalPages() > 0) {
-            int newPage = Math.max(1, productPage.getTotalPages()); // Quay về trang hợp lệ cuối cùng
+            int newPage = Math.max(1, productPage.getTotalPages());
             StringBuilder redirectUrl = new StringBuilder("redirect:/Admin/product-manager?page=" + newPage);
 
             if (keyword != null) {

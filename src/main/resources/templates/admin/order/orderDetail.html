@@ -238,8 +238,6 @@
         const orderId = url.substring(url.lastIndexOf('/') + 1);
         window.location.href = `/Admin/order/downloadInvoicePdf?orderId=${orderId}`;
     }
-
-    // Thay thế đoạn script ở cuối file HTML của bạn với đoạn code dưới đây
     document.addEventListener('DOMContentLoaded', function() {
         const confirmCancelBtn = document.getElementById('confirmCancelBtn');
         if (confirmCancelBtn) {
@@ -266,7 +264,7 @@
                 })
                     .then(response => {
                         if (response.ok) {
-                            window.location.href = '/Admin/order';
+                            window.location.href = '/Admin/order?msg=cancel_ok';
                         } else {
                             alert('Không thể hủy đơn hàng. Vui lòng thử lại sau.');
                         }

@@ -19,7 +19,4 @@ public class ProductChosen {
     @Min(value = 1000, message = "Giá sản phẩm phải lớn hơn 1000 VND")
     private Integer productPrice;
     private Integer quantity;
-
-
-
 }

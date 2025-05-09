@@ -439,12 +439,13 @@
                             window.open("/Admin/order/downloadInvoicePdf?orderId=" + response.orderId, "_blank");
                         }
 
+                        // Sửa đoạn code ở dòng 1157-1163 trong file paste-4.txt
                         if(response.paymentMethod == 1){
                             // Redirect to QR code payment page with orderId
                             window.location.href = "/Admin/payment/qr-code?orderId=" + response.orderId;
                         } else {
-                            // For cash payment, redirect to order list
-                            window.location.href = "/Admin/order";
+                            // For cash payment, redirect to order list with success parameter
+                            window.location.href = "/Admin/order?successMessage=Thêm đơn hàng mới thành công!";
                         }
 
                         // Clear storage

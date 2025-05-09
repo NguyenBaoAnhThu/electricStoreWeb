@@ -17,6 +17,4 @@ public class OrderHistoryRq {
     private String orderStatus;
     private String paymentMethod;
     private Double totalPrice;
-
-
 }
