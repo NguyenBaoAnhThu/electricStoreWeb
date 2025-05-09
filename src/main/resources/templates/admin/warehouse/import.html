@@ -56,15 +56,15 @@
             <div class="form-container position-relative mb-3">
                 <div class="red-bar"></div>
                 <div class="row g-3">
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <label for="receiptCode" class="form-label">Mã Phiếu Nhập</label>
                         <input type="text" class="form-control" id="receiptCode" name="receiptCode" th:value="${receiptCode}">
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <label for="importDate" class="form-label">Ngày Nhập Hàng</label>
                         <input type="date" class="form-control" id="importDate" name="importDate" th:value="${importDate}">
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <label for="supplier" class="form-label">Nhà Cung Cấp</label>
                         <select class="form-select" id="supplier" name="supplier"
                                 onchange="handleSupplierChange(this.value)">
@@ -76,9 +76,10 @@
                             </option>
                         </select>
                     </div>
-                    <div class="col-md-3">
+                    <!-- Ghi chú xuống hàng dưới và chiếm trọn hàng -->
+                    <div class="col-md-12">
                         <label for="notes" class="form-label">Ghi Chú</label>
-                        <input type="text" class="form-control" id="notes" name="notes" th:value="${notes}">
+                        <textarea class="form-control" id="notes" name="notes" rows="3" th:text="${notes}"></textarea>
                     </div>
                 </div>
             </div>

@@ -368,39 +368,38 @@
     <div class="wrapper">
         <h1 class="tittle">Thống kê bán hàng theo năm</h1>
 
-        <div class="search-container mb-4">
-            <form class="row p-4" id="filterForm">
-                <div class="col-md-8 mb-3">
-                    <label class="form-label">Năm</label>
-                    <select class="form-select" name="year" id="yearSelect">
-                        <option value="">Chọn năm</option>
-                        <option value="2024">2024</option>
-                        <option value="2025">2025</option>
-                    </select>
-                </div>
-                <div class="col-md-4 mb-3 d-flex justify-content-end align-items-end">
-                    <button class="btn btn-danger" type="submit" style="width: 180px;">
-                        <i class="fas fa-search me-2"></i> Áp dụng bộ lọc
-                    </button>
-                </div>
+        <form class="row p-4" id="filterForm">
+            <div class="col-md-5 mb-3">
+                <label class="form-label">Năm</label>
+                <select class="form-select" name="year" id="yearSelect">
+                    <option value="">Chọn năm</option>
+                    <option value="2024">2023</option>
+                    <option value="2024">2024</option>
+                    <option value="2025">2025</option>
+                </select>
+            </div>
+            <div class="col-md-7 mb-3 d-flex justify-content-end align-items-end">
+                <button class="btn btn-danger" type="submit" style="width: 200px;">
+                    <i class="fas fa-search me-2"></i> Áp dụng bộ lọc
+                </button>
+            </div>
 
-                <div class="d-flex justify-content-between align-items-center mt-3 w-100">
-                    <div class="dropdown">
-                        <button class="btn btn-primary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-filter me-2"></i> Chọn loại thống kê
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="filterDropdown">
-                            <li><a class="dropdown-item" href="/Admin/statistical?type=day">Theo ngày</a></li>
-                            <li><a class="dropdown-item" href="/Admin/statistical?type=month">Theo tháng</a></li>
-                            <li><a class="dropdown-item" href="/Admin/statistical?type=year">Theo năm</a></li>
-                        </ul>
-                    </div>
-                    <div id="dateMessage" class="px-3 py-2 bg-pink-100 text-danger rounded">
-                        <i class="fas fa-calendar-alt me-2"></i> Thống kê năm 2025
-                    </div>
+            <div class="d-flex justify-content-between align-items-center mt-3 w-100">
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-filter me-2"></i> Chọn loại thống kê
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="filterDropdown">
+                        <li><a class="dropdown-item" href="/Admin/statistical?type=day">Theo ngày</a></li>
+                        <li><a class="dropdown-item" href="/Admin/statistical?type=month">Theo tháng</a></li>
+                        <li><a class="dropdown-item" href="/Admin/statistical?type=year">Theo năm</a></li>
+                    </ul>
                 </div>
-            </form>
-        </div>
+                <div id="dateMessage" class="px-3 py-2 bg-pink-100 text-danger rounded ms-auto">
+                    <i class="fas fa-calendar-alt me-2"></i> Thống kê năm 2025
+                </div>
+            </div>
+        </form>
 
         <div class="card-container">
             <div class="card stats-card card-success">
@@ -408,7 +407,7 @@
                     <i class="fas fa-money-bill-wave icon"></i>
                     <div class="card-label">Doanh thu</div>
                     <h2 class="card-title" id="revenue-value">0 VND</h2>
-                    <a id="revenue-detail" href="#" class="card-link">
+                    <a id="revenue-detail" href="#" class="card-link" target="_blank">
                         Xem chi tiết <i class="fas fa-arrow-right"></i>
                     </a>
                 </div>
@@ -418,7 +417,7 @@
                     <i class="fas fa-shopping-cart icon"></i>
                     <div class="card-label">Đơn hàng thành công</div>
                     <h2 class="card-title" id="orders-value">0</h2>
-                    <a id="orders-detail" href="#" class="card-link">
+                    <a id="orders-detail" href="#" class="card-link" target="_blank">
                         Xem chi tiết <i class="fas fa-arrow-right"></i>
                     </a>
                 </div>
@@ -428,7 +427,7 @@
                     <i class="fas fa-box icon"></i>
                     <div class="card-label">Tổng sản phẩm</div>
                     <h2 class="card-title" id="products-value">0</h2>
-                    <a id="products-detail" href="#" class="card-link">
+                    <a id="products-detail" href="#" class="card-link" target="_blank">
                         Xem chi tiết <i class="fas fa-arrow-right"></i>
                     </a>
                 </div>
@@ -438,7 +437,7 @@
                     <i class="fas fa-times-circle icon"></i>
                     <div class="card-label">Đơn hàng hủy</div>
                     <h2 class="card-title" id="orders-cancel-value">0</h2>
-                    <a id="orders-cancel-detail" href="#" class="card-link">
+                    <a id="orders-cancel-detail" href="#" class="card-link" target="_blank">
                         Xem chi tiết <i class="fas fa-arrow-right"></i>
                     </a>
                 </div>

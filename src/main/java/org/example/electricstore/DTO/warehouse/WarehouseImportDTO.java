@@ -22,19 +22,14 @@ public class WarehouseImportDTO {
     private double totalAmount;
     private double grandTotal;
     private long totalQuantity;
-    
+
     public void validate() {
         validateImportDate();
         validateSupplier();
     }
 
-    /**
-     * Kiểm tra ngày nhập không thể ở tương lai
-     */
     private void validateImportDate() {
         if (importDate == null) {
-            // Nếu muốn thêm IMPORT_DATE_REQUIRED vào enum thì sử dụng
-            // Còn không thì có thể throw RuntimeException thông thường
             throw new RuntimeException("Ngày nhập không được để trống");
         }
 
@@ -43,10 +38,6 @@ public class WarehouseImportDTO {
             throw new InvoiceException(InvoiceError.FUTURE_IMPORT_DATE);
         }
     }
-
-    /**
-     * Kiểm tra nhà cung cấp không được để trống
-     */
     private void validateSupplier() {
         if (supplierId == null) {
             throw new InvoiceException(InvoiceError.SUPPLIER_REQUIRED);
