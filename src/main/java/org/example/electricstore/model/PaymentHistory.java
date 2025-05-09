@@ -1,5 +1,6 @@
 package org.example.electricstore.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,6 +24,7 @@ public class PaymentHistory {
 
     @ManyToOne
     @JoinColumn(name = "invoice_id", nullable = false, insertable = false, updatable = false)
+    @JsonIgnore
     private Invoice invoice;
 
     @Column(nullable = false)

@@ -1,5 +1,7 @@
 package org.example.electricstore.service.impl;
 
+import org.example.electricstore.exception.invoice.InvoiceError;
+import org.example.electricstore.exception.invoice.InvoiceException;
 import org.example.electricstore.model.Invoice;
 import org.example.electricstore.model.InvoiceItem;
 import org.example.electricstore.model.Product;
@@ -9,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,8 +53,28 @@ public class InvoiceService {
         return prefix + String.format("%04d", number);
     }
 
+    public void validateInvoice(Invoice invoice) {
+        // Kiểm tra ngày nhập
+        if (invoice.getImportDate() == null) {
+            throw new RuntimeException("Ngày nhập không được để trống");
+        }
+
+        LocalDate today = LocalDate.now();
+        if (invoice.getImportDate().isAfter(today)) {
+            throw new InvoiceException(InvoiceError.FUTURE_IMPORT_DATE);
+        }
+
+        // Kiểm tra nhà cung cấp
+        if (invoice.getSupplier() == null && invoice.getSupplierId() == null) {
+            throw new InvoiceException(InvoiceError.SUPPLIER_REQUIRED);
+        }
+    }
+
     @Transactional
     public Invoice saveInvoice(Invoice invoice) {
+        // Validate trước khi lưu
+        validateInvoice(invoice);
+
         Invoice savedInvoice = invoiceRepository.save(invoice);
 
         // Cập nhật số lượng tồn kho cho các sản phẩm

@@ -86,7 +86,7 @@
                 <div class="red-bar"></div>
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h5 class="fw-bold mb-0">Sản Phẩm</h5>
-                    <button type="button" class="add-product-btn" data-bs-toggle="modal" data-bs-target="#productModal">
+                    <button type="button" class="add-product-btn" id="addProductButton">
                         <i class="fas fa-plus me-1"></i> Thêm sản phẩm
                     </button>
                 </div>
@@ -163,7 +163,28 @@
         </form>
     </div>
 </main>
-
+<!-- Modal thông báo chưa chọn nhà cung cấp -->
+<div class="modal fade" id="supplierRequiredModal" tabindex="-1" aria-labelledby="supplierRequiredModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title" id="supplierRequiredModalLabel">Thông báo</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body d-flex align-items-center">
+                <div class="me-3 text-dark">
+                    <i class="material-icons" style="font-size:48px; color:black;">error_outline</i>
+                </div>
+                <div>
+                    <p class="mb-0">Vui lòng chọn nhà cung cấp trước khi thêm sản phẩm.</p>
+                </div>
+            </div>
+            <div class="modal-footer border-0 justify-content-center">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- Modal xác nhận lưu -->
 <div class="modal fade" id="saveConfirmModal" tabindex="-1" aria-labelledby="saveConfirmModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -275,31 +296,6 @@
     $(document).ready(function() {
         // Các biến toàn cục
         const STORAGE_KEY = 'warehouseImportData';
-        // const savedData = sessionStorage.getItem(STORAGE_KEY);
-        //
-        // if (savedData) {
-        //     const importData = JSON.parse(savedData);
-        //     const receiptCode = importData.header?.receiptCode || '';
-        //
-        //     // Tạo dữ liệu mới chỉ với mã phiếu
-        //     const newData = {
-        //         header: {
-        //             receiptCode: receiptCode,
-        //             importDate: '',
-        //             supplier: '',
-        //             notes: ''
-        //         },
-        //         products: [],
-        //         footer: {
-        //             discount: '0',
-        //             vat: '0',
-        //             additionalFees: '0',
-        //         }
-        //     };
-        //
-        //     // Lưu lại dữ liệu mới
-        //     sessionStorage.setItem(STORAGE_KEY, JSON.stringify(newData));
-        // }
         const productContainer = $("#productContainer");
         const noProductsMessage = $('#no-products-message');
 
@@ -356,8 +352,76 @@
         function setupEventListeners() {
             // Sự kiện cho các trường thông tin cơ bản
             $('#receiptCode, #notes').on('blur', saveDataToSession);
-            $('#importDate').on('change', saveDataToSession);
+
+            // Sự kiện cho ngày nhập - thêm validation
+            $('#importDate').on('change', function() {
+                saveDataToSession();
+
+                // Kiểm tra ngày nhập không thể ở tương lai
+                const selectedDate = new Date($(this).val());
+                const today = new Date();
+                // Đặt thời gian về 0 để so sánh chỉ ngày
+                selectedDate.setHours(0, 0, 0, 0);
+                today.setHours(0, 0, 0, 0);
+
+                if (selectedDate > today) {
+                    // Hiển thị lỗi
+                    $(this).addClass('is-invalid');
+                    if ($('#importDateError').length === 0) {
+                        $(this).after('<div id="importDateError" class="text-danger mt-1">Ngày nhập không thể ở tương lai</div>');
+                    }
+                } else {
+                    // Xóa lỗi
+                    $(this).removeClass('is-invalid');
+                    $('#importDateError').remove();
+                }
+            });
+
             $('#supplier').on('change', handleSupplierChange);
+
+            // Sự kiện cho nút thêm sản phẩm
+            $('.add-product-btn').on('click', function(e) {
+                e.preventDefault();
+                // Kiểm tra xem đã chọn nhà cung cấp chưa
+                const supplierId = $('#supplier').val();
+                if (!supplierId) {
+                    // Hiển thị modal thông báo cần chọn nhà cung cấp
+                    if ($('#supplierRequiredModal').length === 0) {
+                        // Nếu chưa có modal, tạo mới
+                        const modalHTML = `
+                    <div class="modal fade" id="supplierRequiredModal" tabindex="-1" aria-labelledby="supplierRequiredModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header bg-dark text-white">
+                                    <h5 class="modal-title" id="supplierRequiredModalLabel">Thông báo</h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body d-flex align-items-center">
+                                    <div class="me-3 text-dark">
+                                        <i class="material-icons" style="font-size:48px; color:black;">error_outline</i>
+                                    </div>
+                                    <div>
+                                        <p class="mb-0">Vui lòng chọn nhà cung cấp trước khi thêm sản phẩm.</p>
+                                    </div>
+                                </div>
+                                <div class="modal-footer border-0 justify-content-center">
+                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Đã hiểu</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+
+                        $('body').append(modalHTML);
+                    }
+
+                    const supplierRequiredModal = new bootstrap.Modal(document.getElementById('supplierRequiredModal'));
+                    supplierRequiredModal.show();
+                } else {
+                    // Mở modal thêm sản phẩm
+                    const productModal = new bootstrap.Modal(document.getElementById('productModal'));
+                    productModal.show();
+                }
+            });
 
             // Sự kiện cho các trường footer
             $('#discount, #additionalFees').on('blur', function() {
@@ -373,8 +437,10 @@
 
             // Sự kiện cho các nút thao tác
             $('#generatePdfOnlyBtn').on('click', function() {
-                const modal = new bootstrap.Modal(document.getElementById('saveConfirmModal'));
-                modal.show();
+                if (validateInvoice()) {
+                    const modal = new bootstrap.Modal(document.getElementById('saveConfirmModal'));
+                    modal.show();
+                }
             });
 
             $('#confirmSaveBtn').on('click', saveInvoice);
@@ -397,6 +463,51 @@
             });
 
             $('#productList').on('change', '.product-checkbox', updateSelectedCount);
+        }
+        function validateInvoice() {
+            let isValid = true;
+
+            // Xóa thông báo lỗi cũ
+            $('.is-invalid').removeClass('is-invalid');
+            $('#importDateError, #supplierError, #productsError').remove();
+
+            // Kiểm tra ngày nhập
+            const importDate = $('#importDate').val();
+            if (!importDate) {
+                $('#importDate').after('<div id="importDateError" class="text-danger mt-1">Ngày nhập không được để trống</div>');
+                isValid = false;
+            } else {
+                const selectedDate = new Date(importDate);
+                const today = new Date();
+                selectedDate.setHours(0, 0, 0, 0);
+                today.setHours(0, 0, 0, 0);
+
+                if (selectedDate > today) {
+                    $('#importDate').after('<div id="importDateError" class="text-danger mt-1">Ngày nhập không thể ở tương lai</div>');
+                    isValid = false;
+                }
+            }
+
+            // Kiểm tra nhà cung cấp
+            const supplierId = $('#supplier').val();
+            if (!supplierId) {
+                $('#supplier').after('<div id="supplierError" class="text-danger mt-1">Vui lòng chọn nhà cung cấp</div>');
+                isValid = false;
+            }
+
+            // Kiểm tra có sản phẩm hay không
+            if (productContainer.children().length === 0) {
+                $('#no-products-message').removeClass('d-none')
+                    .after('<div id="productsError" class="text-danger mt-1">Phiếu nhập phải có ít nhất một sản phẩm</div>');
+                isValid = false;
+            } else {
+                $('#productsError').remove();
+            }
+
+            // Xóa thông báo lỗi tổng quan nếu có
+            $('#validationErrorsContainer').remove();
+
+            return isValid;
         }
 
         /**
@@ -739,6 +850,7 @@
             // Định dạng với Intl.NumberFormat
             return new Intl.NumberFormat('vi-VN').format(numValue);
         }
+
         /**
          * Định dạng giá trị nhập vào trường tiền tệ
          */
@@ -869,6 +981,11 @@
          * Lưu phiếu nhập
          */
         function saveInvoice() {
+            // Validate phiếu trước khi lưu
+            if (!validateInvoice()) {
+                return;
+            }
+
             const importData = JSON.parse(sessionStorage.getItem(STORAGE_KEY));
             if (!importData) {
                 alert("Không tìm thấy dữ liệu trong sessionStorage");
@@ -910,11 +1027,36 @@
                     data: JSON.stringify(payload),
                     success: function(response) {
                         sessionStorage.removeItem(STORAGE_KEY);
-                        window.location.href = "/Admin/ware-houses/history_warehouse";
+
+                        // Chuyển hướng đến trang chi tiết phiếu thay vì trang lịch sử
+                        if (response.invoiceId) {
+                            window.location.href = "/Admin/ware-houses/invoice_form_warehouses/" + response.invoiceId;
+                        } else {
+                            // Phòng trường hợp response không có invoiceId (khả năng nhỏ)
+                            window.location.href = "/Admin/ware-houses/history_warehouse";
+                        }
                     },
                     error: function(xhr, status, error) {
                         console.error("Error response:", xhr.responseText);
-                        alert("Lỗi khi lưu phiếu: " + xhr.responseText);
+
+                        try {
+                            // Cố gắng parse response để hiển thị lỗi cụ thể từ server
+                            const responseObj = JSON.parse(xhr.responseText);
+
+                            // Hiển thị lỗi từ server
+                            if (typeof responseObj === 'object') {
+                                let errorMessage = "Lỗi khi lưu phiếu:\n";
+                                for (const key in responseObj) {
+                                    errorMessage += `- ${responseObj[key]}\n`;
+                                }
+                                alert(errorMessage);
+                            } else {
+                                alert("Lỗi khi lưu phiếu: " + xhr.responseText);
+                            }
+                        } catch (e) {
+                            // Nếu không parse được, hiển thị thông báo lỗi chung
+                            alert("Lỗi khi lưu phiếu: " + xhr.responseText);
+                        }
                     }
                 });
             } catch (err) {
@@ -985,7 +1127,17 @@
         $(input).val(formattedValue);
 
         // Kích hoạt tính toán tổng giá trị
-        calculateTotals();
+        try {
+            calculateTotals();
+        } catch (e) {
+            console.error("Error calling calculateTotals:", e);
+        }
+    }
+
+    // Hàm trợ giúp làm sạch dữ liệu draft trước khi submit
+    function clearDraftBeforeSubmit(event) {
+        // Xóa dữ liệu trong sessionStorage
+        sessionStorage.removeItem('warehouseImportData');
     }
 </script>
 

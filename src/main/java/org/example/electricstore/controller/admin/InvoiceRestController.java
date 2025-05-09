@@ -1,6 +1,8 @@
 package org.example.electricstore.controller.admin;
 
 import lombok.RequiredArgsConstructor;
+import org.example.electricstore.DTO.warehouse.PaymentHistoryDTO;
+import org.example.electricstore.exception.invoice.InvoiceException;
 import org.example.electricstore.model.*;
 import org.example.electricstore.repository.InvoiceRepository;
 import org.example.electricstore.repository.InvoiceItemRepository;
@@ -24,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/Admin/invoice")
@@ -47,17 +50,19 @@ public class InvoiceRestController {
     @Autowired
     private ProductService productService;
 
-    // In InvoiceRestController.java
     @PostMapping
-    public ResponseEntity<String> saveInvoice(@RequestBody Invoice invoice) {
+    public ResponseEntity<?> saveInvoice(@RequestBody Invoice invoice) {
         try {
-            // Check if supplierId exists in the request
+            // Kiểm tra và thiết lập nhà cung cấp
             if (invoice.getSupplier() == null && invoice.getSupplierId() != null) {
                 // Create a reference Supplier with just the ID
                 Supplier supplier = new Supplier();
                 supplier.setSupplierID(invoice.getSupplierId());
                 invoice.setSupplier(supplier);
             }
+
+            // Validate phiếu nhập kho trước khi lưu
+            invoiceService.validateInvoice(invoice);
 
             invoiceRepo.save(invoice); // Save invoice to get ID
 
@@ -71,7 +76,29 @@ public class InvoiceRestController {
                 }
                 invoiceItemRepo.saveAll(items);
             }
-            return ResponseEntity.ok("Lưu hóa đơn thành công!");
+
+            // Trả về thông tin phiếu đã tạo bao gồm ID
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Lưu hóa đơn thành công!");
+            response.put("invoiceId", invoice.getId());
+
+            return ResponseEntity.ok(response);
+        } catch (InvoiceException ex) {
+            // Phần xử lý lỗi không thay đổi
+            Map<String, String> error = new HashMap<>();
+
+            switch (ex.getErrorCode()) {
+                case FUTURE_IMPORT_DATE:
+                    error.put("importDate", ex.getMessage());
+                    break;
+                case SUPPLIER_REQUIRED:
+                    error.put("supplierId", ex.getMessage());
+                    break;
+                default:
+                    error.put("globalError", ex.getMessage());
+            }
+
+            return ResponseEntity.badRequest().body(error);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -115,12 +142,6 @@ public class InvoiceRestController {
                     .body("Lỗi khi hủy phiếu nhập: " + e.getMessage());
         }
     }
-
-    /**
-     * Cập nhật số lượng tồn kho của sản phẩm
-     * @param productId ID của sản phẩm
-     * @param quantity Số lượng thay đổi (dương: tăng, âm: giảm)
-     */
     private void updateProductStock(int productId, int quantity) {
         Product product = productService.findById(productId);
         if (product != null) {
@@ -257,14 +278,16 @@ public class InvoiceRestController {
     public ResponseEntity<?> getPaymentHistory(@RequestParam Integer invoiceId) {
         try {
             List<PaymentHistory> historyList = paymentHistoryRepository.findByInvoiceIdOrderByPaidAtDesc(invoiceId);
-            return ResponseEntity.ok(historyList);
+            List<PaymentHistoryDTO> dtoList = historyList.stream()
+                    .map(PaymentHistoryDTO::fromEntity)
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(dtoList);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Lỗi khi lấy dữ liệu lịch sử thanh toán");
         }
     }
-
     private String getPaymentMethodText(String method) {
         switch (method) {
             case "cash":

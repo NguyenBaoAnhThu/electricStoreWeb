@@ -1,5 +1,6 @@
 package org.example.electricstore.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -50,6 +51,7 @@ public class Invoice {
     private List<InvoiceItem> products;
 
     @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<PaymentHistory> paymentHistories;
 
     public Integer getSupplierId() {

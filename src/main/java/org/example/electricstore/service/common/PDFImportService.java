@@ -417,7 +417,7 @@ public class PDFImportService {
         dto.setReceiptCode(invoice.getReceiptCode());
         dto.setImportDate(invoice.getImportDate());
         if (invoice.getSupplier() != null) {
-            dto.setSupplierId(String.valueOf(invoice.getSupplier().getSupplierID()));
+            dto.setSupplierId(Integer.valueOf(invoice.getSupplier().getSupplierID()));
             dto.setSupplierName(invoice.getSupplier().getSupplierName());
         } else {
             dto.setSupplierId(null);

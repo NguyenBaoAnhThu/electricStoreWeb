@@ -1,6 +1,9 @@
 package org.example.electricstore.DTO.warehouse;
 
 import lombok.Data;
+import org.example.electricstore.exception.invoice.InvoiceError;
+import org.example.electricstore.exception.invoice.InvoiceException;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -9,7 +12,7 @@ public class WarehouseImportDTO {
     private Integer id;
     private String receiptCode;
     private LocalDate importDate;
-    private String supplierId;
+    private Integer supplierId;
     private String supplierName;
     private String notes;
     private double discount;
@@ -19,4 +22,34 @@ public class WarehouseImportDTO {
     private double totalAmount;
     private double grandTotal;
     private long totalQuantity;
+    
+    public void validate() {
+        validateImportDate();
+        validateSupplier();
+    }
+
+    /**
+     * Kiểm tra ngày nhập không thể ở tương lai
+     */
+    private void validateImportDate() {
+        if (importDate == null) {
+            // Nếu muốn thêm IMPORT_DATE_REQUIRED vào enum thì sử dụng
+            // Còn không thì có thể throw RuntimeException thông thường
+            throw new RuntimeException("Ngày nhập không được để trống");
+        }
+
+        LocalDate today = LocalDate.now();
+        if (importDate.isAfter(today)) {
+            throw new InvoiceException(InvoiceError.FUTURE_IMPORT_DATE);
+        }
+    }
+
+    /**
+     * Kiểm tra nhà cung cấp không được để trống
+     */
+    private void validateSupplier() {
+        if (supplierId == null) {
+            throw new InvoiceException(InvoiceError.SUPPLIER_REQUIRED);
+        }
+    }
 }

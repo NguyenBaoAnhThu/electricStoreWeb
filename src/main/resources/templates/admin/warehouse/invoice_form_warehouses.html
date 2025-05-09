@@ -121,7 +121,7 @@
           <td th:text="${item.productCode}"></td>
           <td th:text="${item.productName}"></td>
           <td th:text="${item.brand}"></td>
-          <td th:text="${item.quantity}"></td>
+          <td th:text="${item.quantity.intValue()}"></td>
           <td th:text="${#numbers.formatDecimal(item.price, 0, 'POINT', 0, 'COMMA')} + ' VNĐ'"></td>
           <td th:text="${#numbers.formatDecimal(item.quantity * item.price, 0, 'POINT', 0, 'COMMA')} + ' VNĐ'"></td>
         </tr>
@@ -363,7 +363,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-        <button type="button" class="btn btn-danger" onclick="confirmCancel()">Xác Nhận Hủy</button>
+        <button type="button" class="btn btn-danger" onclick="confirmCancel()">Xác Nhận</button>
       </div>
     </div>
   </div>
