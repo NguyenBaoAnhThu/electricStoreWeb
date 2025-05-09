@@ -369,8 +369,7 @@
     <div class="wrapper">
         <h1 class="tittle">Thống kê bán hàng theo tháng</h1>
 
-        <div class="search-container mb-4">
-            <form class="row p-4" id="filterForm">
+            <form class="row p-4 w-100" id="filterForm">
                 <div class="col-md-4 mb-3">
                     <label class="form-label">Tháng</label>
                     <select class="form-select" name="month" id="monthSelect">
@@ -386,12 +385,14 @@
                     <label class="form-label">Năm</label>
                     <select class="form-select" name="year" id="yearSelect">
                         <option value="">Chọn năm</option>
+                        <option value="2023">2023</option>
                         <option value="2024">2024</option>
                         <option value="2025">2025</option>
                     </select>
                 </div>
-                <div class="col-md-4 mb-3 d-flex align-items-end">
-                    <button class="btn btn-danger w-100" type="submit">
+
+                <div class="col-md-4 mb-3 d-flex justify-content-end align-items-end">
+                    <button class="btn btn-danger" type="submit" style="width: 200px;">
                         <i class="fas fa-search me-2"></i> Áp dụng bộ lọc
                     </button>
                 </div>
@@ -410,7 +411,6 @@
                     <div id="dateMessage"></div>
                 </div>
             </form>
-        </div>
 
         <div class="card-container">
             <div class="card stats-card card-success">

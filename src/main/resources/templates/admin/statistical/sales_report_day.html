@@ -368,44 +368,43 @@
     <div class="wrapper">
         <h1 class="tittle">Thống kê bán hàng</h1>
 
-        <div class="search-container mb-4">
-            <form class="row p-4" id="filterForm">
-                <div class="col-md-3 mb-3">
-                    <label class="form-label">Ngày</label>
-                    <select class="form-select" name="day" id="daySelect">
-                        <option value="">Chọn ngày</option>
-                        <script>
-                            for (let i = 1; i <= 31; i++) {
-                                document.write(`<option value="${i}">${i}</option>`);
-                            }
-                        </script>
-                    </select>
-                </div>
-                <div class="col-md-3 mb-3">
-                    <label class="form-label">Tháng</label>
-                    <select class="form-select" name="month" id="monthSelect">
-                        <option value="">Chọn tháng</option>
-                        <script>
-                            for (let i = 1; i <= 12; i++) {
-                                document.write(`<option value="${i}">Tháng ${i}</option>`);
-                            }
-                        </script>
-                    </select>
-                </div>
-                <div class="col-md-3 mb-3">
-                    <label class="form-label">Năm</label>
-                    <select class="form-select" name="year" id="yearSelect">
-                        <option value="">Chọn năm</option>
-                        <option value="2024">2023</option>
-                        <option value="2024">2024</option>
-                        <option value="2025">2025</option>
-                    </select>
-                </div>
-                <div class="col-md-3 mb-3 d-flex align-items-end">
-                    <button class="btn btn-danger w-100" type="submit">
-                        <i class="fas fa-search me-2"></i> Áp dụng bộ lọc
-                    </button>
-                </div>
+        <form class="row p-4 w-100" id="filterForm">
+            <div class="col-md-3 mb-3">
+                <label class="form-label">Ngày</label>
+                <select class="form-select" name="day" id="daySelect">
+                    <option value="">Chọn ngày</option>
+                    <script>
+                        for (let i = 1; i <= 31; i++) {
+                            document.write(`<option value="${i}">${i}</option>`);
+                        }
+                    </script>
+                </select>
+            </div>
+            <div class="col-md-3 mb-3">
+                <label class="form-label">Tháng</label>
+                <select class="form-select" name="month" id="monthSelect">
+                    <option value="">Chọn tháng</option>
+                    <script>
+                        for (let i = 1; i <= 12; i++) {
+                            document.write(`<option value="${i}">Tháng ${i}</option>`);
+                        }
+                    </script>
+                </select>
+            </div>
+            <div class="col-md-3 mb-3">
+                <label class="form-label">Năm</label>
+                <select class="form-select" name="year" id="yearSelect">
+                    <option value="">Chọn năm</option>
+                    <option value="2024">2023</option>
+                    <option value="2024">2024</option>
+                    <option value="2025">2025</option>
+                </select>
+            </div>
+            <div class="col-md-3 mb-3 d-flex align-items-end justify-content-end">
+                <button class="btn btn-danger" type="submit" style="width: 200px;">
+                    <i class="fas fa-search me-2"></i> Áp dụng bộ lọc
+                </button>
+            </div>
 
                 <div class="d-flex justify-content-between align-items-center mt-2 w-100">
                     <div class="dropdown">
@@ -421,7 +420,6 @@
                     <div id="dateMessage"></div>
                 </div>
             </form>
-        </div>
 
         <div class="card-container">
             <div class="card stats-card card-success">
