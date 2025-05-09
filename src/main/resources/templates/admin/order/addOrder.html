@@ -21,10 +21,15 @@
         .btn-action { border-radius: 4px; padding: 10px 20px; font-weight: 600; margin-top: 10px; }
         .red-bar { background-color: #dc3545; width: 4px; height: 100%; position: absolute; left: 0; top: 0; }
         .delete-btn { padding: 2px 6px; background-color: #dc3545; color: white; border: none; border-radius: 4px; }
-        .validation-message { font-size: 0.875em; margin-top: .25rem; display: block; }
         .text-end { text-align: right !important; }
         #productModal .table th, #productModal .table td { vertical-align: middle; }
         #productModal .table th:first-child, #productModal .table td:first-child { text-align: center; }
+        .error {
+            color: #dc3545;
+            font-size: 16px;
+            margin-top: 0.25rem;
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
@@ -73,27 +78,27 @@
                     <div class="col-md-4">
                         <label for="customerName" class="form-label">Tên Khách Hàng <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="customerName" name="customerName" th:field="*{customerDTO.customerName}" required>
-                        <p class="error text-danger" th:if="${#fields.hasErrors('customerDTO.customerName')}" th:errors="*{customerDTO.customerName}"></p>
+                        <p class="error text-danger" id="customerNameError" th:if="${#fields.hasErrors('customerDTO.customerName')}" th:errors="*{customerDTO.customerName}"></p>
                     </div>
                     <div class="col-md-4">
                         <label for="customerPhoneNumber" class="form-label">Số điện thoại <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="customerPhoneNumber" name="customerPhoneNumber" th:field="*{customerDTO.phoneNumber}" required>
-                        <p class="error text-danger" th:if="${#fields.hasErrors('customerDTO.phoneNumber')}" th:errors="*{customerDTO.phoneNumber}"></p>
+                        <p class="error text-danger" id="phoneNumberError" th:if="${#fields.hasErrors('customerDTO.phoneNumber')}" th:errors="*{customerDTO.phoneNumber}"></p>
                     </div>
                     <div class="col-md-4">
                         <label for="customerEmail" class="form-label">Email <span class="text-danger">*</span></label>
                         <input type="email" class="form-control" id="customerEmail" name="customerEmail" th:field="*{customerDTO.email}" required>
-                        <p class="error text-danger" th:if="${#fields.hasErrors('customerDTO.email')}" th:errors="*{customerDTO.email}"></p>
+                        <p class="error text-danger" id="emailError" th:if="${#fields.hasErrors('customerDTO.email')}" th:errors="*{customerDTO.email}"></p>
                     </div>
                     <div class="col-md-4">
                         <label for="customerAddress" class="form-label">Địa chỉ <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="customerAddress" name="customerAddress" th:field="*{customerDTO.address}" required>
-                        <p class="error text-danger" th:if="${#fields.hasErrors('customerDTO.address')}" th:errors="*{customerDTO.address}"></p>
+                        <p class="error text-danger" id="addressError" th:if="${#fields.hasErrors('customerDTO.address')}" th:errors="*{customerDTO.address}"></p>
                     </div>
                     <div class="col-md-4">
-                        <label for="customerBirthdate" class="form-label">Ngày sinh</label>
-                        <input type="date" class="form-control" id="customerBirthdate" name="customerBirthdate" th:field="*{customerDTO.birthDate}">
-                        <p class="error text-danger" th:if="${#fields.hasErrors('customerDTO.birthDate')}" th:errors="*{customerDTO.birthDate}"></p>
+                        <label for="customerBirthdate" class="form-label">Ngày sinh <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" id="customerBirthdate" name="customerBirthdate" th:field="*{customerDTO.birthDate}" required>
+                        <p class="error text-danger" id="birthDateError" th:if="${#fields.hasErrors('customerDTO.birthDate')}" th:errors="*{customerDTO.birthDate}"></p>
                     </div>
                 </div>
             </div>
@@ -103,7 +108,7 @@
                 <div class="red-bar"></div>
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h5 class="fw-bold mb-0">Sản Phẩm</h5>
-                    <button type="button" class="btn btn-primary" onclick="selectProduct(this)">
+                    <button type="button" class="btn btn-primary" id="addProductButton">
                         <i class="fas fa-plus me-1"></i> Thêm sản phẩm
                     </button>
                 </div>
@@ -166,7 +171,7 @@
                             <option value="1">Chuyển khoản</option>
                             <option value="2">Tiền mặt</option>
                         </select>
-                        <p class="error text-danger" th:if="${#fields.hasErrors('paymentMethod')}" th:errors="*{paymentMethod}"></p>
+                        <p class="error text-danger" id="paymentMethodError" th:if="${#fields.hasErrors('paymentMethod')}" th:errors="*{paymentMethod}"></p>
                     </div>
                 </div>
                 <hr class="my-2">
@@ -217,6 +222,29 @@
             <div class="modal-footer border-0 justify-content-center">
                 <button type="button" class="btn btn-primary" id="confirmCancelBtn">Xác nhận</button>
                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Hủy</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal thông báo cần chọn khách hàng -->
+<div class="modal fade" id="customerRequiredModal" tabindex="-1" aria-labelledby="customerRequiredModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title" id="customerRequiredModalLabel">Thông báo</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body d-flex align-items-center">
+                <div class="me-3 text-dark">
+                    <i class="material-icons" style="font-size:48px; color:black;">error_outline</i>
+                </div>
+                <div>
+                    <p class="mb-0">Vui lòng chọn khách hàng trước khi thêm sản phẩm.</p>
+                </div>
+            </div>
+            <div class="modal-footer border-0 justify-content-center">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Đóng</button>
             </div>
         </div>
     </div>
@@ -413,6 +441,11 @@
             window.location.href = "/Admin/order";
         });
 
+        // Gắn sự kiện cho nút thêm sản phẩm
+        $('#addProductButton').on('click', function() {
+            selectProductWithValidation();
+        });
+
         // Form submission handling
         $("#orderForm").submit(function(event) {
             event.preventDefault();
@@ -428,10 +461,10 @@
 
             // Kiểm tra xem có sản phẩm không
             if ($('#productList tr.product-row').length === 0) {
-                alert("Vui lòng thêm ít nhất một sản phẩm vào đơn hàng");
+                $('#noProductsMessage').html('<span class="error" style="font-weight: 500;!important;">Vui lòng thêm ít nhất một sản phẩm</span>');
+                $('#noProductsMessage').show();
                 return;
             }
-
             let formData = $(this).serialize();
             console.log("Submitting form data:", formData);
 
@@ -450,8 +483,7 @@
                             window.open("/Admin/order/downloadInvoicePdf?orderId=" + response.orderId, "_blank");
                         }
 
-                        // Sửa đoạn code ở dòng 1157-1163 trong file paste-4.txt
-                        if(response.paymentMethod == 1){
+                        if (response.paymentMethod == 1) {
                             // Redirect to QR code payment page with orderId
                             window.location.href = "/Admin/payment/qr-code?orderId=" + response.orderId;
                         } else {
@@ -639,8 +671,113 @@
         console.log(`Grand total: ${grandTotal}`);
     }
 
+    // Verify customer information and show modal if incomplete
+    function selectProductWithValidation() {
+        console.log("selectProductWithValidation called");
+
+        // Kiểm tra nếu đã có customerId thì cho phép thêm sản phẩm
+        const customerId = document.getElementById('customerId').value;
+        if (customerId) {
+            // Đã chọn khách hàng có sẵn, thực hiện chọn sản phẩm
+            selectProduct();
+            return;
+        }
+
+        // Kiểm tra thông tin khách hàng nếu nhập mới
+        const nameInput = document.getElementById('customerName');
+        const phoneInput = document.getElementById('customerPhoneNumber');
+        const addressInput = document.getElementById('customerAddress');
+        const emailInput = document.getElementById('customerEmail');
+
+        // Xóa các thông báo lỗi hiện tại
+        document.querySelectorAll('.error').forEach(error => {
+            error.textContent = '';
+            error.style.display = 'none';
+        });
+
+        let isValid = true;
+
+        // Kiểm tra tên khách hàng
+        if (!nameInput.value.trim()) {
+            const errorElement = document.getElementById('customerNameError') ||
+                document.querySelector('.error[for="customerName"]');
+            if (errorElement) {
+                errorElement.textContent = 'Tên không được để trống';
+                errorElement.style.display = 'block';
+            } else {
+                const newError = document.createElement('p');
+                newError.className = 'error text-danger';
+                newError.id = 'customerNameError';
+                newError.textContent = 'Tên không được để trống';
+                nameInput.parentNode.appendChild(newError);
+            }
+            isValid = false;
+        }
+
+        // Kiểm tra số điện thoại
+        if (!phoneInput.value.trim()) {
+            const errorElement = document.getElementById('phoneNumberError') ||
+                document.querySelector('.error[for="customerPhoneNumber"]');
+            if (errorElement) {
+                errorElement.textContent = 'Số điện thoại không được để trống';
+                errorElement.style.display = 'block';
+            } else {
+                const newError = document.createElement('p');
+                newError.className = 'error text-danger';
+                newError.id = 'phoneNumberError';
+                newError.textContent = 'Số điện thoại không được để trống';
+                phoneInput.parentNode.appendChild(newError);
+            }
+            isValid = false;
+        }
+
+        // Kiểm tra địa chỉ
+        if (!addressInput.value.trim()) {
+            const errorElement = document.getElementById('addressError') ||
+                document.querySelector('.error[for="customerAddress"]');
+            if (errorElement) {
+                errorElement.textContent = 'Địa chỉ không được để trống';
+                errorElement.style.display = 'block';
+            } else {
+                const newError = document.createElement('p');
+                newError.className = 'error text-danger';
+                newError.id = 'addressError';
+                newError.textContent = 'Địa chỉ không được để trống';
+                addressInput.parentNode.appendChild(newError);
+            }
+            isValid = false;
+        }
+
+        // Kiểm tra email
+        if (!emailInput.value.trim()) {
+            const errorElement = document.getElementById('emailError') ||
+                document.querySelector('.error[for="customerEmail"]');
+            if (errorElement) {
+                errorElement.textContent = 'Email không được để trống';
+                errorElement.style.display = 'block';
+            } else {
+                const newError = document.createElement('p');
+                newError.className = 'error text-danger';
+                newError.id = 'emailError';
+                newError.textContent = 'Email không được để trống';
+                emailInput.parentNode.appendChild(newError);
+            }
+            isValid = false;
+        }
+
+        if (!isValid) {
+            // Hiển thị modal thông báo cần điền đầy đủ thông tin khách hàng
+            const customerRequiredModal = new bootstrap.Modal(document.getElementById('customerRequiredModal'));
+            customerRequiredModal.show();
+            return;
+        }
+
+        // Thông tin khách hàng hợp lệ, tiếp tục chọn sản phẩm
+        selectProduct();
+    }
+
     // Select product function
-    function selectProduct(button) {
+    function selectProduct() {
         console.log("Select product button clicked");
 
         // Save customer data
@@ -653,9 +790,10 @@
             let customerBirthdate = $('#customerBirthdate').val();
             let customerCode = $('#customerCode').val();
 
-
             if (!customerName || !customerPhoneNumber || !customerEmail || !customerAddress) {
-                alert("Vui lòng điền đầy đủ thông tin khách hàng trước khi thêm sản phẩm");
+                // Hiển thị modal thông báo
+                const customerRequiredModal = new bootstrap.Modal(document.getElementById('customerRequiredModal'));
+                customerRequiredModal.show();
                 return;
             }
 
@@ -667,7 +805,6 @@
                 email: customerEmail,
                 birthdate: customerBirthdate,
                 code: customerCode !== "Tự sinh khi lưu" ? customerCode : ""
-
             };
             sessionStorage.setItem("selectedNewCustomer", JSON.stringify(customerData));
             console.log("Saved new customer data to sessionStorage", customerData);
@@ -733,6 +870,7 @@
         // Cập nhật hiển thị phần sản phẩm
         updateProductSectionDisplay();
     }
+
     // Khởi tạo mã khách hàng
     document.getElementById("customerCode").value = "Tự sinh khi lưu";
     document.getElementById("customerCodeHidden").value = "";
@@ -748,5 +886,7 @@
             document.getElementById("customerCode").value = "Tự sinh khi lưu";
         });
 </script>
+
+<script th:src="@{/js/admin/orderValidation.js}"></script>
 </body>
 </html>

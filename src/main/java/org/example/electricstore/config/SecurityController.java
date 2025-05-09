@@ -28,14 +28,12 @@ public class SecurityController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    // Trang đăng nhập
     @GetMapping(value = "/login")
     public String loginPage(Model model, @RequestParam(value = "error", defaultValue = "") String error) {
         model.addAttribute("error", error);
         return "login";
     }
 
-    // Trang chủ sau khi đăng nhập
     @GetMapping(value = "/home")
     public String homePage(Authentication authentication, Model model) {
         String username = authentication.getName(); // Lấy tên người dùng đã đăng nhập
@@ -57,32 +55,28 @@ public class SecurityController {
         }
     }
 
-    // Xử lý khi đăng xuất thành công
     @GetMapping(value = "/logoutSuccessful")
     public String logoutSuccessfulPage(Model model) {
         model.addAttribute("title", "Logout");
         return "login";
     }
 
-    // Trang lỗi 403 - Không có quyền truy cập
     @GetMapping(value = "/403")
     public String view403Page() {
         return "error";
     }
 
-    // Xem thông tin tài khoản - cả ADMIN và EMPLOYEE đều có thể xem
     @GetMapping("/account")
     public String viewAccount(Authentication authentication, Model model) {
         String username = authentication.getName();
         User user = userRepository.findByUsername(username);
         if (user == null) {
-            return "error"; // Trả về trang lỗi nếu không tìm thấy user
+            return "error";
         }
         model.addAttribute("user", user);
-        return "account"; // Hiển thị trang tài khoản
+        return "account";
     }
 
-    // Cập nhật thông tin tài khoản - chỉ ADMIN có quyền
     @PostMapping("/account/update")
     public String updateAccount(
             Authentication authentication,
@@ -94,7 +88,6 @@ public class SecurityController {
             Model model,
             RedirectAttributes redirectAttributes) {
 
-        // Kiểm tra quyền truy cập - chỉ ADMIN có thể cập nhật
         if (!hasRole("ROLE_ADMIN")) {
             redirectAttributes.addFlashAttribute("error", "Bạn không có quyền cập nhật thông tin!");
             return "redirect:/account";
@@ -106,10 +99,8 @@ public class SecurityController {
             return "error";
         }
 
-        // Cập nhật thông tin
         user.setEmail(email);
 
-        // Cập nhật các thông tin mới
         if (employeeName != null && !employeeName.trim().isEmpty()) {
             user.setEmployeeName(employeeName);
         }
@@ -130,7 +121,6 @@ public class SecurityController {
         return "redirect:/account";
     }
 
-    // Thay đổi mật khẩu - chỉ ADMIN có quyền
     @PostMapping("/account/change-password")
     public String changePassword(
             Authentication authentication,
@@ -140,7 +130,6 @@ public class SecurityController {
             Model model,
             RedirectAttributes redirectAttributes) {
 
-        // Kiểm tra quyền truy cập - chỉ ADMIN có thể đổi mật khẩu
         if (!hasRole("ROLE_ADMIN")) {
             redirectAttributes.addFlashAttribute("error", "Bạn không có quyền thay đổi mật khẩu!");
             return "redirect:/account";
@@ -152,19 +141,16 @@ public class SecurityController {
             return "error";
         }
 
-        // Kiểm tra mật khẩu cũ có đúng không
         if (!passwordEncoder.matches(oldPassword, user.getEncrytedPassword())) {
             redirectAttributes.addFlashAttribute("error", "Mật khẩu cũ không đúng!");
             return "redirect:/account";
         }
 
-        // Kiểm tra mật khẩu mới có trùng khớp không
         if (!newPassword.equals(confirmPassword)) {
             redirectAttributes.addFlashAttribute("error", "Mật khẩu mới và xác nhận mật khẩu không trùng khớp!");
             return "redirect:/account";
         }
 
-        // Cập nhật mật khẩu mới
         user.setEncrytedPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
 
@@ -172,7 +158,6 @@ public class SecurityController {
         return "redirect:/account";
     }
 
-    // Phương thức tiện ích để kiểm tra vai trò
     private boolean hasRole(String role) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication.getAuthorities().stream()
