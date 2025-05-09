@@ -298,6 +298,9 @@ public class ProductController {
         productDTO.setCreateAt(LocalDateTime.now());
         productDTO.setUpdateAt(LocalDateTime.now());
 
+        // Thiết lập giá trị stock mặc định là 0
+        productDTO.setStock(0);
+
         // Thêm các thuộc tính vào model
         model.addAttribute("product", productDTO);
         model.addAttribute("categories", categoryService.getAllCategories());
@@ -327,13 +330,20 @@ public class ProductController {
         productDTO.setProductCode(generatedCode);
         logger.info("Mã sản phẩm tự động: {}", generatedCode);
 
+        // Thiết lập giá trị stock mặc định là 0 nếu chưa được thiết lập
+        if (productDTO.getStock() == null) {
+            productDTO.setStock(0);
+            logger.info("Thiết lập giá trị stock mặc định là 0");
+        }
+
         // Log thông tin sản phẩm
-        logger.info("Thông tin sản phẩm: Tên={}, Giá={}, Danh mục={}, Thương hiệu={}, Nhà cung cấp={}",
+        logger.info("Thông tin sản phẩm: Tên={}, Giá={}, Danh mục={}, Thương hiệu={}, Nhà cung cấp={}, Stock={}",
                 productDTO.getName(),
                 productDTO.getPrice(),
                 productDTO.getCategoryId(),
                 productDTO.getBrandId(),
-                productDTO.getId());
+                productDTO.getId(),
+                productDTO.getStock());
 
         // Kiểm tra lỗi validation (trừ lỗi mainImageUrl nếu có ảnh)
         if (bindingResult.hasErrors() && (bindingResult.getFieldError("mainImageUrl") == null ||
@@ -376,6 +386,11 @@ public class ProductController {
             // Chuyển đổi từ DTO sang Entity
             Product product = productMapper.toEntity(productDTO);
             logger.info("Đã chuyển đổi từ DTO sang Entity");
+
+            // Đảm bảo stock được thiết lập là 0 trong entity
+            if (product.getStock() == null) {
+                product.setStock(0);
+            }
 
             // Thiết lập mối quan hệ giữa product và productDetail
             if (product.getProductDetail() != null) {

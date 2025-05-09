@@ -872,19 +872,33 @@
     }
 
     // Khởi tạo mã khách hàng
-    document.getElementById("customerCode").value = "Tự sinh khi lưu";
-    document.getElementById("customerCodeHidden").value = "";
+    document.addEventListener('DOMContentLoaded', function() {
+        // Chỉ khởi tạo mã khách hàng mới nếu không có customerId
+        // và customerCode hiện tại chưa được thiết lập
+        if (!document.getElementById("customerId").value &&
+            (!document.getElementById("customerCode").value ||
+                document.getElementById("customerCode").value === "Tự sinh khi lưu")) {
 
-    fetch('/Admin/customers/next-code')
-        .then(response => response.text())
-        .then(nextCode => {
-            document.getElementById("customerCode").value = nextCode;
-            document.getElementById("customerCodeHidden").value = nextCode;
-        })
-        .catch(error => {
-            console.error('Error fetching next customer code:', error);
             document.getElementById("customerCode").value = "Tự sinh khi lưu";
-        });
+            document.getElementById("customerCodeHidden").value = "";
+
+            fetch('/Admin/customers/next-code')
+                .then(response => response.text())
+                .then(nextCode => {
+                    // Chỉ cập nhật nếu chưa có khách hàng được chọn
+                    if (!document.getElementById("customerId").value) {
+                        document.getElementById("customerCode").value = nextCode;
+                        document.getElementById("customerCodeHidden").value = nextCode;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching next customer code:', error);
+                    if (!document.getElementById("customerId").value) {
+                        document.getElementById("customerCode").value = "Tự sinh khi lưu";
+                    }
+                });
+        }
+    });
 </script>
 
 <script th:src="@{/js/admin/orderValidation.js}"></script>

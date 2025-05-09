@@ -27,6 +27,12 @@
         .text-end { text-align: right !important; }
         #productModal .table th, #productModal .table td { vertical-align: middle; }
         #productModal .table th:first-child, #productModal .table td:first-child { text-align: center; }
+        .error {
+            color: #dc3545;
+            font-size: 16px;
+            margin-top: 0.25rem;
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
@@ -367,7 +373,7 @@
                     // Hiển thị lỗi
                     $(this).addClass('is-invalid');
                     if ($('#importDateError').length === 0) {
-                        $(this).after('<div id="importDateError" class="text-danger mt-1">Ngày nhập không thể ở tương lai</div>');
+                        $(this).after('<div id="importDateError" class="error">Ngày nhập không thể ở tương lai</div>');
                     }
                 } else {
                     // Xóa lỗi
@@ -473,7 +479,7 @@
             // Kiểm tra ngày nhập
             const importDate = $('#importDate').val();
             if (!importDate) {
-                $('#importDate').after('<div id="importDateError" class="text-danger mt-1">Ngày nhập không được để trống</div>');
+                $('#importDate').after('<div id="importDateError" class="error">Ngày nhập không được để trống</div>');
                 isValid = false;
             } else {
                 const selectedDate = new Date(importDate);
@@ -482,7 +488,7 @@
                 today.setHours(0, 0, 0, 0);
 
                 if (selectedDate > today) {
-                    $('#importDate').after('<div id="importDateError" class="text-danger mt-1">Ngày nhập không thể ở tương lai</div>');
+                    $('#importDate').after('<div id="importDateError" class="error">Ngày nhập không thể ở tương lai</div>');
                     isValid = false;
                 }
             }
@@ -490,14 +496,14 @@
             // Kiểm tra nhà cung cấp
             const supplierId = $('#supplier').val();
             if (!supplierId) {
-                $('#supplier').after('<div id="supplierError" class="text-danger mt-1">Vui lòng chọn nhà cung cấp</div>');
+                $('#supplier').after('<div id="supplierError" class="error">Vui lòng chọn nhà cung cấp</div>');
                 isValid = false;
             }
 
             // Kiểm tra có sản phẩm hay không
             if (productContainer.children().length === 0) {
                 $('#no-products-message').removeClass('d-none')
-                    .after('<div id="productsError" class="text-danger mt-1" style="font-weight: 500;">Phiếu nhập phải có ít nhất một sản phẩm</div>');
+                    .after('<div id="productsError" class="error">Phiếu nhập phải có ít nhất một sản phẩm</div>');
                 isValid = false;
             } else {
                 $('#productsError').remove();

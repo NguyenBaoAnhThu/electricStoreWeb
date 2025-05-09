@@ -77,6 +77,7 @@ public class ProductDTO {
     private String screenResolution;
     private String ports;
     private Integer weight;
+    private Integer stock;
 
     public void setSupplierId(Integer supplierId) {
         this.id = supplierId;
