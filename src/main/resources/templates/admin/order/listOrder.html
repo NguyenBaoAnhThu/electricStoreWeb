@@ -159,7 +159,12 @@
 <script th:src="@{/js/admin/layout.js}"></script>
 <script th:src="@{/js/admin/header.js}" type="text/javascript"></script>
 <script th:src="@{/js/admin/sidebarActiveMenu.js}" defer></script>
-
+<script th:fragment="sidebarScript">
+    // Toggle sidebar
+    document.getElementById('sidebar-toggle').addEventListener('click', () => {
+        document.body.classList.toggle('sidebar-collapsed');
+    });
+</script>
 <script>
     // Tự động ẩn thông báo sau 5 giây
     setTimeout(function() {

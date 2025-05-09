@@ -203,15 +203,12 @@
     </div>
 </main>
 
-<!-- Footer Fragment -->
 <div th:replace="~{admin/fragments/footer :: footer}"></div>
 
-<!-- Scripts -->
 <script th:src="@{/js/admin/layout.js}"></script>
 <script th:src="@{/js/admin/sidebarActiveMenu.js}" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script th:fragment="sidebarScript">
-    // Toggle sidebar
     document.getElementById('sidebar-toggle').addEventListener('click', () => {
         document.body.classList.toggle('sidebar-collapsed');
     });
