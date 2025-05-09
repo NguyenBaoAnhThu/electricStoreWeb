@@ -23,8 +23,6 @@ import java.util.Map;
 @Controller
 @RequestMapping("/Admin/customers")
 public class CustomerController {
-
-
     private final CustomerService customerService;
     private final OrderService orderService;
 
@@ -89,5 +87,10 @@ public class CustomerController {
         }
         this.customerService.updateCustomer(customerDTO, customerDTO.getCustomerId());
         return ResponseEntity.ok("Đã cập nhật khách hàng thành công!");
+    }
+    @GetMapping("/next-code")
+    @ResponseBody
+    public String getNextCustomerCode() {
+        return customerService.getNextCustomerCode();
     }
 }

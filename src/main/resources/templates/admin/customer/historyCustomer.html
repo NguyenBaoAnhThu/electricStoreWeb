@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -140,6 +140,7 @@
       <div class="card-body customer-info">
         <div class="row">
           <div class="col-md-6">
+            <p><strong>Mã KH:</strong> <span th:text="${customer.customerCode}"></span></p>
             <p><strong>Họ và Tên:</strong> <span th:text="${customer.customerName}"></span></p>
             <p><strong>Số Điện Thoại:</strong> <span th:text="${customer.phoneNumber}"></span></p>
           </div>
@@ -155,9 +156,10 @@
         <thead class="table-dark">
         <tr>
           <th width="60">STT</th>
+          <th width="120">Mã Đơn</th>
           <th>Ngày Mua</th>
           <th>Tổng Tiền</th>
-          <th>Trạng Thái</th>
+          <th width="150">Trạng Thái</th>
           <th>Phương thức thanh toán</th>
           <th width="80">Chi Tiết</th>
         </tr>
@@ -165,17 +167,17 @@
         <tbody>
         <tr th:each="order,c : ${orderHistoryRqs}">
           <td th:text="${c.index + 1}"></td>
+          <td class="order-code-cell">-</td>
           <td th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm')}"></td>
           <td th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
-          <td class="text-center">
+          <td>
+            <!-- Thay đổi ở đây: Sửa lại phần hiển thị trạng thái giống trang danh sách đơn hàng -->
             <span class="badge px-3 py-2 w-100" style="min-width: 120px; display: inline-block;"
-                  th:classappend="${order.orderStatus == 'Đã giao hàng' ? 'bg-success' :
-                                 (order.orderStatus == 'Đã hủy' ? 'bg-danger' :
-                                 (order.orderStatus == 'Đang xử lý' ? 'bg-warning text-dark' : 'bg-secondary'))}"
-                  th:text="${order.orderStatus}">
+                  th:classappend="${order.orderStatus == 'COMPLETE'} ? 'bg-success' : 'bg-danger'"
+                  th:text="${order.orderStatus == 'COMPLETE' ? 'ĐÃ HOÀN THÀNH' : 'ĐÃ HỦY'}">
             </span>
           </td>
-          <td th:text="${order.paymentMethod}"></td>
+          <td class="payment-method-cell" th:text="${order.paymentMethod}"></td>
           <td class="action-buttons text-center">
             <a class="btn btn-sm btn-info text-white" href="#"
                th:attr="data-order-id=${order.id}"
@@ -263,10 +265,40 @@
 <script th:src="@{/js/admin/sidebarActiveMenu.js}" defer></script>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
+    // Lấy thông tin đơn hàng từ model để hiển thị mã đơn hàng
+    const orderRows = document.querySelectorAll("table.table-history tbody tr");
+
+    // Thêm mã đơn hàng theo format HD00xxx
+    orderRows.forEach((row, index) => {
+      // Lấy ID đơn hàng từ nút "Chi tiết"
+      const orderIdBtn = row.querySelector("[data-order-id]");
+      if (orderIdBtn) {
+        const orderId = orderIdBtn.getAttribute("data-order-id");
+        // Format mã đơn hàng theo quy tắc HD + orderId với 5 chữ số
+        const formattedOrderCode = "HD" + orderId.padStart(5, "0");
+
+        // Cập nhật ô mã đơn hàng
+        const orderCodeCell = row.querySelector(".order-code-cell");
+        if (orderCodeCell) {
+          orderCodeCell.textContent = formattedOrderCode;
+        }
+      }
+    });
+
+    // Dịch phương thức thanh toán
+    document.querySelectorAll(".payment-method-cell").forEach(function(cell) {
+      const text = cell.textContent.trim();
+      if (text === "CASH") {
+        cell.textContent = "Tiền mặt";
+      } else if (text === "ONLINE_BANKING") {
+        cell.textContent = "Chuyển khoản";
+      }
+    });
+
     document.querySelectorAll("[data-bs-target='#orderDetailModal']").forEach(button => {
       button.addEventListener("click", function () {
         let orderId = this.getAttribute("data-order-id");
-        document.getElementById("orderId").textContent = orderId;
+        document.getElementById("orderId").textContent = "HD" + orderId.padStart(5, "0");
 
         fetch(`/Admin/customers/api/orders/${orderId}/details`)
                 .then(response => response.json())

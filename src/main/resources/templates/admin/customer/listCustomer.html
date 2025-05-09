@@ -53,6 +53,7 @@
                 <thead class="table-dark">
                 <tr>
                     <th width="60">STT</th>
+                    <th>Mã KH</th>
                     <th>Tên Khách Hàng</th>
                     <th>Số Điện Thoại</th>
                     <th>Địa Chỉ</th>
@@ -64,6 +65,7 @@
                 <tbody>
                 <tr th:each="item, c : ${customers}">
                     <td th:text="${c.index + 1}"></td>
+                    <td th:text="${item.customerCode}"></td>
                     <td th:text="${item.customerName}"></td>
                     <td th:text="${item.phoneNumber}"></td>
                     <td th:text="${item.address}"></td>
@@ -72,13 +74,14 @@
                     <td class="d-flex justify-content-center">
                         <button type="button" class="btn btn-warning edit-btn"
                                 th:data-id="${item.customerId}"
+                                th:data-code="${item.customerCode}"
                                 th:data-name="${item.customerName}"
                                 th:data-phone="${item.phoneNumber}"
                                 th:data-address="${item.address}"
                                 th:data-birthdate="${#temporals.format(item.birthDate, 'yyyy-MM-dd')}"
                                 th:data-email="${item.email}"
                                 data-bs-toggle="modal" data-bs-target="#editCustomerModal">
-                            <i class="fas fa-edit"></i>
+                                <i class="fas fa-edit"></i>
                         </button>
                         <a th:href="@{/Admin/customers/history/{id}(id=${item.customerId})}"
                            class="btn btn-info ms-2">
@@ -138,53 +141,60 @@
                 </ul>
             </nav>
         </div>
-    <!-- Modal Chỉnh Sửa Khách Hàng -->
-    <div class="modal fade" id="editCustomerModal" tabindex="-1" aria-labelledby="editCustomerModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editCustomerModalLabel">Chỉnh Sửa Khách Hàng</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="editCustomerForm">
-                        <input type="hidden" name="customerId" id="customerId">
+        <!-- Modal Chỉnh Sửa Khách Hàng -->
+        <div class="modal fade" id="editCustomerModal" tabindex="-1" aria-labelledby="editCustomerModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editCustomerModalLabel">Chỉnh Sửa Khách Hàng</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editCustomerForm">
+                            <input type="hidden" name="customerId" id="customerId">
 
-                        <div class="mb-3">
-                            <label class="form-label">Họ và Tên:</label>
-                            <input type="text" class="form-control" name="customerName" id="customerName" required>
-                            <p class="error text-danger" id="customerNameError"></p>
-                        </div>
+                            <div class="row mb-3">
+                                <div class="col-md-3">
+                                    <label class="form-label">Mã KH:</label>
+                                    <input type="text" class="form-control" name="customerCode" id="customerCode" readonly>
+                                </div>
+                                <div class="col-md-9">
+                                    <label class="form-label">Họ và Tên:</label>
+                                    <input type="text" class="form-control" name="customerName" id="customerName" required>
+                                    <p class="error text-danger" id="customerNameError"></p>
+                                </div>
+                            </div>
 
-                        <div class="mb-3">
-                            <label class="form-label">Số điện thoại:</label>
-                            <input type="text" class="form-control" name="phoneNumber" id="phoneNumber" required>
-                            <p class="error text-danger" id="phoneNumberError"></p>
-                        </div>
+                            <div class="mb-3">
+                                <label class="form-label">Số điện thoại:</label>
+                                <input type="text" class="form-control" name="phoneNumber" id="phoneNumber" required>
+                                <p class="error text-danger" id="phoneNumberError"></p>
+                            </div>
 
-                        <div class="mb-3">
-                            <label class="form-label">Địa chỉ:</label>
-                            <input type="text" class="form-control" name="address" id="address" required>
-                            <p class="error text-danger" id="addressError"></p>
-                        </div>
+                            <div class="mb-3">
+                                <label class="form-label">Địa chỉ:</label>
+                                <input type="text" class="form-control" name="address" id="address" required>
+                                <p class="error text-danger" id="addressError"></p>
+                            </div>
 
-                        <div class="mb-3">
-                            <label class="form-label">Ngày Sinh:</label>
-                            <input type="date" class="form-control" name="birthDate" id="birthDate" required>
-                            <p class="error text-danger" id="birthDateError"></p>
-                        </div>
+                            <div class="mb-3">
+                                <label class="form-label">Ngày Sinh:</label>
+                                <input type="date" class="form-control" name="birthDate" id="birthDate" required>
+                                <p class="error text-danger" id="birthDateError"></p>
+                            </div>
 
-                        <div class="mb-3">
-                            <label class="form-label">Email:</label>
-                            <input type="text" class="form-control" name="email" id="email" required>
-                            <p class="error text-danger" id="emailError"></p>
-                        </div>
+                            <div class="mb-3">
+                                <label class="form-label">Email:</label>
+                                <input type="text" class="form-control" name="email" id="email" required>
+                                <p class="error text-danger" id="emailError"></p>
+                            </div>
 
-                        <div class="text-end mt-4">
-                            <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Hủy</button>
-                            <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
-                        </div>
-                    </form>
+                            <div class="text-end mt-4">
+                                <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Hủy</button>
+                                <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -208,6 +218,7 @@
         editButtons.forEach(button => {
             button.addEventListener("click", function () {
                 let id = this.getAttribute("data-id");
+                let code = this.getAttribute("data-code");
                 let name = this.getAttribute("data-name");
                 let phone = this.getAttribute("data-phone");
                 let address = this.getAttribute("data-address");
@@ -215,6 +226,7 @@
                 let email = this.getAttribute("data-email");
 
                 document.getElementById("customerId").value = id;
+                document.getElementById("customerCode").value = code;
                 document.getElementById("customerName").value = name;
                 document.getElementById("phoneNumber").value = phone;
                 document.getElementById("address").value = address;
@@ -229,6 +241,7 @@
 
             let customerData = {
                 customerId: $("#customerId").val(),
+                customerCode: $("#customerCode").val(),
                 customerName: $("#customerName").val(),
                 phoneNumber: $("#phoneNumber").val(),
                 address: $("#address").val(),

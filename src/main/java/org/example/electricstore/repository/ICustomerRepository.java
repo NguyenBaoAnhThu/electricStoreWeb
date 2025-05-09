@@ -28,4 +28,6 @@ public interface ICustomerRepository extends JpaRepository<Customer, Integer> {
     Page<Customer> findByPhoneNumberContaining(String phone, Pageable pageable);
     Page<Customer> findByAddressContainingIgnoreCase(String address, Pageable pageable);
     Page<Customer> findByEmailContainingIgnoreCase(String email, Pageable pageable);
+    @Query("SELECT MAX(c.customerCode) FROM Customer c WHERE c.customerCode LIKE 'KH%'")
+    String findMaxCustomerCode();
 }

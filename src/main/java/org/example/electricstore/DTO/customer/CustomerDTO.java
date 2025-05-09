@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @Builder
 public class CustomerDTO {
     private Integer customerId;
-
+    private String customerCode;
     @NotBlank(message = "Tên không được để trống")
     @Size(min = 2, max = 50, message = "Tên phải có độ dài từ 2 đến 50 ký tự")
     @Pattern(regexp = "^[A-Za-zÀ-ỹ\\s]+$",

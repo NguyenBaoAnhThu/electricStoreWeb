@@ -40,15 +40,6 @@
             </a>
         </div>
 
-        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
-            <span th:text="${successMessage}"></span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
-            <span th:text="${errorMessage}"></span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-
         <form id="orderForm" th:action="@{/Admin/order/create}" method="POST" th:object="${orderDTO}" class="needs-validation" novalidate>
             <!-- Thông tin đơn hàng -->
             <div class="form-container position-relative mb-3">
@@ -74,6 +65,11 @@
                 <input type="hidden" th:field="*{customerDTO.customerId}" id="customerId">
 
                 <div class="row g-3">
+                    <div class="col-md-4">
+                        <label for="customerCode" class="form-label">Mã Khách Hàng</label>
+                        <input type="text" class="form-control bg-light" id="customerCode" name="customerCode" value="Tự sinh khi lưu" readonly>
+                        <input type="hidden" th:field="*{customerDTO.customerCode}" id="customerCodeHidden">
+                    </div>
                     <div class="col-md-4">
                         <label for="customerName" class="form-label">Tên Khách Hàng <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="customerName" name="customerName" th:field="*{customerDTO.customerName}" required>
@@ -301,7 +297,13 @@
             document.getElementById("customerAddress").value = customer.address;
             document.getElementById("customerEmail").value = customer.email;
             document.getElementById("customerBirthdate").value = customer.birthdate;
-
+            if (customer.code) {
+                document.getElementById("customerCode").value = customer.code;
+                document.getElementById("customerCodeHidden").value = customer.code;
+            } else {
+                document.getElementById("customerCode").value = "Tự sinh khi lưu";
+                document.getElementById("customerCodeHidden").value = "";
+            }
             // Delete data from localStorage after use
             localStorage.removeItem("selectedCustomer");
             // Add to session
@@ -415,7 +417,16 @@
         $("#orderForm").submit(function(event) {
             event.preventDefault();
 
-            // Check if products exist
+            // Đảm bảo mã khách hàng được cập nhật đúng cách trước khi submit
+            if (document.getElementById("customerCode").value === "Tự sinh khi lưu") {
+                // Nếu là mã tự sinh, đặt giá trị null/rỗng để backend tự tạo
+                document.getElementById("customerCodeHidden").value = "";
+            } else {
+                // Sử dụng mã khách hàng đã có
+                document.getElementById("customerCodeHidden").value = document.getElementById("customerCode").value;
+            }
+
+            // Kiểm tra xem có sản phẩm không
             if ($('#productList tr.product-row').length === 0) {
                 alert("Vui lòng thêm ít nhất một sản phẩm vào đơn hàng");
                 return;
@@ -640,6 +651,8 @@
             let customerAddress = $('#customerAddress').val();
             let customerEmail = $('#customerEmail').val();
             let customerBirthdate = $('#customerBirthdate').val();
+            let customerCode = $('#customerCode').val();
+
 
             if (!customerName || !customerPhoneNumber || !customerEmail || !customerAddress) {
                 alert("Vui lòng điền đầy đủ thông tin khách hàng trước khi thêm sản phẩm");
@@ -652,7 +665,9 @@
                 phone: customerPhoneNumber,
                 address: customerAddress,
                 email: customerEmail,
-                birthdate: customerBirthdate
+                birthdate: customerBirthdate,
+                code: customerCode !== "Tự sinh khi lưu" ? customerCode : ""
+
             };
             sessionStorage.setItem("selectedNewCustomer", JSON.stringify(customerData));
             console.log("Saved new customer data to sessionStorage", customerData);
@@ -718,6 +733,20 @@
         // Cập nhật hiển thị phần sản phẩm
         updateProductSectionDisplay();
     }
+    // Khởi tạo mã khách hàng
+    document.getElementById("customerCode").value = "Tự sinh khi lưu";
+    document.getElementById("customerCodeHidden").value = "";
+
+    fetch('/Admin/customers/next-code')
+        .then(response => response.text())
+        .then(nextCode => {
+            document.getElementById("customerCode").value = nextCode;
+            document.getElementById("customerCodeHidden").value = nextCode;
+        })
+        .catch(error => {
+            console.error('Error fetching next customer code:', error);
+            document.getElementById("customerCode").value = "Tự sinh khi lưu";
+        });
 </script>
 </body>
 </html>
