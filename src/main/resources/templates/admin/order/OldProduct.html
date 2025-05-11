@@ -47,8 +47,9 @@
                 <thead class="table-dark">
                 <tr>
                     <th width="60">STT</th>
-                    <th>Tên</th>
-                    <th>Giá</th>
+                    <th>Mã SP</th>
+                    <th>Tên Sản Phảm</th>
+                    <th>Đơn Giá(VNĐ)</th>
                     <th>CPU</th>
                     <th>Lưu trữ</th>
                     <th width="80">Thao tác</th>
@@ -57,6 +58,7 @@
                 <tbody>
                 <tr th:each="item, stat : ${products}">
                     <td th:text="${(currentPage - 1) * pageSize + stat.count}"></td>
+                    <td th:text="${item.productCode}"></td>
                     <td th:text="${item.productName}"></td>
                     <td th:text="${item.productPrice}"></td>
                     <td th:text="${item.productCPU}"></td>

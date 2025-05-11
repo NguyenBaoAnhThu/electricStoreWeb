@@ -33,7 +33,7 @@ public class CustomerDTO {
     private String address;
 
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = "dd/MM/yyyy") // Sửa lại pattern để phù hợp với giao diện người dùng
     @NotNull(message = "Ngày sinh không được để trống !")
     @DobConstraint(min = 15 , message = "Không đủ điều kiện , tuổi phải lớn hơn 15 !")
     private LocalDate birthDate;

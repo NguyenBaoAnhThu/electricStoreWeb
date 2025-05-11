@@ -81,7 +81,7 @@
                         <p class="error text-danger" id="customerNameError" th:if="${#fields.hasErrors('customerDTO.customerName')}" th:errors="*{customerDTO.customerName}"></p>
                     </div>
                     <div class="col-md-4">
-                        <label for="customerPhoneNumber" class="form-label">Số điện thoại <span class="text-danger">*</span></label>
+                        <label for="customerPhoneNumber" class="form-label">Số Điện Thoại <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="customerPhoneNumber" name="customerPhoneNumber" th:field="*{customerDTO.phoneNumber}" required>
                         <p class="error text-danger" id="phoneNumberError" th:if="${#fields.hasErrors('customerDTO.phoneNumber')}" th:errors="*{customerDTO.phoneNumber}"></p>
                     </div>
@@ -96,8 +96,12 @@
                         <p class="error text-danger" id="addressError" th:if="${#fields.hasErrors('customerDTO.address')}" th:errors="*{customerDTO.address}"></p>
                     </div>
                     <div class="col-md-4">
-                        <label for="customerBirthdate" class="form-label">Ngày sinh <span class="text-danger">*</span></label>
-                        <input type="date" class="form-control" id="customerBirthdate" name="customerBirthdate" th:field="*{customerDTO.birthDate}" required>
+                        <label for="customerBirthdate" class="form-label">Ngày Sinh <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="customerBirthdate" name="customerBirthdate"
+                               th:field="*{customerDTO.birthDate}"
+                               placeholder="dd/MM/yyyy"
+                               pattern="(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[012])/(19|20)\d\d"
+                               required>
                         <p class="error text-danger" id="birthDateError" th:if="${#fields.hasErrors('customerDTO.birthDate')}" th:errors="*{customerDTO.birthDate}"></p>
                     </div>
                 </div>
@@ -316,6 +320,24 @@
             selectedCustomer = localStorage.getItem("selectedCustomer");
         }
 
+        // Hàm chuyển đổi định dạng ngày
+        function formatDateToDisplay(dateStr) {
+            if (!dateStr) return '';
+
+            // Nếu đã ở định dạng dd/MM/yyyy thì giữ nguyên
+            if (dateStr.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
+                return dateStr;
+            }
+
+            // Chuyển từ yyyy-MM-dd sang dd/MM/yyyy
+            if (dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
+                const parts = dateStr.split('-');
+                return parts[2] + '/' + parts[1] + '/' + parts[0];
+            }
+
+            return dateStr;
+        }
+
         if (selectedCustomer) {
             let customer = JSON.parse(selectedCustomer);
             // Display data on form
@@ -324,7 +346,7 @@
             document.getElementById("customerPhoneNumber").value = customer.phone;
             document.getElementById("customerAddress").value = customer.address;
             document.getElementById("customerEmail").value = customer.email;
-            document.getElementById("customerBirthdate").value = customer.birthdate;
+            document.getElementById("customerBirthdate").value = formatDateToDisplay(customer.birthdate);
             if (customer.code) {
                 document.getElementById("customerCode").value = customer.code;
                 document.getElementById("customerCodeHidden").value = customer.code;
@@ -449,6 +471,20 @@
         // Form submission handling
         $("#orderForm").submit(function(event) {
             event.preventDefault();
+
+            // Xử lý ngày sinh trước khi submit
+            const birthDateInput = document.getElementById('customerBirthdate');
+            if (birthDateInput && birthDateInput.value) {
+                try {
+                    // Nếu ngày hợp lệ, thì không cần xử lý gì thêm vì DTO đã sử dụng @DateTimeFormat(pattern = "dd/MM/yyyy")
+                    console.log("Submitting birthdate in format dd/MM/yyyy:", birthDateInput.value);
+                } catch (e) {
+                    console.error("Error formatting birthdate:", e);
+                    // Hiển thị lỗi nếu ngày không hợp lệ
+                    $('#birthDateError').text("Ngày sinh không hợp lệ").show();
+                    return;
+                }
+            }
 
             // Đảm bảo mã khách hàng được cập nhật đúng cách trước khi submit
             if (document.getElementById("customerCode").value === "Tự sinh khi lưu") {
@@ -899,6 +935,7 @@
                 });
         }
     });
+
 </script>
 
 <script th:src="@{/js/admin/orderValidation.js}"></script>

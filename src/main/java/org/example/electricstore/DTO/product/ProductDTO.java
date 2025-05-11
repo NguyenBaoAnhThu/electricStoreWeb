@@ -49,7 +49,7 @@ public class ProductDTO {
     private Integer brandId;
 
     @NotNull(message = "Nhà cung cấp không được để trống")
-    private Integer id; // ID của Supplier
+    private Integer id;
 
     private Double screenSize;
     private Integer camera;

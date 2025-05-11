@@ -50,7 +50,7 @@
                 <thead class="table-dark">
                 <tr>
                     <th width="60">STT</th>
-                    <th>Mã Khách Hàng</th> <!-- Thêm cột Mã Khách Hàng -->
+                    <th>Mã KH</th>
                     <th>Tên Khách Hàng</th>
                     <th>Số Điện Thoại</th>
                     <th>Địa Chỉ</th>
@@ -62,12 +62,12 @@
                 <tbody>
                 <tr th:each="item, stat : ${customers.content}">
                     <td th:text="${(currentPage - 1) * pageSize + stat.count}"></td>
-                    <td th:text="${item.customerCode}"></td> <!-- Hiển thị mã khách hàng -->
+                    <td th:text="${item.customerCode}"></td>
                     <td th:text="${item.customerName}"></td>
                     <td th:text="${item.phoneNumber}"></td>
                     <td th:text="${item.address}"></td>
                     <td th:text="${item.email != null ? item.email : 'Không có email'}"></td>
-                    <td th:text="${#temporals.format(item.birthDate, 'yyyy-MM-dd')}"></td>
+                    <td th:text="${#temporals.format(item.birthDate, 'dd/MM/yyyy')}"></td>
                     <td class="text-center">
                         <button class="btn btn-success select-customer"
                                 th:data-id="${item.customerId}"

@@ -245,7 +245,7 @@ public class OrderController {
             @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword,
             @RequestParam(value = "filter", required = false, defaultValue = "name") String filter,
             @RequestParam(value = "page", required = false, defaultValue = "1") int page,
-            @RequestParam(value = "size", required = false, defaultValue = "5") int size,
+            @RequestParam(value = "size", required = false, defaultValue = "10") int size,
             Model model) {
 
         Page<Customer> customers = (keyword != null && !keyword.isEmpty())
@@ -269,7 +269,7 @@ public class OrderController {
     public String listProducts(
             @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword,
             @RequestParam(value = "page", required = false, defaultValue = "1") int page,
-            @RequestParam(value = "size", required = false, defaultValue = "5") int size,
+            @RequestParam(value = "size", required = false, defaultValue = "10") int size,
             @RequestParam(value = "oldData", required = false) String listIdAndQuantity,
             Model model) {
 

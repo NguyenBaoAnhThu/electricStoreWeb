@@ -76,7 +76,7 @@ public class Product {
     @PostLoad
     public void formatPrice() {
         if (this.price != null) {
-            DecimalFormat decimalFormat = new DecimalFormat("#,### VND");
+            DecimalFormat decimalFormat = new DecimalFormat("#,###");
             this.formattedPrice = decimalFormat.format(this.price);
         }
     }
