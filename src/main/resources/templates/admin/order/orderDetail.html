@@ -96,8 +96,8 @@
                     <th>STT</th>
                     <th>Tên Sản Phẩm</th>
                     <th>Số Lượng</th>
-                    <th>Đơn Giá</th>
-                    <th>Thành Tiền</th>
+                    <th>Đơn Giá(VNĐ)</th>
+                    <th>Thành Tiền(VNĐ)</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -105,8 +105,8 @@
                     <td th:text="${stat.index + 1}"></td>
                     <td th:text="${detail.product != null ? detail.product.name : ''}"></td>
                     <td th:text="${detail.quantity != null ? detail.quantity : 0}"></td>
-                    <td th:text="${detail.price != null ? #numbers.formatDecimal(detail.price, 0, 'POINT', 0, 'COMMA') + ' VNĐ' : '0 VNĐ'}"></td>
-                    <td th:text="${detail.price != null && detail.quantity != null ? #numbers.formatDecimal(detail.price * detail.quantity, 0, 'POINT', 0, 'COMMA') + ' VNĐ' : '0 VNĐ'}"></td>
+                    <td th:text="${detail.price != null ? #numbers.formatDecimal(detail.price, 0, 'POINT', 0, 'COMMA') : '0'}"></td>
+                    <td th:text="${detail.price != null && detail.quantity != null ? #numbers.formatDecimal(detail.price * detail.quantity, 0, 'POINT', 0, 'COMMA') : '0'}"></td>
                 </tr>
                 <tr th:if="${order == null || order.orderDetails == null || order.orderDetails.isEmpty()}">
                     <td colspan="5" class="text-center">Không có sản phẩm nào</td>
@@ -147,10 +147,10 @@
 
                             <div class="row mb-2">
                                 <div class="col-sm-6">
-                                    <span class="text-secondary">Giảm giá:</span>
+                                    <span class="text-secondary">Giảm giá(VNĐ):</span>
                                 </div>
                                 <div class="col-sm-6 text-end">
-                                    <strong th:text="${order?.discount != null ? #numbers.formatDecimal(order.discount, 0, 'POINT', 0, 'COMMA') + ' VNĐ' : '0 VNĐ'}"></strong>
+                                    <strong th:text="${order?.discount != null ? #numbers.formatDecimal(order.discount, 0, 'POINT', 0, 'COMMA') : '0'}"></strong>
                                 </div>
                             </div>
 

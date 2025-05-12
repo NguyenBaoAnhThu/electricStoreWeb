@@ -106,6 +106,7 @@ VALUES ('DM0001', 'Điện thoại', 'Các loại điện thoại di động th�
        ('DM0010', 'Thiết bị mạng', 'Router, modem và thiết bị kết nối mạng', NOW(), NOW());
 
 # Thêm dữ liệu vào brand (giữ nguyên)
+# Thêm dữ liệu vào brand
 INSERT INTO brands (brand_code, brand_name, country, create_at, update_at)
 VALUES ('TH0001', 'Apple', 'Mỹ', NOW(), NOW()),
        ('TH0002', 'Samsung', 'Hàn Quốc', NOW(), NOW()),
@@ -116,51 +117,110 @@ VALUES ('TH0001', 'Apple', 'Mỹ', NOW(), NOW()),
        ('TH0007', 'Huawei', 'Trung Quốc', NOW(), NOW()),
        ('TH0008', 'LG', 'Hàn Quốc', NOW(), NOW()),
        ('TH0009', 'Oppo', 'Trung Quốc', NOW(), NOW()),
-       ('TH0010', 'Lenovo', 'Trung Quốc', NOW(), NOW());
-
-# Thêm dữ liệu vào supplier (giữ nguyên)
+       ('TH0010', 'Lenovo', 'Trung Quốc', NOW(), NOW()),
+       ('TH0011', 'Google', 'Mỹ', NOW(), NOW()),
+       ('TH0012', 'Microsoft', 'Mỹ', NOW(), NOW()),
+       ('TH0013', 'HP', 'Mỹ', NOW(), NOW()),
+       ('TH0014', 'Acer', 'Đài Loan', NOW(), NOW()),
+       ('TH0015', 'OnePlus', 'Trung Quốc', NOW(), NOW()),
+       ('TH0016', 'Realme', 'Trung Quốc', NOW(), NOW()),
+       ('TH0017', 'Vivo', 'Trung Quốc', NOW(), NOW()),
+       ('TH0018', 'JBL', 'Mỹ', NOW(), NOW()),
+       ('TH0019', 'Bose', 'Mỹ', NOW(), NOW()),
+       ('TH0020', 'Anker', 'Trung Quốc', NOW(), NOW());
+# Thêm dữ liệu nhà cung cấp điện thoại ở Việt Nam
 INSERT INTO suppliers (supplier_code, supplier_name, address, phone, email, create_at, update_at)
-VALUES ('NCC0001', 'Apple Store', 'California, USA', '0981921280', 'apple@gmail.com', NOW(), NOW()),
-       ('NCC0002', 'Samsung Store', 'Seoul, Korea', '0911921281', 'samsung@gmail.com', NOW(), NOW()),
-       ('NCC0003', 'Oppo Store', 'Guangdong, China', '0981921182', 'oppo@gmail.com', NOW(), NOW()),
-       ('NCC0004', 'Xiaomi Store', 'Beijing, China', '0001921283', 'xiaomi@gmail.com', NOW(), NOW()),
-       ('NCC0005', 'Sony Distributor', 'Tokyo, Japan', '0981921284', 'sony@gmail.com', NOW(), NOW()),
-       ('NCC0006', 'Asus Vietnam', 'Hanoi, Vietnam', '0981921285', 'asus@gmail.com', NOW(), NOW()),
-       ('NCC0007', 'Dell Vietnam', 'HCMC, Vietnam', '0981921286', 'dell@gmail.com', NOW(), NOW()),
-       ('NCC0008', 'Huawei Store', 'Shenzhen, China', '0981921287', 'huawei@gmail.com', NOW(), NOW()),
-       ('NCC0009', 'LG Electronics', 'Seoul, Korea', '0981921288', 'lg@gmail.com', NOW(), NOW()),
-       ('NCC0010', 'Lenovo Shop', 'Shanghai, China', '0981921289', 'lenovo@gmail.com', NOW(), NOW());
-# Thêm dữ liệu vào products (sửa lại mã sản phẩm theo SP0001, SP0002, ...)
+VALUES
+    ('NCC0001', 'Thegioididong', 'Quận 1, TP. Hồ Chí Minh, Việt Nam', '0988123456', 'contact@thegioididong.com', NOW(), NOW()),
+    ('NCC0002', 'FPT Shop', 'Cầu Giấy, Hà Nội, Việt Nam', '0989123457', 'support@fptshop.com.vn', NOW(), NOW()),
+    ('NCC0003', 'Viettel Store', 'Hà Đông, Hà Nội, Việt Nam', '0989123458', 'viettelstore@viettel.com.vn', NOW(), NOW()),
+    ('NCC0004', 'CellphoneS', 'Đống Đa, Hà Nội, Việt Nam', '0989123459', 'info@cellphones.com.vn', NOW(), NOW()),
+    ('NCC0005', 'Hoàng Hà Mobile', 'Hai Bà Trưng, Hà Nội, Việt Nam', '0989123460', 'contact@hoanghamobile.com', NOW(), NOW()),
+    ('NCC0006', 'Điện Máy Xanh', 'Quận 7, TP. Hồ Chí Minh, Việt Nam', '0989123461', 'cskh@dienmayxanh.com', NOW(), NOW()),
+    ('NCC0007', 'Vĩnh Xuân Mobile', 'Quận 10, TP. Hồ Chí Minh, Việt Nam', '0989123462', 'info@vinhxuanmobile.vn', NOW(), NOW()),
+    ('NCC0008', 'Mai Nguyên', 'Quận 3, TP. Hồ Chí Minh, Việt Nam', '0989123463', 'cskh@mainguyen.vn', NOW(), NOW()),
+    ('NCC0009', 'Di Động Việt', 'Tân Bình, TP. Hồ Chí Minh, Việt Nam', '0989123464', 'lienhe@didongviet.vn', NOW(), NOW()),
+    ('NCC0010', 'Minh Tuấn Mobile', 'Thanh Xuân, Hà Nội, Việt Nam', '0989123465', 'support@minhtuanmobile.com', NOW(), NOW()),
+    ('NCC0011', 'Apple Việt Nam', 'Tầng 15, Keangnam Landmark, Hà Nội', '0989234567', 'contact@apple.vn', NOW(), NOW()),
+    ('NCC0012', 'Samsung Việt Nam', 'Tòa nhà PVI, Cầu Giấy, Hà Nội', '0989234568', 'support@samsung.vn', NOW(), NOW()),
+    ('NCC0013', 'Huawei Việt Nam', 'Tòa nhà Capital, Ba Đình, Hà Nội', '0989234569', 'info@huawei.vn', NOW(), NOW()),
+    ('NCC0014', 'Sony Việt Nam', 'TTTM Saigon Centre, Quận 1, TP.HCM', '0989234570', 'customer@sony.vn', NOW(), NOW()),
+    ('NCC0015', 'Xiaomi Việt Nam', 'Tòa nhà Lim, Quận 10, TP.HCM', '0989234571', 'service@xiaomi.vn', NOW(), NOW()),
+    ('NCC0016', 'Oppo Việt Nam', 'Tòa nhà Pearl Plaza, Bình Thạnh, TP.HCM', '0989234572', 'support@oppo.vn', NOW(), NOW()),
+    ('NCC0017', 'Vivo Việt Nam', 'Tòa Diamond, Quận 1, TP.HCM', '0989234573', 'care@vivo.vn', NOW(), NOW()),
+    ('NCC0018', 'Asus Việt Nam', 'Tòa nhà HM, Cầu Giấy, Hà Nội', '0989234574', 'support@asus.vn', NOW(), NOW()),
+    ('NCC0019', 'Dell Việt Nam', 'Bitexco Tower, Quận 1, TP.HCM', '0989234575', 'sales@dell.vn', NOW(), NOW()),
+    ('NCC0020', 'HP Việt Nam', 'Lầu 8, Tòa nhà Metropolitan, Quận 1, TP.HCM', '0989234576', 'contact@hp.vn', NOW(), NOW());
+# Thêm 50 sản phẩm vào bảng products
 INSERT INTO products (product_id, product_name, main_image_url, description, price, stock, create_at, update_at, brand_id, category_id, supplier_id, product_code)
 VALUES
--- Smartphones (Danh mục 1: Điện thoại)
+-- Điện thoại (15 sản phẩm)
 (1, 'Xiaomi Redmi Note 12 Pro', 'https://byvn.net/2qP6', 'Xiaomi Redmi Note 12 Pro - Hiệu năng ổn định', 8990000, 100, NOW(), NOW(), 6, 1, 4, 'SP0001'),
-(2, 'Realme GT Neo 5', 'https://byvn.net/kvZe', 'Realme GT Neo 5 - Sạc siêu nhanh', 10990000, 80, NOW(), NOW(), 9, 1, 9, 'SP0002'),
+(2, 'Realme GT Neo 5', 'https://byvn.net/kvZe', 'Realme GT Neo 5 - Sạc siêu nhanh', 10990000, 80, NOW(), NOW(), 16, 1, 9, 'SP0002'),
 (3, 'Oppo Find X5 Pro', 'https://byvn.net/XHnW', 'Oppo Find X5 Pro - Thiết kế sang trọng', 19990000, 50, NOW(), NOW(), 9, 1, 3, 'SP0003'),
-(4, 'Vivo X90 Pro', 'https://byvn.net/3hgh', 'Vivo X90 Pro - Camera chuyên nghiệp', 22990000, 60, NOW(), NOW(), 1, 1, 1, 'SP0004'),
-(5, 'Honor Magic5 Pro', 'https://byvn.net/rhiq', 'Honor Magic5 Pro - Công nghệ cao cấp', 20990000, 45, NOW(), NOW(), 1, 1, 1, 'SP0005'),
+(4, 'Vivo X90 Pro', 'https://byvn.net/3hgh', 'Vivo X90 Pro - Camera chuyên nghiệp', 22990000, 60, NOW(), NOW(), 17, 1, 1, 'SP0004'),
+(5, 'Honor Magic5 Pro', 'https://byvn.net/rhiq', 'Honor Magic5 Pro - Công nghệ cao cấp', 20990000, 45, NOW(), NOW(), 7, 1, 1, 'SP0005'),
 (6, 'Samsung Galaxy S23 Ultra', 'https://byvn.net/s23u', 'Samsung Galaxy S23 Ultra - Flagship hàng đầu', 29990000, 40, NOW(), NOW(), 2, 1, 2, 'SP0006'),
-(7, 'iPhone 15 Pro Max', 'https://byvn.net/ip15pm', 'iPhone 15 Pro Max - Đỉnh cao công nghệ', 33990000., 55, NOW(), NOW(), 1, 1, 1, 'SP0007'),
+(7, 'iPhone 15 Pro Max', 'https://byvn.net/ip15pm', 'iPhone 15 Pro Max - Đỉnh cao công nghệ', 33990000, 55, NOW(), NOW(), 1, 1, 1, 'SP0007'),
 (8, 'Xiaomi 14 Ultra', 'https://byvn.net/xm14u', 'Xiaomi 14 Ultra - Camera đỉnh cao', 25990000, 35, NOW(), NOW(), 6, 1, 4, 'SP0008'),
+(9, 'Google Pixel 8 Pro', 'https://byvn.net/pixel8pro', 'Google Pixel 8 Pro - Camera AI tốt nhất', 26990000, 30, NOW(), NOW(), 11, 1, 1, 'SP0009'),
+(10, 'Nothing Phone 2', 'https://byvn.net/nphone2', 'Nothing Phone 2 - Thiết kế Glyph độc đáo', 15990000, 45, NOW(), NOW(), 15, 1, 4, 'SP0010'),
+(11, 'OnePlus 12', 'https://byvn.net/op12', 'OnePlus 12 - Hiệu năng mạnh mẽ', 24990000, 40, NOW(), NOW(), 15, 1, 5, 'SP0011'),
+(12, 'Samsung Galaxy Z Fold 5', 'https://byvn.net/zfold5', 'Samsung Galaxy Z Fold 5 - Màn hình gập cao cấp', 39990000, 25, NOW(), NOW(), 2, 1, 2, 'SP0012'),
+(13, 'iPhone 15', 'https://byvn.net/ip15', 'iPhone 15 - Thiết kế tinh tế', 22990000, 70, NOW(), NOW(), 1, 1, 1, 'SP0013'),
+(14, 'Xiaomi 14', 'https://byvn.net/xm14', 'Xiaomi 14 - Hiệu năng cao', 19990000, 55, NOW(), NOW(), 6, 1, 15, 'SP0014'),
+(15, 'Oppo Find X7 Ultra', 'https://byvn.net/findx7u', 'Oppo Find X7 Ultra - Camera đỉnh cao', 27990000, 30, NOW(), NOW(), 9, 1, 16, 'SP0015'),
 
--- Tablets (Danh mục 2: Máy tính bảng)
-(9, 'Huawei MatePad Pro 11', 'https://byvn.net/U9pt', 'Huawei MatePad Pro 11 - Màn hình sắc nét', 16990000, 70, NOW(), NOW(), 7, 2, 8, 'SP0009'),
-(10, 'Xiaomi Pad 6 Pro', 'https://byvn.net/RX3m', 'Xiaomi Pad 6 Pro - Hiệu năng mạnh mẽ', 14990000, 65, NOW(), NOW(), 6, 2, 4, 'SP0010'),
-(11, 'Realme Pad 2', 'https://byvn.net/E4HL', 'Realme Pad 2 - Giải trí đa năng', 8990000, 90, NOW(), NOW(), 9, 2, 3, 'SP0011'),
-(12, 'iPad Pro M2 12.9', 'https://byvn.net/ipadm2', 'iPad Pro M2 12.9 - Hiệu suất vượt trội', 31990000, 40, NOW(), NOW(), 1, 2, 1, 'SP0012'),
-(13, 'Samsung Galaxy Tab S9 Ultra', 'https://byvn.net/tabs9u', 'Samsung Galaxy Tab S9 Ultra - Màn hình lớn', 26990000, 30, NOW(), NOW(), 2, 2, 2, 'SP0013'),
-(14, 'Lenovo Tab P12 Pro', 'https://byvn.net/lenovop12', 'Lenovo Tab P12 Pro - Giải trí đỉnh cao', 17990000, 25, NOW(), NOW(), 10, 2, 10, 'SP0014'),
+-- Laptop (10 sản phẩm)
+(16, 'HP Spectre x360', 'https://byvn.net/KNjw', 'HP Spectre x360 - Laptop 2 trong 1', 39990000, 40, NOW(), NOW(), 13, 2, 20, 'SP0016'),
+(17, 'Acer Predator Helios 300', 'https://byvn.net/9cmk', 'Acer Predator Helios 300 - Gaming', 35990000, 50, NOW(), NOW(), 14, 2, 6, 'SP0017'),
+(18, 'Lenovo ThinkPad X1 Carbon', 'https://byvn.net/6Mva', 'Lenovo ThinkPad X1 Carbon - Doanh nhân', 45990000, 35, NOW(), NOW(), 10, 2, 10, 'SP0018'),
+(19, 'Microsoft Surface Laptop 5', 'https://byvn.net/Ga38', 'Microsoft Surface Laptop 5 - Sang trọng', 37990000, 45, NOW(), NOW(), 12, 2, 2, 'SP0019'),
+(20, 'MacBook Pro 16 M3 Max', 'https://byvn.net/mbpm3', 'MacBook Pro 16 M3 Max - Mạnh mẽ', 89990000, 20, NOW(), NOW(), 1, 2, 11, 'SP0020'),
+(21, 'Dell XPS 15', 'https://byvn.net/dellxps15', 'Dell XPS 15 - Thiết kế cao cấp', 55990000, 30, NOW(), NOW(), 5, 2, 19, 'SP0021'),
+(22, 'Asus ROG Zephyrus G16', 'https://byvn.net/asusrog', 'Asus ROG Zephyrus G16 - Gaming cao cấp', 49990000, 25, NOW(), NOW(), 4, 2, 18, 'SP0022'),
+(23, 'MSI Creator Z16', 'https://byvn.net/msicre', 'MSI Creator Z16 - Dành cho sáng tạo', 51990000, 15, NOW(), NOW(), 14, 2, 8, 'SP0023'),
+(24, 'MacBook Air M3', 'https://byvn.net/mbairm3', 'MacBook Air M3 - Mỏng nhẹ, mạnh mẽ', 32990000, 60, NOW(), NOW(), 1, 2, 11, 'SP0024'),
+(25, 'LG Gram 17', 'https://byvn.net/lggram17', 'LG Gram 17 - Siêu nhẹ, pin trâu', 41990000, 40, NOW(), NOW(), 8, 2, 7, 'SP0025'),
 
--- Laptops (Danh mục 3: Laptop)
-(15, 'HP Spectre x360', 'https://byvn.net/KNjw', 'HP Spectre x360 - Laptop 2 trong 1', 39990000, 40, NOW(), NOW(), 1, 3, 1, 'SP0015'),
-(16, 'Acer Predator Helios 300', 'https://byvn.net/9cmk', 'Acer Predator Helios 300 - Gaming', 35990000, 50, NOW(), NOW(), 1, 3, 1, 'SP0016'),
-(17, 'Lenovo ThinkPad X1 Carbon', 'https://byvn.net/6Mva', 'Lenovo ThinkPad X1 Carbon - Doanh nhân', 45990000, 35, NOW(), NOW(), 10, 3, 10, 'SP0017'),
-(18, 'Microsoft Surface Laptop 5', 'https://byvn.net/Ga38', 'Microsoft Surface Laptop 5 - Sang trọng', 37990000, 45, NOW(), NOW(), 1, 3, 1, 'SP0018'),
-(19, 'MacBook Pro 16 M3 Max', 'https://byvn.net/mbpm3', 'MacBook Pro 16 M3 Max - Mạnh mẽ', 89990000, 20, NOW(), NOW(), 1, 3, 1, 'SP0019'),
-(20, 'Dell XPS 15', 'https://byvn.net/dellxps15', 'Dell XPS 15 - Thiết kế cao cấp', 55990000, 30, NOW(), NOW(), 5, 3, 7, 'SP0020'),
-(21, 'Asus ROG Zephyrus G16', 'https://byvn.net/asusrog', 'Asus ROG Zephyrus G16 - Gaming cao cấp', 49990000, 25, NOW(), NOW(), 4, 3, 6, 'SP0021'),
-(22, 'MSI Creator Z16', 'https://byvn.net/msicre', 'MSI Creator Z16 - Dành cho sáng tạo', 51990000, 15, NOW(), NOW(), 1, 3, 1, 'SP0022');
-# Thêm dữ liệu vào ProductDetail với cấu trúc mới
+-- Máy tính bảng (6 sản phẩm)
+(26, 'Huawei MatePad Pro 11', 'https://byvn.net/U9pt', 'Huawei MatePad Pro 11 - Màn hình sắc nét', 16990000, 70, NOW(), NOW(), 7, 3, 13, 'SP0026'),
+(27, 'Xiaomi Pad 6 Pro', 'https://byvn.net/RX3m', 'Xiaomi Pad 6 Pro - Hiệu năng mạnh mẽ', 14990000, 65, NOW(), NOW(), 6, 3, 15, 'SP0027'),
+(28, 'Realme Pad 2', 'https://byvn.net/E4HL', 'Realme Pad 2 - Giải trí đa năng', 8990000, 90, NOW(), NOW(), 16, 3, 3, 'SP0028'),
+(29, 'iPad Pro M2 12.9', 'https://byvn.net/ipadm2', 'iPad Pro M2 12.9 - Hiệu suất vượt trội', 31990000, 40, NOW(), NOW(), 1, 3, 11, 'SP0029'),
+(30, 'Samsung Galaxy Tab S9 Ultra', 'https://byvn.net/tabs9u', 'Samsung Galaxy Tab S9 Ultra - Màn hình lớn', 26990000, 30, NOW(), NOW(), 2, 3, 12, 'SP0030'),
+(31, 'Lenovo Tab P12 Pro', 'https://byvn.net/lenovop12', 'Lenovo Tab P12 Pro - Giải trí đỉnh cao', 17990000, 25, NOW(), NOW(), 10, 3, 10, 'SP0031'),
+
+-- Đồng hồ thông minh (5 sản phẩm)
+(32, 'Apple Watch Series 9', 'https://byvn.net/awatch9', 'Apple Watch Series 9 - Nhiều tính năng sức khỏe', 10990000, 60, NOW(), NOW(), 1, 4, 11, 'SP0032'),
+(33, 'Samsung Galaxy Watch 6 Classic', 'https://byvn.net/swatch6c', 'Samsung Galaxy Watch 6 Classic - Thiết kế sang trọng', 8990000, 75, NOW(), NOW(), 2, 4, 12, 'SP0033'),
+(34, 'Xiaomi Watch S2', 'https://byvn.net/xwatch2', 'Xiaomi Watch S2 - Pin trâu, giá tốt', 3990000, 90, NOW(), NOW(), 6, 4, 15, 'SP0034'),
+(35, 'Huawei Watch GT 4', 'https://byvn.net/huagt4', 'Huawei Watch GT 4 - Thiết kế sang trọng', 6990000, 65, NOW(), NOW(), 7, 4, 13, 'SP0035'),
+(36, 'Garmin Forerunner 955', 'https://byvn.net/garm955', 'Garmin Forerunner 955 - Dành cho vận động viên', 12990000, 40, NOW(), NOW(), 13, 4, 2, 'SP0036'),
+
+-- Tai nghe (5 sản phẩm)
+(37, 'AirPods Pro 2', 'https://byvn.net/airpodspro2', 'AirPods Pro 2 - Chống ồn chủ động tốt nhất', 6490000, 100, NOW(), NOW(), 1, 5, 11, 'SP0037'),
+(38, 'Sony WH-1000XM5', 'https://byvn.net/sonym5', 'Sony WH-1000XM5 - Tai nghe chụp tai cao cấp', 8990000, 55, NOW(), NOW(), 3, 5, 14, 'SP0038'),
+(39, 'Bose QuietComfort Ultra', 'https://byvn.net/boseqcu', 'Bose QuietComfort Ultra - Âm thanh đỉnh cao', 9990000, 45, NOW(), NOW(), 19, 5, 5, 'SP0039'),
+(40, 'Samsung Galaxy Buds3 Pro', 'https://byvn.net/buds3p', 'Samsung Galaxy Buds3 Pro - Thiết kế ergonomic', 4490000, 80, NOW(), NOW(), 2, 5, 12, 'SP0040'),
+(41, 'Jabra Elite 10', 'https://byvn.net/jabra10', 'Jabra Elite 10 - Chống ồn tốt, pin trâu', 5990000, 60, NOW(), NOW(), 13, 5, 8, 'SP0041'),
+
+-- Loa (3 sản phẩm)
+(42, 'JBL Charge 5', 'https://byvn.net/jblcharge5', 'JBL Charge 5 - Loa bluetooth di động chống nước', 3490000, 85, NOW(), NOW(), 18, 6, 6, 'SP0042'),
+(43, 'Sony SRS-XG500', 'https://byvn.net/srsxg500', 'Sony SRS-XG500 - Loa di động công suất lớn', 8990000, 50, NOW(), NOW(), 3, 6, 14, 'SP0043'),
+(44, 'Bose Smart Speaker 500', 'https://byvn.net/bose500', 'Bose Smart Speaker 500 - Loa thông minh cao cấp', 9990000, 40, NOW(), NOW(), 19, 6, 9, 'SP0044'),
+
+-- Sạc dự phòng (3 sản phẩm)
+(45, 'Anker PowerCore 26800', 'https://byvn.net/anker26800', 'Anker PowerCore 26800 - Pin dự phòng dung lượng lớn', 1590000, 120, NOW(), NOW(), 20, 7, 9, 'SP0045'),
+(46, 'Xiaomi Power Bank 3 Pro', 'https://byvn.net/mipower3', 'Xiaomi Power Bank 3 Pro - Sạc nhanh 45W', 990000, 150, NOW(), NOW(), 6, 7, 5, 'SP0046'),
+(47, 'Samsung Super Fast Portable', 'https://byvn.net/samscharge', 'Samsung Super Fast Portable - Sạc nhanh 25W', 1290000, 100, NOW(), NOW(), 2, 7, 2, 'SP0047'),
+
+-- Phụ kiện (3 sản phẩm)
+(48, 'Apple MagSafe Charger', 'https://byvn.net/magsafe', 'Apple MagSafe Charger - Sạc không dây cho iPhone', 990000, 150, NOW(), NOW(), 1, 8, 11, 'SP0048'),
+(49, 'Samsung 45W Travel Adapter', 'https://byvn.net/samadapter', 'Samsung 45W Travel Adapter - Sạc nhanh cho điện thoại và laptop', 890000, 180, NOW(), NOW(), 2, 8, 12, 'SP0049'),
+(50, 'Anker 735 Charger', 'https://byvn.net/anker735', 'Anker 735 Charger - Sạc 3 cổng GaN II 65W', 1290000, 140, NOW(), NOW(), 20, 8, 9, 'SP0050');
+
+# Thêm chi tiết sản phẩm
 INSERT INTO product_details (screen_size, camera, front_camera, color, description, cpu, gpu, ram, rom, os, os_version, battery, screen_type, screen_resolution, ports, weight, create_at, update_at, product_id)
 VALUES
 -- Điện thoại
@@ -172,49 +232,131 @@ VALUES
 (6.8, 200, 12, 'Đen Phantom', 'Bút S-Pen, zoom quang 10x', 'Snapdragon 8 Gen 2', 'Adreno 740', '12GB', '512GB', 'Android', '13 (One UI 5.1)', '5000mAh', 'Dynamic AMOLED 2X', '3088x1440', 'USB Type-C', 234, NOW(), NOW(), 6),
 (6.7, 48, 12, 'Titan Tự nhiên', 'Khung titan, Dynamic Island', 'A17 Pro', 'Apple GPU (6-core)', '8GB', '512GB', 'iOS', '17', '4422mAh', 'Super Retina XDR OLED', '2796x1290', 'USB Type-C', 221, NOW(), NOW(), 7),
 (6.73, 50, 32, 'Đen', 'Camera Leica, chụp đêm tốt', 'Snapdragon 8 Gen 2', 'Adreno 740', '16GB', '512GB', 'Android', '14 (MIUI 15)', '5000mAh', 'AMOLED', '3200x1440', 'USB Type-C', 227, NOW(), NOW(), 8),
-
--- Máy tính bảng
-(11.0, 13, 8, 'Xám', 'Hỗ trợ bút M-Pencil', 'Snapdragon 888', 'Adreno 660', '8GB', '256GB', 'HarmonyOS', '3.0', '8300mAh', 'OLED', '2560x1600', 'USB Type-C', 449, NOW(), NOW(), 9),
-(11.2, 50, 20, 'Bạc', 'Hỗ trợ bút, tần số quét 144Hz', 'Snapdragon 8+ Gen 1', 'Adreno 730', '8GB', '256GB', 'Android', '13 (MIUI 14)', '8600mAh', 'IPS LCD', '2880x1800', 'USB Type-C', 490, NOW(), NOW(), 10),
-(11.5, 8, 5, 'Xanh lá', 'Màn hình lớn, pin khỏe', 'MediaTek Helio G99', 'Mali-G57 MC2', '8GB', '256GB', 'Android', '13 (Realme UI 4.0)', '8360mAh', 'IPS LCD', '2000x1200', 'USB Type-C, 3.5mm jack', 538, NOW(), NOW(), 11),
-(12.9, 12, 12, 'Space Gray', 'Chip M2, màn hình mini-LED', 'Apple M2', 'Apple M2 GPU (10-core)', '16GB', '1TB', 'iPadOS', '17', '10758mAh', 'Liquid Retina XDR', '2732x2048', 'USB Type-C', 682, NOW(), NOW(), 12),
-(14.6, 13, 12, 'Graphite', 'Màn hình lớn nhất, S-Pen', 'Snapdragon 8 Gen 2', 'Adreno 740', '12GB', '512GB', 'Android', '13 (One UI 5.1)', '11200mAh', 'Dynamic AMOLED 2X', '2960x1848', 'USB Type-C', 732, NOW(), NOW(), 13),
-(12.6, 13, 8, 'Storm Gray', 'Màn hình AMOLED rộng', 'Snapdragon 8 Gen 1', 'Adreno 730', '8GB', '256GB', 'Android', '13', '10200mAh', 'AMOLED', '2560x1600', 'USB Type-C, 3.5mm jack', 565, NOW(), NOW(), 14),
+(6.7, 50, 10, 'Xanh Hazel', 'Camera với AI Google, chụp đêm tuyệt vời', 'Google Tensor G3', 'Mali-G715 MP7', '12GB', '256GB', 'Android', '14', '5050mAh', 'LTPO OLED', '3120x1440', 'USB Type-C', 213, NOW(), NOW(), 9),
+(6.7, 50, 32, 'Trắng', 'Đèn LED Glyph độc đáo ở mặt lưng', 'Snapdragon 8+ Gen 1', 'Adreno 730', '12GB', '256GB', 'Android', '13', '4700mAh', 'OLED', '2412x1080', 'USB Type-C', 201, NOW(), NOW(), 10),
+(6.82, 50, 16, 'Đen', 'Sạc nhanh 100W, Hasselblad camera', 'Snapdragon 8 Gen 3', 'Adreno 750', '16GB', '512GB', 'Android', '14 (OxygenOS 14)', '5400mAh', 'LTPO AMOLED', '3168x1440', 'USB Type-C', 220, NOW(), NOW(), 11),
+(7.6, 50, 10, 'Đen', 'Màn hình gập, đa nhiệm', 'Snapdragon 8 Gen 2', 'Adreno 740', '12GB', '512GB', 'Android', '13 (One UI 5.1)', '4400mAh', 'Dynamic AMOLED 2X', '2176x1812', 'USB Type-C', 253, NOW(), NOW(), 12),
+(6.1, 48, 12, 'Xanh', 'Dynamic Island, camera cải tiến', 'A16 Bionic', 'Apple GPU (5-core)', '6GB', '256GB', 'iOS', '17', '3349mAh', 'Super Retina XDR OLED', '2532x1170', 'USB Type-C', 171, NOW(), NOW(), 13),
+(6.36, 50, 32, 'Đen', 'Hiệu năng mạnh mẽ, sạc nhanh', 'Snapdragon 8 Gen 3', 'Adreno 750', '12GB', '256GB', 'Android', '14 (MIUI 15)', '4610mAh', 'AMOLED', '2670x1200', 'USB Type-C', 193, NOW(), NOW(), 14),
+(6.78, 50, 32, 'Trắng', 'Camera Hasselblad, zoom quang 6x', 'Dimensity 9300', 'Mali-G715', '16GB', '512GB', 'Android', '14 (ColorOS 14)', '5150mAh', 'LTPO AMOLED', '2780x1264', 'USB Type-C', 221, NOW(), NOW(), 15),
 
 -- Laptop
-(13.5, NULL, NULL, 'Xanh Navy', 'Laptop xoay gập 360 độ', 'Intel Core i7-1355U', 'Intel Iris Xe', '16GB', '1TB SSD', 'Windows', '11 Home', '66Wh', 'OLED Touch', '3000x2000', '2x Thunderbolt 4, USB-A, 3.5mm jack', 1360, NOW(), NOW(), 15),
-(15.6, NULL, NULL, 'Đen', 'Laptop gaming hiệu năng cao', 'Intel Core i7-12700H', 'NVIDIA RTX 3070 Ti 8GB', '16GB', '1TB SSD', 'Windows', '11 Home', '90Wh', 'IPS, 165Hz', '2560x1440', '3x USB-A, USB-C, HDMI, Ethernet, 3.5mm jack', 2400, NOW(), NOW(), 16),
-(14.0, NULL, NULL, 'Đen', 'Laptop doanh nhân cao cấp', 'Intel Core i7-1360P', 'Intel Iris Xe', '16GB', '1TB SSD', 'Windows', '11 Pro', '57Wh', 'IPS', '2880x1800', '2x Thunderbolt 4, USB-A, HDMI, 3.5mm jack', 1120, NOW(), NOW(), 17),
-(13.5, NULL, NULL, 'Bạch kim', 'Thiết kế sang trọng, pin dài', 'Intel Core i7-1255U', 'Intel Iris Xe', '16GB', '512GB SSD', 'Windows', '11 Home', '47.4Wh', 'PixelSense Touch', '2256x1504', 'USB-A, Thunderbolt 4, 3.5mm jack', 1270, NOW(), NOW(), 18),
-(16.2, NULL, NULL, 'Space Black', 'Hiệu năng mạnh mẽ, màn hình mini-LED', 'Apple M3 Max (16-core)', 'Apple M3 Max (40-core)', '64GB', '2TB SSD', 'macOS', 'Sonoma', '100Wh', 'Liquid Retina XDR, 120Hz', '3456x2234', '3x Thunderbolt 4, HDMI, SD card, 3.5mm jack', 2170, NOW(), NOW(), 19),
-(15.6, NULL, NULL, 'Platinum', 'Thiết kế mỏng nhẹ, màn hình OLED', 'Intel Core i9-13900H', 'NVIDIA RTX 4070 8GB', '32GB', '1TB SSD', 'Windows', '11 Pro', '86Wh', 'OLED', '3456x2160', '2x Thunderbolt 4, USB-A, HDMI, SD card, 3.5mm jack', 1920, NOW(), NOW(), 20),
-(16.0, NULL, NULL, 'Off Black', 'Laptop gaming cao cấp', 'Intel Core i9-13900H', 'NVIDIA RTX 4080 12GB', '32GB', '2TB SSD', 'Windows', '11 Pro', '90Wh', 'ROG Nebula Display, 240Hz', '2560x1600', '2x USB-C, 2x USB-A, HDMI, LAN, 3.5mm jack', 2100, NOW(), NOW(), 21),
-(16.0, NULL, NULL, 'Xám Core Black', 'Laptop cho nhà sáng tạo', 'Intel Core i7-12700H', 'NVIDIA RTX 3070 8GB', '32GB', '1TB SSD', 'Windows', '11 Pro', '90Wh', 'Touch', '2560x1600', '2x Thunderbolt 4, USB-A, HDMI, SD card, 3.5mm jack', 2350, NOW(), NOW(), 22);
+(13.5, NULL, NULL, 'Xanh Navy', 'Laptop xoay gập 360 độ', 'Intel Core i7-1355U', 'Intel Iris Xe', '16GB', '1TB SSD', 'Windows', '11 Home', '66Wh', 'OLED Touch', '3000x2000', '2x Thunderbolt 4, USB-A, 3.5mm jack', 1360, NOW(), NOW(), 16),
+(15.6, NULL, NULL, 'Đen', 'Laptop gaming hiệu năng cao', 'Intel Core i7-12700H', 'NVIDIA RTX 3070 Ti 8GB', '16GB', '1TB SSD', 'Windows', '11 Home', '90Wh', 'IPS, 165Hz', '2560x1440', '3x USB-A, USB-C, HDMI, Ethernet, 3.5mm jack', 2400, NOW(), NOW(), 17),
+(14.0, NULL, NULL, 'Đen', 'Laptop doanh nhân cao cấp', 'Intel Core i7-1360P', 'Intel Iris Xe', '16GB', '1TB SSD', 'Windows', '11 Pro', '57Wh', 'IPS', '2880x1800', '2x Thunderbolt 4, USB-A, HDMI, 3.5mm jack', 1120, NOW(), NOW(), 18),
+(13.5, NULL, NULL, 'Bạch kim', 'Thiết kế sang trọng, pin dài', 'Intel Core i7-1255U', 'Intel Iris Xe', '16GB', '512GB SSD', 'Windows', '11 Home', '47.4Wh', 'PixelSense Touch', '2256x1504', 'USB-A, Thunderbolt 4, 3.5mm jack', 1270, NOW(), NOW(), 19),
+(16.2, NULL, NULL, 'Space Black', 'Hiệu năng mạnh mẽ, màn hình mini-LED', 'Apple M3 Max (16-core)', 'Apple M3 Max (40-core)', '64GB', '2TB SSD', 'macOS', 'Sonoma', '100Wh', 'Liquid Retina XDR, 120Hz', '3456x2234', '3x Thunderbolt 4, HDMI, SD card, 3.5mm jack', 2170, NOW(), NOW(), 20),
+(15.6, NULL, NULL, 'Platinum', 'Thiết kế mỏng nhẹ, màn hình OLED', 'Intel Core i9-13900H', 'NVIDIA RTX 4070 8GB', '32GB', '1TB SSD', 'Windows', '11 Pro', '86Wh', 'OLED', '3456x2160', '2x Thunderbolt 4, USB-A, HDMI, SD card, 3.5mm jack', 1920, NOW(), NOW(), 21),
+(16.0, NULL, NULL, 'Off Black', 'Laptop gaming cao cấp', 'Intel Core i9-13900H', 'NVIDIA RTX 4080 12GB', '32GB', '2TB SSD', 'Windows', '11 Pro', '90Wh', 'ROG Nebula Display, 240Hz', '2560x1600', '2x USB-C, 2x USB-A, HDMI, LAN, 3.5mm jack', 2100, NOW(), NOW(), 22),
+(16.0, NULL, NULL, 'Xám Core Black', 'Laptop cho nhà sáng tạo', 'Intel Core i7-12700H', 'NVIDIA RTX 3070 8GB', '32GB', '1TB SSD', 'Windows', '11 Pro', '90Wh', 'Touch', '2560x1600', '2x Thunderbolt 4, USB-A, HDMI, SD card, 3.5mm jack', 2350, NOW(), NOW(), 23),
+(13.6, NULL, NULL, 'Midnight', 'Mỏng nhẹ, pin trâu', 'Apple M3', 'Apple M3 GPU (10-core)', '16GB', '512GB SSD', 'macOS', 'Sonoma', '52.6Wh', 'Liquid Retina', '2560x1664', '2x Thunderbolt/USB-C', 1240, NOW(), NOW(), 24),
+(17.0, NULL, NULL, 'Bạc', 'Siêu nhẹ, màn hình lớn', 'Intel Core i7-1360P', 'Intel Iris Xe', '16GB', '1TB SSD', 'Windows', '11 Pro', '80Wh', 'IPS', '2560x1600', '2x Thunderbolt 4, HDMI, USB-A, microSD', 1350, NOW(), NOW(), 25),
+
+-- Máy tính bảng
+(11.0, 13, 8, 'Xám', 'Hỗ trợ bút M-Pencil', 'Snapdragon 888', 'Adreno 660', '8GB', '256GB', 'HarmonyOS', '3.0', '8300mAh', 'OLED', '2560x1600', 'USB Type-C', 449, NOW(), NOW(), 26),
+(11.2, 50, 20, 'Bạc', 'Hỗ trợ bút, tần số quét 144Hz', 'Snapdragon 8+ Gen 1', 'Adreno 730', '8GB', '256GB', 'Android', '13 (MIUI 14)', '8600mAh', 'IPS LCD', '2880x1800', 'USB Type-C', 490, NOW(), NOW(), 27),
+(11.5, 8, 5, 'Xanh lá', 'Màn hình lớn, pin khỏe', 'MediaTek Helio G99', 'Mali-G57 MC2', '8GB', '256GB', 'Android', '13 (Realme UI 4.0)', '8360mAh', 'IPS LCD', '2000x1200', 'USB Type-C, 3.5mm jack', 538, NOW(), NOW(), 28),
+(12.9, 12, 12, 'Space Gray', 'Chip M2, màn hình mini-LED', 'Apple M2', 'Apple M2 GPU (10-core)', '16GB', '1TB', 'iPadOS', '17', '10758mAh', 'Liquid Retina XDR', '2732x2048', 'USB Type-C', 682, NOW(), NOW(), 29),
+(14.6, 13, 12, 'Graphite', 'Màn hình lớn nhất, S-Pen', 'Snapdragon 8 Gen 2', 'Adreno 740', '12GB', '512GB', 'Android', '13 (One UI 5.1)', '11200mAh', 'Dynamic AMOLED 2X', '2960x1848', 'USB Type-C', 732, NOW(), NOW(), 30),
+(12.6, 13, 8, 'Storm Gray', 'Màn hình AMOLED rộng', 'Snapdragon 8 Gen 1', 'Adreno 730', '8GB', '256GB', 'Android', '13', '10200mAh', 'AMOLED', '2560x1600', 'USB Type-C, 3.5mm jack', 565, NOW(), NOW(), 31),
+
+-- Đồng hồ thông minh
+(1.9, NULL, NULL, 'Graphite', 'Theo dõi sức khỏe 24/7, đo điện tâm đồ', 'Apple S9', NULL, '2GB', '64GB', 'watchOS', '10', '308mAh', 'LTPO OLED', '484x396', NULL, 51.5, NOW(), NOW(), 32),
+(1.5, NULL, NULL, 'Đen', 'Bezel xoay vật lý, cảm biến sức khỏe BioActive', 'Exynos W930', NULL, '2GB', '16GB', 'WearOS', '4.5 (One UI 5 Watch)', '425mAh', 'Super AMOLED', '480x480', NULL, 59, NOW(), NOW(), 33),
+(1.43, NULL, NULL, 'Bạc', 'Pin 12 ngày, hơn 100 chế độ thể thao', 'Apollo 4Plus', NULL, '512MB', '4GB', 'MIUI Watch', NULL, '500mAh', 'AMOLED', '466x466', NULL, 36.5, NOW(), NOW(), 34),
+(1.32, NULL, NULL, 'Đen', 'Thiết kế sang trọng, 14 ngày pin', 'Kirin', NULL, '32MB', '4GB', 'HarmonyOS', '4.0', '455mAh', 'AMOLED', '466x466', NULL, 48, NOW(), NOW(), 35),
+(1.3, NULL, NULL, 'Đen', 'GPS đa băng tần, pin 15 ngày', 'NXP i.MX', NULL, '32MB', '32GB', 'Garmin OS', NULL, '550mAh', 'MIP', '260x260', NULL, 53, NOW(), NOW(), 36),
+
+-- Tai nghe
+(NULL, NULL, NULL, 'Trắng', 'Chống ồn chủ động, âm thanh không gian', NULL, NULL, NULL, NULL, 'iOS/Android', NULL, '6 giờ (30 giờ với case)', NULL, NULL, 'Lightning', 5.4, NOW(), NOW(), 37),
+(NULL, NULL, NULL, 'Đen', 'Công nghệ LDAC, 8 micro giảm ồn tốt nhất', NULL, NULL, NULL, NULL, 'iOS/Android', NULL, '30 giờ', NULL, NULL, 'USB Type-C', 250, NOW(), NOW(), 38),
+(NULL, NULL, NULL, 'Trắng/Đen', 'Âm thanh không gian, chống ồn đỉnh cao', NULL, NULL, NULL, NULL, 'iOS/Android', NULL, '24 giờ', NULL, NULL, 'USB Type-C', 230, NOW(), NOW(), 39),
+(NULL, NULL, NULL, 'Tím', 'Chống ồn 33db, chế độ xuyên âm', NULL, NULL, NULL, NULL, 'iOS/Android', NULL, '8 giờ (30 giờ với case)', NULL, NULL, 'USB Type-C', 5.5, NOW(), NOW(), 40),
+(NULL, NULL, NULL, 'Đen', 'Chống ồn tốt, kết nối đa điểm', NULL, NULL, NULL, NULL, 'iOS/Android', NULL, '6 giờ (36 giờ với case)', NULL, NULL, 'USB Type-C', 5.7, NOW(), NOW(), 41),
+
+-- Loa
+(NULL, NULL, NULL, 'Xanh Navy', 'Chống nước IP67, kết nối PartyBoost', NULL, NULL, NULL, NULL, 'iOS/Android', NULL, '20 giờ', NULL, NULL, 'USB Type-C', 980, NOW(), NOW(), 42),
+(NULL, NULL, NULL, 'Đen', 'Loa di động, đèn LED RGB, chống nước', NULL, NULL, NULL, NULL, 'iOS/Android', NULL, '30 giờ', NULL, NULL, 'USB Type-C', 5500, NOW(), NOW(), 43),
+(NULL, NULL, NULL, 'Bạc', 'Loa thông minh, tích hợp Alexa', NULL, NULL, NULL, NULL, 'iOS/Android', NULL, 'Cắm điện', NULL, NULL, 'Power, AUX', 2300, NOW(), NOW(), 44),
+
+-- Sạc dự phòng
+(NULL, NULL, NULL, 'Đen', 'Dung lượng 26800mAh, sạc nhanh PD 20W', NULL, NULL, NULL, NULL, NULL, NULL, '26800mAh', NULL, NULL, '2x USB-A, 1x USB-C', 495, NOW(), NOW(), 45),
+(NULL, NULL, NULL, 'Đen', '20000mAh, sạc nhanh 45W', NULL, NULL, NULL, NULL, NULL, NULL, '20000mAh', NULL, NULL, '2x USB-A, 1x USB-C', 432, NOW(), NOW(), 46),
+(NULL, NULL, NULL, 'Trắng', '10000mAh, siêu mỏng', NULL, NULL, NULL, NULL, NULL, NULL, '10000mAh', NULL, NULL, '1x USB-A, 1x USB-C', 210, NOW(), NOW(), 47),
+
+-- Phụ kiện
+(NULL, NULL, NULL, 'Trắng', 'Sạc không dây 15W, công nghệ MagSafe', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'USB-C', 45, NOW(), NOW(), 48),
+(NULL, NULL, NULL, 'Đen', 'Sạc nhanh 45W, dùng cho điện thoại và laptop', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'USB-C', 52, NOW(), NOW(), 49),
+(NULL, NULL, NULL, 'Đen', 'Sạc GaN II 65W, 3 cổng sạc', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2x USB-C, 1x USB-A', 110, NOW(), NOW(), 50);
+
 
 # Thêm dữ liệu vào ware_house với giá nhập phù hợp (thấp hơn giá bán khoảng 20-30%)
 INSERT INTO ware_house (import_date, price, product_id) VALUES
-('2023-11-15', 6990000, 1),  -- Xiaomi Redmi Note 12 Pro (giá bán: 8990000)
-('2023-11-20', 8490000, 2),  -- Realme GT Neo 5 (giá bán: 10990000)
-('2023-12-05', 15990000, 3), -- Oppo Find X5 Pro (giá bán: 19990000)
-('2023-12-10', 17990000, 4), -- Vivo X90 Pro (giá bán: 22990000)
-('2023-12-15', 16990000, 5), -- Honor Magic5 Pro (giá bán: 20990000)
-('2024-01-05', 23990000, 6), -- Samsung Galaxy S23 Ultra (giá bán: 29990000)
-('2024-01-10', 27990000, 7), -- iPhone 15 Pro Max (giá bán: 33990000)
-('2024-01-20', 20990000, 8), -- Xiaomi 14 Ultra (giá bán: 25990000)
-('2024-02-01', 13490000, 9), -- Huawei MatePad Pro 11 (giá bán: 16990000)
-('2024-02-10', 11990000, 10), -- Xiaomi Pad 6 Pro (giá bán: 14990000)
-('2024-02-15', 6990000, 11),  -- Realme Pad 2 (giá bán: 8990000)
-('2024-02-25', 26990000, 12), -- iPad Pro M2 12.9 (giá bán: 31990000)
-('2024-03-01', 21990000, 13), -- Samsung Galaxy Tab S9 Ultra (giá bán: 26990000)
-('2024-03-05', 14490000, 14), -- Lenovo Tab P12 Pro (giá bán: 17990000)
-('2024-03-10', 32990000, 15), -- HP Spectre x360 (giá bán: 39990000)
-('2024-03-15', 29990000, 16), -- Acer Predator Helios 300 (giá bán: 35990000)
-('2024-03-20', 38990000, 17), -- Lenovo ThinkPad X1 Carbon (giá bán: 45990000)
-('2024-03-25', 31990000, 18), -- Microsoft Surface Laptop 5 (giá bán: 37990000)
-('2024-04-01', 75990000, 19), -- MacBook Pro 16 M3 Max (giá bán: 89990000)
-('2024-04-05', 46990000, 20), -- Dell XPS 15 (giá bán: 55990000)
-('2024-04-10', 41990000, 21), -- Asus ROG Zephyrus G16 (giá bán: 49990000)
-('2024-04-15', 43990000, 22); -- MSI Creator Z16 (giá bán: 51990000)
+-- Điện thoại
+('2023-11-15', 6790000, 1),  -- Xiaomi Redmi Note 12 Pro
+('2023-11-20', 8290000, 2),  -- Realme GT Neo 5
+('2023-12-05', 14990000, 3), -- Oppo Find X5 Pro
+('2023-12-10', 17490000, 4), -- Vivo X90 Pro
+('2023-12-15', 15990000, 5), -- Honor Magic5 Pro
+('2024-01-05', 22990000, 6), -- Samsung Galaxy S23 Ultra
+('2024-01-10', 26990000, 7), -- iPhone 15 Pro Max
+('2024-01-20', 19990000, 8), -- Xiaomi 14 Ultra
+('2024-01-25', 20990000, 9), -- Google Pixel 8 Pro
+('2024-02-01', 11990000, 10), -- Nothing Phone 2
+('2024-02-05', 18990000, 11), -- OnePlus 12
+('2024-02-10', 31990000, 12), -- Samsung Galaxy Z Fold 5
+('2024-02-15', 17990000, 13), -- iPhone 15
+('2024-02-20', 14990000, 14), -- Xiaomi 14
+('2024-03-01', 21990000, 15), -- Oppo Find X7 Ultra
+
+-- Laptop
+('2024-03-05', 30990000, 16), -- HP Spectre x360
+('2024-03-10', 27990000, 17), -- Acer Predator Helios 300
+('2024-03-15', 36990000, 18), -- Lenovo ThinkPad X1 Carbon
+('2024-03-20', 29990000, 19), -- Microsoft Surface Laptop 5
+('2024-03-25', 72990000, 20), -- MacBook Pro 16 M3 Max
+('2024-04-01', 44990000, 21), -- Dell XPS 15
+('2024-04-05', 38990000, 22), -- Asus ROG Zephyrus G16
+('2024-04-10', 41990000, 23), -- MSI Creator Z16
+('2024-04-15', 25990000, 24), -- MacBook Air M3
+('2024-04-20', 32990000, 25), -- LG Gram 17
+
+-- Máy tính bảng
+('2024-04-25', 12990000, 26), -- Huawei MatePad Pro 11
+('2024-05-01', 11490000, 27), -- Xiaomi Pad 6 Pro
+('2024-05-05', 6790000, 28),  -- Realme Pad 2
+('2024-05-10', 24990000, 29), -- iPad Pro M2 12.9
+('2024-05-15', 20990000, 30), -- Samsung Galaxy Tab S9 Ultra
+('2024-05-20', 13990000, 31), -- Lenovo Tab P12 Pro
+
+-- Đồng hồ thông minh
+('2024-05-25', 8490000, 32),  -- Apple Watch Series 9
+('2024-06-01', 6790000, 33),  -- Samsung Galaxy Watch 6 Classic
+('2024-06-05', 2990000, 34),  -- Xiaomi Watch S2
+('2024-06-10', 5490000, 35),  -- Huawei Watch GT 4
+('2024-06-15', 9990000, 36),  -- Garmin Forerunner 955
+
+-- Tai nghe
+('2024-06-20', 4990000, 37),  -- AirPods Pro 2
+('2024-06-25', 6990000, 38),  -- Sony WH-1000XM5
+('2024-07-01', 7490000, 39),  -- Bose QuietComfort Ultra
+('2024-07-05', 3390000, 40),  -- Samsung Galaxy Buds3 Pro
+('2024-07-10', 4590000, 41),  -- Jabra Elite 10
+
+-- Loa
+('2024-07-15', 2590000, 42),  -- JBL Charge 5
+('2024-07-20', 6990000, 43),  -- Sony SRS-XG500
+('2024-07-25', 7990000, 44),  -- Bose Smart Speaker 500
+
+-- Sạc dự phòng
+('2024-08-01', 1190000, 45),  -- Anker PowerCore 26800
+('2024-08-05', 740000, 46),   -- Xiaomi Power Bank 3 Pro
+('2024-08-10', 990000, 47),   -- Samsung Super Fast Portable
+
+-- Phụ kiện
+('2024-08-15', 690000, 48),   -- Apple MagSafe Charger
+('2024-08-20', 640000, 49),   -- Samsung 45W Travel Adapter
+('2024-08-25', 990000, 50);   -- Anker 735 Charger
 
 -- Thêm dữ liệu cho bảng order_products
 INSERT INTO order_products (order_code, total_price, discount, discount_percent, status, create_at, update_at, customer_id)

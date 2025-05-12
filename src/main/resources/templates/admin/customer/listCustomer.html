@@ -33,7 +33,7 @@
             <div class="search-container">
                 <form class="search-form" th:action="@{/Admin/customers}" method="get">
                     <select class="input-select" name="searchField" id="searchField">
-                        <option value="name" th:selected="${field == 'name'}">Tên</option>
+                        <option value="name" th:selected="${field == 'name'}">Tên Khách Hàng </option>
                         <option value="phone" th:selected="${field == 'phone'}">Số điện thoại</option>
                         <option value="address" th:selected="${field == 'address'}">Địa chỉ</option>
                     </select>
