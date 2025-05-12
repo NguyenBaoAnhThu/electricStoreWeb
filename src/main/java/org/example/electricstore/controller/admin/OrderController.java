@@ -92,7 +92,8 @@ public class OrderController {
 
         // Kiểm tra nếu không có đơn hàng và có tìm kiếm
         if (orders.isEmpty() && (searchInput != null && !searchInput.isEmpty())) {
-            model.addAttribute("noResultMessage", "Không tìm thấy đơn hàng nào phù hợp với dữ liệu tìm kiếm.");
+            model.addAttribute("noResultMessage", "Không tìm thấy kết quả phù hợp với dữ liệu tìm kiếm." +
+                    "\n");
         }
 
         if (msg != null) {

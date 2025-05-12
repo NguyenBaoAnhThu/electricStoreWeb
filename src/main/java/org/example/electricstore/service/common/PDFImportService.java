@@ -184,8 +184,8 @@ public class PDFImportService {
             addTableHeader(productTable, "Tên sản phẩm", vietnameseBoldFont);
             addTableHeader(productTable, "Thương hiệu", vietnameseBoldFont);
             addTableHeader(productTable, "Số lượng", vietnameseBoldFont);
-            addTableHeader(productTable, "Đơn giá", vietnameseBoldFont);
-            addTableHeader(productTable, "Thành tiền", vietnameseBoldFont);
+            addTableHeader(productTable, "Đơn giá (VNĐ)", vietnameseBoldFont);
+            addTableHeader(productTable, "Thành tiền (VNĐ)", vietnameseBoldFont);
 
             // Dữ liệu sản phẩm
             int index = 1;
@@ -263,7 +263,7 @@ public class PDFImportService {
             if (importDTO.getVat() > 0) {
                 Cell vatLabelCell = new Cell();
                 vatLabelCell.setBorder(Border.NO_BORDER);
-                vatLabelCell.add(new Paragraph("VAT (" + importDTO.getVat() + "%):"))
+                vatLabelCell.add(new Paragraph("VAT (" + (int)importDTO.getVat() + "%):"))
                         .setFont(vietnameseFont)
                         .setFontSize(12)
                         .setTextAlignment(TextAlignment.RIGHT);
@@ -271,7 +271,8 @@ public class PDFImportService {
 
                 // Tính VAT trên số tiền sau khi giảm giá
                 double amountAfterDiscount = importDTO.getTotalAmount() - importDTO.getDiscount();
-                double vatAmount = amountAfterDiscount * importDTO.getVat() / 100;
+                // Làm tròn để chỉ lấy số nguyên
+                long vatAmount = Math.round(amountAfterDiscount * importDTO.getVat() / 100);
 
                 Cell vatValueCell = new Cell();
                 vatValueCell.setBorder(Border.NO_BORDER);
@@ -476,11 +477,11 @@ public class PDFImportService {
 
     private String formatCurrency(long amount) {
         NumberFormat currencyFormat = NumberFormat.getNumberInstance(new Locale("vi", "VN"));
-        return currencyFormat.format(amount) + " VNĐ";
+        return currencyFormat.format(amount);
     }
 
     private String formatCurrency(double amount) {
         NumberFormat currencyFormat = NumberFormat.getNumberInstance(new Locale("vi", "VN"));
-        return currencyFormat.format(amount) + " VNĐ";
+        return currencyFormat.format(amount);
     }
 }

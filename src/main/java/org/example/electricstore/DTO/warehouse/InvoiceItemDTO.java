@@ -12,5 +12,5 @@ public class InvoiceItemDTO {
     private double quantity;
     private double price;
     private String paymentStatus;
-    private double total; // Thành tiền của sản phẩm
+    private double total;
 }

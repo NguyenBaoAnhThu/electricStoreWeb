@@ -112,8 +112,8 @@
           <th>Tên Sản Phẩm</th>
           <th>Thương Hiệu</th>
           <th>Số Lượng</th>
-          <th>Đơn Giá</th>
-          <th>Thành Tiền</th>
+          <th>Đơn Giá (VNĐ)</th>
+          <th>Thành Tiền (VNĐ)</th>
         </tr>
         </thead>
         <tbody>
@@ -123,8 +123,8 @@
           <td th:text="${item.productName}"></td>
           <td th:text="${item.brand}"></td>
           <td th:text="${item.quantity.intValue()}"></td>
-          <td th:text="${#numbers.formatDecimal(item.price, 0, 'POINT', 0, 'COMMA')} + ' VNĐ'"></td>
-          <td th:text="${#numbers.formatDecimal(item.quantity * item.price, 0, 'POINT', 0, 'COMMA')} + ' VNĐ'"></td>
+          <td th:text="${#numbers.formatDecimal(item.price, 0, 'POINT', 0, 'COMMA')}"></td>
+          <td th:text="${#numbers.formatDecimal(item.quantity * item.price, 0, 'POINT', 0, 'COMMA')}"></td>
         </tr>
         </tbody>
       </table>
@@ -153,66 +153,62 @@
 
               <div class="row mb-2">
                 <div class="col-sm-6">
-                  <span class="text-secondary">Tổng tiền hàng:</span>
+                  <span class="text-secondary">Tổng tiền hàng (VNĐ):</span>
                 </div>
                 <div class="col-sm-6 text-end">
-                  <strong id="totalProductsPrice">0 VNĐ</strong>
+                  <strong id="totalProductsPrice">0</strong>
                 </div>
               </div>
 
               <div class="row mb-2">
                 <div class="col-sm-6">
-                  <span class="text-secondary">Chiết khấu:</span>
+                  <span class="text-secondary">Chiết khấu (%):</span>
                 </div>
                 <div class="col-sm-6 text-end">
-                  <strong th:text="${invoice.discount != null ? #numbers.formatDecimal(invoice.discount, 0, 'POINT', 0, 'COMMA') + ' VNĐ' : '0 VNĐ'}"></strong>
+                  <strong th:text="${invoice.discount != null ? #numbers.formatDecimal(invoice.discount, 0, 'POINT', 0, 'COMMA') : '0'}"></strong>
                 </div>
               </div>
 
               <div class="row mb-2">
                 <div class="col-sm-6">
-                  <span class="text-secondary">Thuế VAT:</span>
+                  <span class="text-secondary">Thuế VAT (%):</span>
                 </div>
                 <div class="col-sm-6 text-end">
-                  <strong id="vatDisplay">0 VNĐ</strong>
+                  <strong id="vatDisplay">0</strong>
                 </div>
               </div>
 
               <div class="row">
                 <div class="col-sm-6">
-                  <span class="text-secondary">Chi Phí Trả Khác:</span>
+                  <span class="text-secondary">Chi Phí Trả Khác (VNĐ):</span>
                 </div>
                 <div class="col-sm-6 text-end">
-                  <strong th:text="${invoice.additionalFees != null ? #numbers.formatDecimal(invoice.additionalFees, 0, 'POINT', 0, 'COMMA') + ' VNĐ' : '0 VNĐ'}"></strong>
+                  <strong th:text="${invoice.additionalFees != null ? #numbers.formatDecimal(invoice.additionalFees, 0, 'POINT', 0, 'COMMA') : '0'}"></strong>
                 </div>
               </div>
             </div>
           </div>
 
           <!-- Phần Tổng Giá Trị Nhập Hàng -->
-          <hr class="my-0">
           <div class="border-start border-5 border-danger">
-            <div class="p-3 pb-0">
-              <h5 class="fw-bold">Tổng Giá Trị Nhập Hàng</h5>
-            </div>
             <hr class="my-2">
 
             <div class="p-3">
               <div class="row mb-2">
                 <div class="col-sm-6">
-                  <span class="text-secondary">Tổng tiền đã thanh toán:</span>
+                  <span class="text-secondary">Tổng tiền đã thanh toán (VNĐ):</span>
                 </div>
                 <div class="col-sm-6 text-end">
-                  <strong id="paidAmountDisplay">0 VNĐ</strong>
+                  <strong id="paidAmountDisplay">0</strong>
                 </div>
               </div>
 
               <div class="row">
                 <div class="col-sm-6">
-                  <span class="text-secondary">Còn Nợ:</span>
+                  <span class="text-secondary">Còn Nợ (VNĐ):</span>
                 </div>
                 <div class="col-sm-6 text-end">
-                  <strong class="text-danger" id="remainingDebtDisplay">0 VNĐ</strong>
+                  <strong class="text-danger" id="remainingDebtDisplay">0</strong>
                 </div>
               </div>
             </div>
@@ -401,7 +397,7 @@
       const rowTotal = parseNumberFromString($(this).find('td:last').text());
       totalPrice += rowTotal;
     });
-    $('#totalProductsPrice').text(formatCurrency(totalPrice) + ' VNĐ');
+    $('#totalProductsPrice').text(formatCurrency(totalPrice));
 
     /**
      * Khởi tạo thông tin chi tiết phiếu nhập
@@ -415,7 +411,7 @@
         const rowTotal = parseNumberFromString($(this).find('td:last').text());
         totalPrice += rowTotal;
       });
-      $('#totalProductsPrice').text(formatCurrency(totalPrice) + ' VNĐ');
+      $('#totalProductsPrice').text(formatCurrency(totalPrice));
 
       // Lấy các giá trị từ input ẩn
       const vatRate = parseFloat($("#vatRate").val() || 0);
@@ -428,9 +424,9 @@
 
       // Hiển thị VAT
       if (vatRate > 0) {
-        $('#vatDisplay').text(vatRate.toFixed(2) + '% (' + formatCurrency(vatAmount) + ' VNĐ)');
+        $('#vatDisplay').text(vatRate.toFixed(0) + '% (' + formatCurrency(vatAmount)+')');
       } else {
-        $('#vatDisplay').text('0 VNĐ');
+        $('#vatDisplay').text('0');
       }
 
       // Tính tổng giá trị bao gồm VAT và phí khác
@@ -441,18 +437,18 @@
       const paidAmount = getStoredPaymentData(sessionKey);
 
       // Hiển thị số tiền đã thanh toán
-      $("#paidAmountDisplay").text(formatCurrency(paidAmount) + ' VNĐ');
+      $("#paidAmountDisplay").text(formatCurrency(paidAmount));
 
       // Hiển thị số tiền còn nợ
       const remaining = grandTotal - paidAmount;
 
       // Cập nhật ở cả hai nơi với cùng một giá trị
-      $("#remainingDebtDisplay").text(formatCurrency(Math.max(0, remaining)) + ' VNĐ');
-      $("#remainingDebt").text(formatCurrency(Math.max(0, remaining)) + ' VNĐ');
+      $("#remainingDebtDisplay").text(formatCurrency(Math.max(0, remaining))  );
+      $("#remainingDebt").text(formatCurrency(Math.max(0, remaining))  );
 
       // Cập nhật các phần khác trong modal
-      $("#paymentModal .text-success").text(formatCurrency(paidAmount) + ' VNĐ');
-      $("#totalDebt").text(formatCurrency(Math.max(0, remaining)) + ' VNĐ');
+      $("#paymentModal .text-success").text(formatCurrency(paidAmount)  );
+      $("#totalDebt").text(formatCurrency(Math.max(0, remaining))  );
       $("#maxPaymentAmount").text(formatCurrency(Math.max(0, remaining)));
 
       // Nếu đã thanh toán hết, vô hiệu hóa nút thanh toán
@@ -477,7 +473,7 @@
         // Tự động điền số tiền còn nợ
         if (remaining > 0) {
           $("#paymentAmount").val(formatCurrency(remaining));
-          $("#totalDebt").text(formatCurrency(remaining) + ' VNĐ');
+          $("#totalDebt").text(formatCurrency(remaining)  );
           $("#paymentSubmitBtn").prop("disabled", false);
         }
       });
@@ -527,7 +523,7 @@
 
       // Cập nhật số tiền hiển thị trong tổng thanh toán
       if (isAmountValid) {
-        $("#totalDebt").text(formatCurrency(amount) + ' VNĐ');
+        $("#totalDebt").text(formatCurrency(amount)  );
       } else {
         $("#totalDebt").text("0 VNĐ");
       }

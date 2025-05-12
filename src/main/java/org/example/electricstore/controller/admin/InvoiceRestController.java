@@ -317,7 +317,7 @@ public class InvoiceRestController {
         model.addAttribute("receiptCode", nextReceiptCode);
 
         // Thêm ngày hiện tại làm mặc định
-        model.addAttribute("importDate", LocalDate.now().toString());
+        model.addAttribute("importDate", LocalDate.now());
 
         // Lấy danh sách nhà cung cấp và sản phẩm (code hiện có)
         model.addAttribute("suppliers", supplierService.getAllSuppliers());

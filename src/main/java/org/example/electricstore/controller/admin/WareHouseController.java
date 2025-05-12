@@ -45,7 +45,7 @@ public class WareHouseController {
 
     @GetMapping
     public ModelAndView showWareHouse(
-            @RequestParam(name = "importDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate importDate,
+            @RequestParam(name = "importDate", required = false) @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate importDate,
             @RequestParam(name = "brand", required = false, defaultValue = "") String brand,
             @RequestParam(name = "statusStock", required = false, defaultValue = "0") Integer statusStock,
             @RequestParam(name = "productCode", required = false) String productCode,

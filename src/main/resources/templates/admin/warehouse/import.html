@@ -42,7 +42,7 @@
 <main class="main-content">
     <div class="wrapper">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="tittle">Tạo Phiếu Nhập Kho</h1>
+            <h1 class="tittle">Thêm Phiếu Nhập Kho</h1>
             <a th:href="@{/Admin/ware-houses}" class="btn btn-secondary">
                 Quay lại
             </a>
@@ -126,8 +126,6 @@
                     <div class="col-md-6">
                         <label class="form-label">Tổng số lượng nhập:</label>
                         <strong id="totalQuantity" class="ms-2">0</strong><br>
-                        <label class="form-label">Tổng tiền hàng:</label>
-                        <strong id="totalAmount" class="ms-2">0</strong>
                     </div>
                 </div>
                 <hr class="my-2">
@@ -155,14 +153,13 @@
                         <span id="grandTotal" class="ms-2 fw-bold fs-5 text-danger">0</span>
                     </div>
                 </div>
-                <hr class="my-2">
             </div>
             <div class="d-flex justify-content-end gap-2">
                 <button type="button" id="generatePdfOnlyBtn" class="btn btn-success btn-action">
                     Lưu phiếu
                 </button>
                 <button type="button" class="btn btn-danger btn-action" id="cancelBtn">
-                    Hủy phiếu
+                    Hủy
                 </button>
             </div>
         </form>

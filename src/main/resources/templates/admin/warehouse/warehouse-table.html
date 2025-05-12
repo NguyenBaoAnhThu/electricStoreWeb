@@ -20,7 +20,7 @@
 <main class="main-content">
     <div class="wrapper">
         <h1 class="tittle" onclick="window.location.href='/Admin/ware-houses'">
-            Kho hàng
+            Kho Hàng
         </h1>
         <div class="warehouse-manager-search mb-4">
             <div class="supplier-form">
@@ -30,7 +30,11 @@
                         <form class="row align-items-end g-3" method="GET" action="/Admin/ware-houses" id="searchForm">
                             <div class="col-md-4">
                                 <label for="importDate" class="form-label">Ngày Nhập Hàng</label>
-                                <input type="date" class="form-control" th:value="${importDate}" id="importDate" name="importDate">
+                                <input type="date"
+                                       class="form-control"
+                                       th:value="${importDate}"
+                                       id="importDate"
+                                       name="importDate">
                             </div>
                             <div class="col-md-4">
                                 <label for="statusStock" class="form-label">Trạng Thái</label>
@@ -54,11 +58,11 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label for="productCode" class="form-label">Mã Sản phẩm</label>
+                                <label for="productCode" class="form-label">Mã Sản Phẩm</label>
                                 <input type="text" class="form-control" th:value="${productCode}" id="productCode" name="productCode" placeholder="Nhập mã sản phẩm">
                             </div>
                             <div class="col-md-6">
-                                <label for="productName" class="form-label">Tên Sản phẩm</label>
+                                <label for="productName" class="form-label">Tên Sản Phẩm</label>
                                 <input type="text" class="form-control" th:value="${productName}" id="productName" name="productName" placeholder="Nhập tên sản phẩm">
                             </div>
                         </form>
@@ -124,22 +128,25 @@
                     <td th:text="${item.product != null && item.product.brand != null ? item.product.brand.brandName : 'Không có thương hiệu'}"></td>
                     <td th:text="${item.product != null ? item.product.stock : 0}"></td>
                     <td th:text="${#temporals.format(item.importDate, 'dd/MM/yyyy')}"></td>
-                    <td>
+                    <td class="text-center">
                         <!-- CÒN HÀNG - màu xanh lá -->
                         <span th:if="${item.product != null && item.product.stock > 30}"
-                              class="badge status-badge px-2 py-2 text-uppercase bg-success">
+                              class="badge status-badge px-2 py-2 text-uppercase bg-success"
+                              style="min-width: 120px; display: inline-block; text-align: center;">
                             CÒN HÀNG
                         </span>
 
                         <!-- SẮP HẾT - màu cam -->
                         <span th:if="${item.product != null && item.product.stock > 0 && item.product.stock <= 30}"
-                              class="badge status-badge px-2 py-2 text-uppercase bg-warning text-dark">
+                              class="badge status-badge px-2 py-2 text-uppercase bg-warning text-dark"
+                              style="min-width: 120px; display: inline-block; text-align: center;">
                             SẮP HẾT
                         </span>
 
                         <!-- HẾT HÀNG - màu đỏ -->
                         <span th:if="${item.product != null && item.product.stock == 0}"
-                              class="badge status-badge px-2 py-2 text-uppercase bg-danger">
+                              class="badge status-badge px-2 py-2 text-uppercase bg-danger"
+                              style="min-width: 120px; display: inline-block; text-align: center;">
                             HẾT HÀNG
                         </span>
                     </td>
