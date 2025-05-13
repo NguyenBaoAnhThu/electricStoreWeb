@@ -43,7 +43,6 @@
     <!-- Thêm phần hiển thị lý do hủy ngay sau phần tiêu đề -->
     <div class="alert alert-danger" th:if="${invoice.products[0].paymentStatus == 'ĐÃ HỦY'}">
       <div class="d-flex align-items-center">
-        <i class="fas fa-exclamation-triangle me-2"></i>
         <strong>Lý do hủy:</strong>
         <span class="ms-2" th:text="${invoice.cancelReason != null ? invoice.cancelReason : 'Không có lý do được ghi lại'}"></span>
       </div>
@@ -91,7 +90,7 @@
             <tr>
               <th>Ngày Thanh Toán</th>
               <th>Phương Thức</th>
-              <th>Số Tiền</th>
+              <th>Số Tiền(VNĐ)</th>
             </tr>
             </thead>
             <tbody id="paymentHistoryBody">
@@ -240,13 +239,12 @@
 <!-- Modal Thanh Toán -->
 <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
   <div class="modal-dialog">
-    <div class="modal-content border-danger">
-      <div class="modal-header bg-danger text-white py-2">
-        <h5 class="modal-title" id="paymentModalLabel">Thanh Toán Hóa Đơn Nhập Hàng</h5>
+    <div class="modal-content border-dark">
+      <div class="modal-header bg-dark text-white py-10">
+        <h5 class="modal-title" id="paymentModalLabel">Thanh toán hoá đơn nhập hàng</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
       </div>
       <div class="modal-body">
-        <p class="fw-bold">Tổng giá trị nhập hàng:</p>
         <p>Đã thanh toán: <span class="text-success">0 VNĐ</span></p>
         <p>Còn nợ: <span class="text-danger" id="remainingDebt">0 VNĐ</span></p>
 
@@ -322,7 +320,7 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header bg-dark text-white">
-        <h5 class="modal-title" id="exportConfirmModalLabel">Xác nhận xuất phiếu</h5>
+        <h5 class="modal-title" id="exportConfirmModalLabel">Xác nhận xuất phiếu nhập kho</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body d-flex align-items-center">
@@ -345,7 +343,7 @@
   <div class="modal-dialog">
     <div class="modal-content border-secondary">
       <div class="modal-header bg-dark text-white">
-        <h5 class="modal-title" id="cancelModalLabel">Xác nhận hủy phiếu</h5>
+        <h5 class="modal-title" id="cancelModalLabel">Xác nhận hủy phiếu nhập kho</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
       </div>
       <div class="modal-body">
@@ -551,7 +549,6 @@
         alert("Vui lòng nhập số tiền hợp lệ");
         return;
       }
-
       // Gửi yêu cầu thanh toán
       $.ajax({
         url: "/api/Admin/invoice/payment-process",
@@ -657,18 +654,60 @@
         dataType: "json",
         success: function(historyList) {
           renderPaymentHistory(historyList);
+
+          // Tính tổng số tiền đã thanh toán từ lịch sử
+          let totalPaid = 0;
+          if (historyList && historyList.length > 0) {
+            historyList.forEach(entry => {
+              totalPaid += Number(entry.amount);
+            });
+          }
+
+          // Lưu vào sessionStorage
+          const sessionKey = `invoice-paid-${invoiceId}`;
+          sessionStorage.setItem(sessionKey, totalPaid);
+
+          // Cập nhật hiển thị
+          updatePaymentDisplay(totalPaid);
         },
         error: function(error) {
           console.error("Lỗi khi tải lịch sử thanh toán:", error);
           $("#paymentHistoryBody").html(`
-          <tr>
-            <td colspan="3" class="text-center text-danger">
-              Không thể tải dữ liệu. Vui lòng thử lại sau.
-            </td>
-          </tr>
-        `);
+        <tr>
+          <td colspan="3" class="text-center text-danger">
+            Không thể tải dữ liệu. Vui lòng thử lại sau.
+          </td>
+        </tr>
+      `);
         }
       });
+    }
+
+// Thêm hàm mới để cập nhật hiển thị
+    function updatePaymentDisplay(paidAmount) {
+      // Lấy các giá trị từ input ẩn
+      const totalPrice = parseNumberFromString($('#totalProductsPrice').text());
+      const vatRate = parseFloat($("#vatRate").val() || 0);
+      const discount = parseNumberFromString($("#discountValue").val() || 0);
+      const additionalFees = parseNumberFromString($("#additionalFeesValue").val() || 0);
+
+      // Tính toán VAT và tổng tiền
+      const amountAfterDiscount = totalPrice - discount;
+      const vatAmount = Math.round(amountAfterDiscount * vatRate / 100);
+      const grandTotal = amountAfterDiscount + vatAmount + additionalFees;
+
+      // Cập nhật số tiền đã thanh toán
+      $("#paidAmountDisplay").text(formatCurrency(paidAmount));
+
+      // Cập nhật số tiền còn nợ
+      const remaining = Math.max(0, grandTotal - paidAmount);
+      $("#remainingDebtDisplay").text(formatCurrency(remaining));
+
+      // Cập nhật các phần trong modal thanh toán
+      $("#paymentModal .text-success").text(formatCurrency(paidAmount));
+      $("#remainingDebt").text(formatCurrency(remaining));
+      $("#totalDebt").text(formatCurrency(remaining));
+      $("#maxPaymentAmount").text(formatCurrency(remaining));
     }
 
     /**
@@ -694,7 +733,7 @@
         const row = $("<tr>").html(`
         <td>${paidDate}</td>
         <td>${entry.method}</td>
-        <td>${formatCurrency(Number(entry.amount))} VNĐ</td>
+        <td>${formatCurrency(Number(entry.amount))}</td>
       `);
         tbody.append(row);
       });
