@@ -40,39 +40,42 @@
             </a>
         </div>
         <!-- Form Lọc -->
-        <div class="form-container mb-4">
-            <div class="red-bar"></div>
-            <form id="filterForm" th:action="@{/Admin/ware-houses/history_warehouse}" method="get">
-                <div class="row g-3 align-items-end">
-                    <div class="col">
-                        <label class="form-label fw-medium">Mã Phiếu</label>
-                        <input id="filterCode" name="filterCode" type="text" class="form-control form-control-sm"
-                               th:value="${param.filterCode}" placeholder="Nhập mã">
-                    </div>
-                    <div class="col">
-                        <label class="form-label fw-medium">Nhà Cung Cấp</label>
-                        <input id="filterBrand" name="filterBrand" type="text" class="form-control form-control-sm"
-                               th:value="${param.filterBrand}" placeholder="Nhập NCC">
-                    </div>
-                    <div class="col">
-                        <label class="form-label fw-medium">Từ Ngày</label>
-                        <input id="filterFromDate" name="filterFromDate" type="date" class="form-control form-control-sm"
-                               th:value="${param.filterFromDate}">
-                    </div>
-                    <div class="col">
-                        <label class="form-label fw-medium">Đến Ngày</label>
-                        <input id="filterToDate" name="filterToDate" type="date" class="form-control form-control-sm"
-                               th:value="${param.filterToDate}">
-                    </div>
-                    <div class="col-auto">
-                        <button type="submit" class="btn btn-danger btn-sm">
-                            <i class="fas fa-search me-1"></i>
-                        </button>
-                    </div>
-                    <input type="hidden" name="page" value="0">
-                    <input type="hidden" name="size" th:value="${pageSize}">
+        <div class="warehouse-manager-search mb-4">
+            <div class="supplier-form">
+                <div class="red-bar"></div>
+                <div class="row w-100">
+                    <form id="filterForm" th:action="@{/Admin/ware-houses/history_warehouse}" method="get" class="row align-items-end g-3">
+                        <div class="col-md-3">
+                            <label for="filterCode" class="form-label">Mã Phiếu</label>
+                            <input id="filterCode" name="filterCode" type="text" class="form-control"
+                                   th:value="${param.filterCode}" placeholder="Nhập mã phiếu">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="filterBrand" class="form-label">Nhà Cung Cấp</label>
+                            <input id="filterBrand" name="filterBrand" type="text" class="form-control"
+                                   th:value="${param.filterBrand}" placeholder="Nhập nhà cung cấp">
+                        </div>
+                        <div class="col-md-2">
+                            <label for="filterFromDate" class="form-label">Từ Ngày</label>
+                            <input id="filterFromDate" name="filterFromDate" type="date" class="form-control"
+                                   th:value="${param.filterFromDate}">
+                        </div>
+                        <div class="col-md-2">
+                            <label for="filterToDate" class="form-label">Đến Ngày</label>
+                            <input id="filterToDate" name="filterToDate" type="date" class="form-control"
+                                   th:value="${param.filterToDate}">
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-danger w-100" type="submit" style="height: 38px;">
+                                <i class="fas fa-search me-1"></i> Tìm Kiếm
+                            </button>
+                        </div>
+                        <input type="hidden" name="page" value="0">
+                        <input type="hidden" name="size" th:value="${pageSize}">
+                    </form>
                 </div>
-            </form>
+            </div>
+            <hr class="mt-4 mb-3 border-2 border-secondary opacity-25">
         </div>
 
         <!-- Bảng Danh Sách -->
