@@ -36,10 +36,10 @@
       <div class="search-container">
         <form class="search-form" action="/Admin/brand-manager" method="get">
           <select class="input-select" name="searchType">
-            <option value="brandName" selected>Tên thương hiệu</option>
-            <option value="country">Xuất xứ</option>
+            <option value="brandName" selected>Tên Thương Hiệu</option>
+            <option value="country">Xuất Xứ</option>
           </select>
-          <input class="form-control" type="search" name="keyword" th:value="${keyword}" placeholder="Tìm kiếm thương hiệu..." aria-label="Search">
+          <input class="form-control" type="search" name="keyword" th:value="${keyword}" placeholder="Nhập thông tin cần tìm..." aria-label="Search">
           <input type="hidden" name="page" value="0">
           <button class="btn" style="background-color: #D10024; color: white;" type="submit">
             <i class="fas fa-search"></i>
@@ -233,7 +233,7 @@
             <i class="material-icons" style="font-size:48px; color:black;">error_outline</i>
           </div>
           <div>
-            <p class="mb-0">Vui lòng chọn ít nhất một thương hiệu để xóa!</p>
+            <p class="mb-0">Vui lòng chọn ít nhất một thương hiệu để xóa.</p>
           </div>
         </div>
         <div class="modal-footer border-0 justify-content-center">

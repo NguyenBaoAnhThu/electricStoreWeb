@@ -40,11 +40,11 @@
             <div class="search-container">
                 <form class="search-form" action="/Admin/employee-manager" method="get">
                     <select class="input-select" name="searchField">
-                        <option value="name" th:selected="${field == 'name'}">Họ và Tên</option>
+                        <option value="name" th:selected="${field == 'name'}">Tên Nhân Viên</option>
                         <option value="phone" th:selected="${field == 'phone'}">Số điện thoại</option>
                         <option value="code" th:selected="${field == 'code'}">Mã nhân viên</option>
                     </select>
-                    <input class="form-control" type="search" name="searchInput" th:value="${filterKeyWord}" placeholder="Tìm kiếm nhân viên..." aria-label="Search">
+                    <input class="form-control" type="search" name="searchInput" th:value="${filterKeyWord}" placeholder="Nhập thông tin cần tìm..." aria-label="Search">
                     <input type="hidden" name="page" value="1">
                     <button class="btn" style="background-color: #D10024; color: white;" type="submit">
                         <i class="fas fa-search"></i>
@@ -71,7 +71,7 @@
                     <th>Tên Nhân Viên</th>
                     <th>Ngày Sinh</th>
                     <th>Địa Chỉ</th>
-                    <th>SĐT</th>
+                    <th>Số Điện Thoại</th>
                     <th width="80">Thao tác</th>
                 </tr>
                 </thead>
@@ -109,7 +109,7 @@
         <!-- Pagination and Delete Button -->
         <div class="d-flex justify-content-between align-items-center mt-4">
             <button type="button" id="deleteBtn" class="btn btn-danger" title="Xóa">
-                <i class="fas fa-trash-alt me-2"></i> Xóa nhân viên
+                <i class="fas fa-trash-alt me-2"></i> Xóa Nhân Viên
             </button>
 
             <nav aria-label="Page navigation" th:if="${employees.totalPages > 0}">
@@ -165,7 +165,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addEmployeeModalLabel">Thêm Nhân Viên Mới</h5>
+                    <h5 class="modal-title" id="addEmployeeModalLabel">Thêm Nhân Viên </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -177,7 +177,7 @@
                                 <p class="error text-danger" id="employeeCodeError"></p>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">Họ và Tên</label>
+                                <label class="form-label">Tên Nhân Viên</label>
                                 <input type="text" class="form-control" id="employeeName" name="employeeName">
                                 <p class="error text-danger" id="employeeNameError"></p>
                             </div>
@@ -214,16 +214,14 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Mật Khẩu</label>
-                                <input type="password" class="form-control" id="password" name="password">
+                                <div class="input-group">
+                                    <input type="password" class="form-control password-input" id="password" name="password">
+                                    <button class="btn btn-outline-secondary toggle-password" type="button">
+                                        <i class="fas fa-eye toggle-password-icon"></i>
+                                    </button>
+                                </div>
                                 <p class="error text-danger" id="passwordError"></p>
                             </div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Vai Trò</label>
-                            <select class="form-select" id="role" name="role">
-                                <option value="ROLE_EMPLOYEE" selected>Nhân Viên</option>
-                                <option value="ROLE_ADMIN">Quản Trị Viên</option>
-                            </select>
                         </div>
                         <div class="text-end mt-4">
                             <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Hủy</button>
@@ -240,7 +238,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editEmployeeModalLabel">Chỉnh Sửa Nhân Viên</h5>
+                    <h5 class="modal-title" id="editEmployeeModalLabel">Sửa Nhân Viên</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -253,7 +251,7 @@
                                 <p class="error text-danger" id="editEmployeeCodeError"></p>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">Họ và Tên</label>
+                                <label class="form-label">Tên Nhân Viên</label>
                                 <input type="text" class="form-control" id="editEmployeeName" name="employeeName">
                                 <p class="error text-danger" id="editEmployeeNameError"></p>
                             </div>
@@ -291,24 +289,17 @@
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Mật Khẩu <span class="fst-italic fs-6">(Nhập nếu muốn thay đổi)</span></label>
                                 <div class="input-group">
-                                    <input type="password" class="form-control" id="editPassword" name="password">
-                                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
-                                        <i class="fas fa-eye" id="togglePasswordIcon"></i>
+                                    <input type="password" class="form-control password-input" id="editPassword" name="password">
+                                    <button class="btn btn-outline-secondary toggle-password" type="button">
+                                        <i class="fas fa-eye toggle-password-icon"></i>
                                     </button>
                                 </div>
                                 <p class="error text-danger" id="editPasswordError"></p>
                             </div>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Vai Trò</label>
-                            <select class="form-select" id="editRole" name="role">
-                                <option value="ROLE_EMPLOYEE">Nhân Viên</option>
-                                <option value="ROLE_ADMIN">Quản Trị Viên</option>
-                            </select>
-                        </div>
                         <div class="text-end mt-4">
                             <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Hủy</button>
-                            <button type="submit" class="btn btn-primary">Cập nhật</button>
+                            <button type="submit" class="btn btn-primary">Lưu</button>
                         </div>
                     </form>
                 </div>
@@ -321,7 +312,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header bg-dark text-white">
-                    <h5 class="modal-title" id="selectEmployeeWarningModalLabel">Thông báo</h5>
+                    <h5 class="modal-title" id="selectEmployeeWarningModalLabel">Thông Báo</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body d-flex align-items-center">
@@ -329,7 +320,7 @@
                         <i class="material-icons" style="font-size:48px; color:black;">error_outline</i>
                     </div>
                     <div>
-                        <p class="mb-0">Vui lòng chọn ít nhất một nhân viên để xóa!</p>
+                        <p class="mb-0">Vui lòng chọn ít nhất một nhân viên để xóa. </p>
                     </div>
                 </div>
                 <div class="modal-footer border-0 justify-content-center">
@@ -344,7 +335,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header bg-dark text-white">
-                    <h5 class="modal-title" id="deleteConfirmModalLabel">Xác nhận xóa nhân viên</h5>
+                    <h5 class="modal-title" id="deleteConfirmModalLabel">Xác Nhận Xóa Nhân Viên</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body d-flex align-items-center">
@@ -490,9 +481,9 @@
         });
 
         // Toggle hiển thị mật khẩu
-        $('#togglePassword').click(function() {
-            const passwordInput = $('#editPassword');
-            const icon = $('#togglePasswordIcon');
+        $('.toggle-password').click(function() {
+            const passwordInput = $(this).siblings('.password-input');
+            const icon = $(this).find('.toggle-password-icon');
 
             if (passwordInput.attr('type') === 'password') {
                 passwordInput.attr('type', 'text');
@@ -511,7 +502,7 @@
 
             // Đảm bảo mã nhân viên được bao gồm trong dữ liệu
             let employeeData = {
-                employeeCode: $('#employeeCode').val(), // Đảm bảo lấy giá trị này
+                employeeCode: $('#employeeCode').val(),
                 employeeName: $('#employeeName').val(),
                 employeeBirthday: $('#employeeBirthday').val(),
                 email: $('#email').val(),
@@ -519,8 +510,8 @@
                 employeePhone: $('#employeePhone').val(),
                 username: $('#username').val(),
                 password: $('#password').val(),
-                role: $('#role').val(),
-                job: 'Nhân viên' // Thêm trường job mặc định
+                role: 'ROLE_EMPLOYEE',
+                job: 'Nhân viên'
             };
 
             // Kiểm tra nếu mã nhân viên trống, lấy giá trị từ server
@@ -596,8 +587,8 @@
                 employeePhone: $('#editEmployeePhone').val(),
                 username: $('#editUsername').val(),
                 password: $('#editPassword').val(),
-                role: $('#editRole').val(),
-                job: 'Nhân viên' // Thêm trường job mặc định
+                role: 'ROLE_EMPLOYEE',
+                job: 'Nhân viên'
             };
 
             // Lấy CSRF token nếu có

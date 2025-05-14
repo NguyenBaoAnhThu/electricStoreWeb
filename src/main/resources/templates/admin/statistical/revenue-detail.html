@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thống kê chi tiết doanh thu</title>
+    <title>Thống Kê Chi Tiết Doanh Thu</title>
     <link rel="stylesheet" th:href="@{/css/admin/fragments/sidebar.css}">
     <link rel="stylesheet" th:href="@{/css/admin/fragments/header.css}">
     <link rel="stylesheet" th:href="@{/css/admin/fragments/footer.css}">
@@ -66,29 +66,27 @@
 
 <main class="main-content">
     <div class="wrapper">
-        <h1 class="tittle">Chi tiết doanh thu</h1>
-
-        <!-- Breadcrumb and Return Button -->
+        <h1 class="tittle">Thống Kê Chi Tiết Doanh Thu</h1>
         <div class="form-mb-4">
             <div class="d-flex justify-content-between align-items-center">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item">
                             <a th:href="@{/Admin/statistical?type=day}" class="text-decoration-none">
-                                <i class="fas fa-chart-line me-1"></i>Báo cáo doanh thu
+                                Báo Cáo Doanh Thu
                             </a>
                         </li>
                         <li class="breadcrumb-item active" aria-current="page">
-                            <i class="fas fa-money-bill-wave me-1"></i>Chi tiết doanh thu
+                            Chi Tiết Doanh Thu
                             <span th:if="${day != null}" th:text="'- ' + ${day}"></span>
-                            <span th:if="${month != null}" th:text="'/' + ${month}"></span>
-                            <span th:text="'/' + ${year}"></span>
+                            <span th:if="${month != null}" th:text="'- Tháng ' + ${month}"></span>
+                            <span th:text="'- Năm ' + ${year}"></span>
                         </li>
                     </ol>
                 </nav>
                 <a th:href="@{/Admin/statistical(type=${type}, day=${day}, month=${month}, year=${year})}"
                    class="btn btn-secondary">
-                    Quay lại
+                    Quay Lại
                 </a>
             </div>
             <hr style="border: 1px solid #e9ecef; margin: 20px 0;">

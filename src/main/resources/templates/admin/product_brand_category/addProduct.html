@@ -90,7 +90,7 @@
 <main class="main-content" th:fragment="content">
     <div class="wrapper">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="tittle" onclick="window.location.href='/Admin/product-manager/addx'">
+            <h1 class="tittle" onclick="window.location.href='/Admin/product-manager/add'">
                 Thêm Sản Phẩm
             </h1>
             <a th:href="@{/Admin/product-manager}" class="btn btn-secondary" id="cancelButton">
@@ -100,20 +100,20 @@
 
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0 text-white"> Thông tin sản phẩm</h5>
+                <h5 class="mb-0 text-white"> Thông Tin Sản Phẩm</h5>
             </div>
             <div class="d-flex border-bottom">
                 <div class="card-tab active" data-tab="basic-info">
-                    <i class="fas fa-info-circle me-1"></i> Thông tin cơ bản
+                    <i class="fas fa-info-circle me-1"></i> Thông Tin Cơ Bản
                 </div>
                 <div class="card-tab" data-tab="technical-info">
-                    <i class="fas fa-microchip me-1"></i> Thông số kỹ thuật
+                    <i class="fas fa-microchip me-1"></i> Thông Số Kỹ Thuật
                 </div>
                 <div class="card-tab" data-tab="display-info">
-                    <i class="fas fa-tv me-1"></i> Màn hình & Camera
+                    <i class="fas fa-tv me-1"></i> Màn Hình & Camera
                 </div>
                 <div class="card-tab" data-tab="design-info">
-                    <i class="fas fa-palette me-1"></i> Thiết kế & Kết nối
+                    <i class="fas fa-palette me-1"></i> Thiết Kế & Kết Nối
                 </div>
             </div>
             <div class="card-body">
@@ -155,14 +155,14 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="compact-form-group">
-                                                <label class="form-label required-field">Giá</label>
+                                                <label class="form-label required-field">Giá Bán</label>
                                                 <input id="productPrice_01" type="text" class="form-control" th:field="*{price}" placeholder="Nhập giá sản phẩm">
                                                 <div class="text-danger" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="compact-form-group">
-                                                <label class="form-label">Màu sắc</label>
+                                                <label class="form-label">Màu Sắc</label>
                                                 <input type="text" class="form-control" th:field="*{color}" placeholder="Ví dụ: Đen, Trắng, Xanh">
                                                 <div class="text-danger" th:if="${#fields.hasErrors('color')}" th:errors="*{color}"></div>
                                             </div>
@@ -172,7 +172,7 @@
                                     <div class="row">
                                         <div class="col-md-4">
                                             <div class="compact-form-group">
-                                                <label class="form-label required-field">Danh mục</label>
+                                                <label class="form-label required-field">Danh Mục</label>
                                                 <select class="form-select" th:field="*{categoryId}">
                                                     <option value="">-- Chọn danh mục --</option>
                                                     <option th:each="c : ${categories}" th:value="${c.categoryID}" th:text="${c.categoryName}"></option>
@@ -182,7 +182,7 @@
                                         </div>
                                         <div class="col-md-4">
                                             <div class="compact-form-group">
-                                                <label class="form-label required-field">Thương hiệu</label>
+                                                <label class="form-label required-field">Thương Hiệu</label>
                                                 <select class="form-select" th:field="*{brandId}">
                                                     <option value="">-- Chọn thương hiệu --</option>
                                                     <option th:each="b : ${brands}" th:value="${b.brandID}" th:text="${b.brandName}"></option>
@@ -192,9 +192,9 @@
                                         </div>
                                         <div class="col-md-4">
                                             <div class="compact-form-group">
-                                                <label class="form-label required-field">Nhà cung cấp</label>
+                                                <label class="form-label required-field">Nhà Cung Cấp</label>
                                                 <select class="form-select" th:field="*{id}">
-                                                    <option value="">-- Chọn nhà cung cấp --</option>
+                                                    <option value="">-- Chọn Nhà Cung Cấp --</option>
                                                     <option th:each="a : ${suppliers}" th:value="${a.supplierID}" th:text="${a.supplierName}"></option>
                                                 </select>
                                                 <div class="text-danger" th:if="${#fields.hasErrors('id')}" th:errors="*{id}"></div>
@@ -204,7 +204,7 @@
 
                                     <div class="compact-form-group">
                                         <label class="form-label required-field">Mô tả sản phẩm</label>
-                                        <textarea class="form-control" th:field="*{description}" rows="3" placeholder="Mô tả sản phẩm"></textarea>
+                                        <textarea class="form-control" th:field="*{description}" rows="4" placeholder="Mô tả sản phẩm"></textarea>
                                         <div class="text-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
                                     </div>
                                 </div>
@@ -226,7 +226,7 @@
                         <div class="tab-pane" id="technical-info">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <h6 class="mb-3">Cấu hình</h6>
+                                    <h6 class="mb-3">Cấu Hình</h6>
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="compact-form-group">
@@ -258,13 +258,13 @@
                                 </div>
 
                                 <div class="col-md-6">
-                                    <h6 class="mb-3">Hệ điều hành & Pin</h6>
+                                    <h6 class="mb-3">Hệ Điều Hành & Pin</h6>
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="compact-form-group">
-                                                <label class="small-label">Hệ điều hành</label>
+                                                <label class="small-label">Hệ Điều Hành</label>
                                                 <select class="form-select" th:field="*{os}">
-                                                    <option value="">-- Chọn hệ điều hành --</option>
+                                                    <option value="">-- Chọn Hệ Điều Hành --</option>
                                                     <option value="Android">Android</option>
                                                     <option value="iOS">iOS</option>
                                                     <option value="Windows">Windows</option>
@@ -304,17 +304,17 @@
                         <div class="tab-pane" id="display-info">
                             <div class="row">
                                 <div class="col-md-8">
-                                    <h6 class="mb-3">Màn hình</h6>
+                                    <h6 class="mb-3">Màn Hình</h6>
                                     <div class="row">
                                         <div class="col-md-4">
                                             <div class="compact-form-group">
-                                                <label class="small-label">Kích thước (inch)</label>
-                                                <input type="number" class="form-control" th:field="*{screenSize}" step="0.1" placeholder="Ví dụ: 6.7">
+                                                <label class="small-label">Kích Thước (inch)</label>
+                                                <input type="text" class="form-control" th:field="*{screenSize}" step="0.1" placeholder="Ví dụ: 6.7">
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="compact-form-group">
-                                                <label class="small-label">Loại màn hình</label>
+                                                <label class="small-label">Loại Màn Hình</label>
                                                 <select class="form-select" th:field="*{screenType}">
                                                     <option value="">-- Chọn loại --</option>
                                                     <option value="LCD">LCD</option>
@@ -329,11 +329,11 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <div class="compact-form-group">
-                                                <label class="small-label">Độ phân giải</label>
+                                                <label class="small-label">Độ Phân Giải</label>
                                                 <select class="form-select" th:field="*{screenResolution}">
-                                                    <option value="">-- Chọn độ phân giải --</option>
+                                                    <option value="">-- Chọn Độ Phân Giải --</option>
                                                     <option value="HD">HD (1280 x 720)</option>
                                                     <option value="HD+">HD+ (1440 x 720)</option>
                                                     <option value="Full HD">Full HD (1920 x 1080)</option>
@@ -352,14 +352,14 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="compact-form-group">
-                                                <label class="small-label">Camera sau (MP)</label>
-                                                <input type="number" class="form-control" th:field="*{camera}" placeholder="Ví dụ: 48">
+                                                <label class="small-label">Camera Sau (MP)</label>
+                                                <input type="text" class="form-control" th:field="*{camera}" placeholder="Ví dụ: 48">
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="compact-form-group">
-                                                <label class="small-label">Camera trước (MP)</label>
-                                                <input type="number" class="form-control" th:field="*{frontCamera}" placeholder="Ví dụ: 12">
+                                                <label class="small-label">Camera Trước (MP)</label>
+                                                <input type="text" class="form-control" th:field="*{frontCamera}" placeholder="Ví dụ: 12">
                                             </div>
                                         </div>
                                     </div>
@@ -371,9 +371,9 @@
                         <div class="tab-pane" id="design-info">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <h6 class="mb-3">Kết nối</h6>
+                                    <h6 class="mb-3">Kết Nối</h6>
                                     <div class="compact-form-group">
-                                        <label class="small-label">Cổng kết nối</label>
+                                        <label class="small-label">Cổng Kết Nối</label>
                                         <input type="text" class="form-control" th:field="*{ports}" placeholder="Ví dụ: USB-C, Lightning, HDMI">
                                     </div>
                                 </div>
@@ -383,7 +383,7 @@
 
                     <!-- Ghi chú trường bắt buộc -->
                     <div class="mt-3 mb-3">
-                        <small class="text-muted"><span class="text-danger">*</span> Trường bắt buộc phải nhập</small>
+                        <small class="text-muted"><span class="text-danger">*</span> Trường Bắt Buộc Phải Nhập</small>
                     </div>
 
                     <!-- Buttons -->

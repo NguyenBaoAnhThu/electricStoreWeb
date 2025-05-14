@@ -22,14 +22,6 @@
                     max-height: 80px;
                     object-fit: contain;
                 }
-                .search-container {
-                    display: flex;
-                    align-items: center;
-                    gap: 15px;
-                    margin-bottom: 20px;
-                    padding: 15px 0;
-                    border-bottom: 1px solid #e9ecef;
-                }
             </style>
         </head>
         <body>
@@ -48,15 +40,15 @@
                                 <!-- Hàng 1 -->
                                 <div class="row g-3 align-items-end mb-3">
                                     <div class="col-md-5">
-                                        <label for="category" class="form-label">Danh mục</label>
+                                        <label for="category" class="form-label">Danh Mục</label>
                                         <select class="form-select" id="category" name="category">
-                                            <option value="">-- Chọn danh mục --</option>
+                                            <option value="">-- Chọn Danh Mục --</option>
                                             <option th:each="c : ${categories}" th:value="${c.categoryID}" th:text="${c.categoryName}" th:selected="${category == c.categoryID}"></option>
                                         </select>
                                     </div>
                                     <div class="col-md-5">
-                                        <label for="keyword" class="form-label">Từ khóa</label>
-                                        <input class="form-control" type="text" id="keyword" name="keyword" placeholder="Nhập tên sản phẩm..." th:value="${keyword}">
+                                        <label for="keyword" class="form-label">Tên Sản Phẩm </label>
+                                        <input class="form-control" type="text" id="keyword" name="keyword" placeholder="Nhập thông tin cần tìm..." th:value="${keyword}">
                                     </div>
                                     <div class="col-md-2">
                                         <button class="btn btn-danger w-100" type="submit" style="height: 38px;">
@@ -68,18 +60,18 @@
                                 <!-- Hàng 2 -->
                                 <div class="row g-3 align-items-end">
                                     <div class="col-md-5">
-                                        <label for="minPrice" class="form-label">Giá tối thiểu</label>
+                                        <label for="minPrice" class="form-label">Giá Tối Thiểu</label>
                                         <input type="text" class="form-control price-input" id="minPrice" name="minPrice"
                                                placeholder="Nhập giá" th:value="${minPrice != null ? #numbers.formatDecimal(minPrice, 0, 'POINT', 0, 'COMMA') : ''}">
                                     </div>
                                     <div class="col-md-5">
-                                        <label for="maxPrice" class="form-label">Giá tối đa</label>
+                                        <label for="maxPrice" class="form-label">Giá Tối Đa</label>
                                         <input type="text" class="form-control price-input" id="maxPrice" name="maxPrice"
                                                placeholder="Nhập giá" th:value="${maxPrice != null ? #numbers.formatDecimal(maxPrice, 0, 'POINT', 0, 'COMMA') : ''}">
                                     </div>
                                     <div class="col-md-2" sec:authorize="hasRole('ROLE_ADMIN')">
                                         <a th:href="@{/Admin/product-manager/add}" class="btn btn-success w-100" style="height: 38px;">
-                                            <i class="fas fa-plus me-1"></i> Thêm Sản Phẩm
+                                            Thêm Sản Phẩm
                                         </a>
                                     </div>
                                 </div>
@@ -98,12 +90,12 @@
                             </th>
                             <th width="60">STT</th>
                             <th width="60">Mã SP</th>
-                            <th width="100">Hình ảnh</th>
-                            <th>Tên sản phẩm</th>
+                            <th width="100">Hình Ảnh</th>
+                            <th>Tên Sản Phẩm</th>
                             <th>Đơn Giá(VNĐ)</th>
-                            <th>Danh mục</th>
-                            <th>Thương hiệu</th>
-                            <th>Nhà cung cấp</th>
+                            <th>Danh Mục</th>
+                            <th>Thương Hiệu</th>
+                            <th>Nhà Cung Cấp</th>
                             <th width="80" sec:authorize="hasRole('ROLE_ADMIN')">Thao tác</th>
                         </tr>
                         </thead>
