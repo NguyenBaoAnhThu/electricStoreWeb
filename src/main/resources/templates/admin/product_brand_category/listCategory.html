@@ -97,7 +97,7 @@
         <div class="d-flex justify-content-between align-items-center mt-4">
             <button type="button" id="deleteBtn" class="btn btn-danger" title="Xóa"
                     sec:authorize="hasRole('ROLE_ADMIN')">
-                <i class="fas fa-trash-alt me-2"></i> Xóa danh mục
+                <i class="fas fa-trash-alt me-2"></i> Xóa Danh Mục
             </button>
             <nav aria-label="Page navigation">
                 <ul class="pagination m-0">
@@ -141,13 +141,13 @@
         </div>
     </div>
 
-    <!-- Modal Thêm Danh Mục (Only visible to ROLE_ADMIN) -->
+<!--    Modal Thêm Danh Mục -->
     <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true"
          sec:authorize="hasRole('ROLE_ADMIN')">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addCategoryModalLabel">Thêm Danh Mục Mới</h5>
+                    <h5 class="modal-title" id="addCategoryModalLabel">Thêm Danh Mục</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -176,12 +176,12 @@
         </div>
     </div>
 
-    <!-- Modal Chỉnh sửa Category (Only visible to ROLE_ADMIN) -->
+    <!-- Modal Chỉnh Sửa Danh Muc -->
     <div class="modal fade" id="editCategoryModal" tabindex="-1" sec:authorize="hasRole('ROLE_ADMIN')">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Chỉnh Sửa Danh Mục</h5>
+                    <h5 class="modal-title">Sửa Danh Mục</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
@@ -217,7 +217,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header bg-dark text-white">
-                    <h5 class="modal-title" id="selectCategoryWarningModalLabel">Thông báo</h5>
+                    <h5 class="modal-title" id="selectCategoryWarningModalLabel">Thông Báo</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body d-flex align-items-center">
@@ -225,7 +225,7 @@
                         <i class="material-icons" style="font-size:48px; color:black;">error_outline</i>
                     </div>
                     <div>
-                        <p class="mb-0">Vui lòng chọn ít nhất một danh mục để xóa!</p>
+                        <p class="mb-0">Vui lòng chọn ít nhất một danh mục để xóa. </p>
                     </div>
                 </div>
                 <div class="modal-footer border-0 justify-content-center">
@@ -241,7 +241,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header bg-dark text-white">
-                    <h5 class="modal-title" id="deleteConfirmModalLabel">Xác nhận xóa danh mục</h5>
+                    <h5 class="modal-title" id="deleteConfirmModalLabel">Xác Nhận Xóa Danh mục</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body d-flex align-items-center">

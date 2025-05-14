@@ -61,7 +61,7 @@
             <input type="checkbox" id="selectAll" class="form-check-input">
           </th>
           <th width="60">STT</th>
-          <th>Mã thương hiệu</th>
+          <th>Mã Thương Hiệu</th>
           <th>Tên Thương Hiệu</th>
           <th>Xuất Xứ</th>
           <th width="80" sec:authorize="hasRole('ROLE_ADMIN')">Thao tác</th>
@@ -96,7 +96,7 @@
     <div class="d-flex justify-content-between align-items-center mt-4">
       <button type="button" id="deleteBtn" class="btn btn-danger" title="Xóa"
               sec:authorize="hasRole('ROLE_ADMIN')">
-        <i class="fas fa-trash-alt me-2"></i> Xóa thương hiệu
+        <i class="fas fa-trash-alt me-2"></i> Xóa Thương Hiệu
       </button>
       <!-- Phân trang -->
       <nav aria-label="Page navigation">
@@ -146,7 +146,7 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="addBrandModalLabel">Thêm Mới Thương Hiệu</h5>
+          <h5 class="modal-title" id="addBrandModalLabel">Thêm Thương Hiệu</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -158,7 +158,7 @@
             </div>
 
             <div class="mb-3">
-              <label for="brandName" class="form-label">Tên thương hiệu</label>
+              <label for="brandName" class="form-label">Tên Thương Hiệu</label>
               <input type="text" id="brandName" name="brandName" class="form-control" />
               <p class="error text-danger" id="brandNameError"></p>
             </div>
@@ -184,7 +184,7 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Chỉnh Sửa Thương Hiệu</h5>
+          <h5 class="modal-title"> Sửa Thương Hiệu</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
@@ -225,7 +225,7 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header bg-dark text-white">
-          <h5 class="modal-title" id="selectBrandWarningModalLabel">Thông báo</h5>
+          <h5 class="modal-title" id="selectBrandWarningModalLabel">Thông Báo</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body d-flex align-items-center">
@@ -249,7 +249,7 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header bg-dark text-white">
-          <h5 class="modal-title" id="deleteConfirmModalLabel">Xác nhận xóa thương hiệu</h5>
+          <h5 class="modal-title" id="deleteConfirmModalLabel">Xác Nhận Xóa Thương Hiệu</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body d-flex align-items-center">

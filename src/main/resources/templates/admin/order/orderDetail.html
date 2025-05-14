@@ -41,11 +41,11 @@
                   th:text="${statusMap[order.status.name()]}">
     </span>
             <div class="ms-auto">
-                <a th:href="@{/Admin/order}" class="btn btn-secondary me-2">Quay lại</a>
+                <a th:href="@{/Admin/order}" class="btn btn-secondary me-2">Quay Lại</a>
                 <button th:if="${order != null && order.status != null && order.status.name() != 'CANCELLED'}"
                         class="btn btn-danger"
                         onclick="printInvoice()">
-                    <i class="fas fa-print me-1"></i> In hóa đơn
+                    <i class="fas fa-print me-1"></i> In Hóa Đơn
                 </button>
             </div>
         </div>
