@@ -1,9 +1,8 @@
-/* Base */
+
 body {
     font-family: 'Nunito', sans-serif;
 }
 
-/* Sidebar chính */
 .main-sidebar {
     width: 250px;
     height: calc(100vh - 80px);
@@ -32,7 +31,6 @@ body {
     background: rgba(255, 255, 255, 0.05);
 }
 
-/* Sidebar thu gọn */
 .sidebar-collapsed .main-sidebar {
     width: 70px;
     overflow: visible;
@@ -76,7 +74,6 @@ body {
     padding: 5px 0;
 }
 
-/* User Panel */
 .user-panel {
     padding: 20px 15px;
     display: flex;
@@ -131,7 +128,6 @@ body {
     color: #e60000;
 }
 
-/* Sidebar menu */
 .sidebar-menu {
     list-style: none;
     padding: 0;
@@ -230,7 +226,6 @@ body {
     transform: rotate(-90deg);
 }
 
-/* Active state */
 .sidebar-menu li.active > a,
 .treeview.active > a,
 .treeview.open > a {
@@ -238,7 +233,6 @@ body {
     color: #fff;
 }
 
-/* Responsive */
 @media (max-width: 1200px) {
     .main-sidebar {
         width: 220px;

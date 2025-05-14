@@ -482,15 +482,7 @@
 <script th:src="@{/js/admin/layout.js}"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script th:src="@{/js/admin/header.js}" type="text/javascript"></script>
-<script th:src="@{/js/admin/sidebarActiveMenu.js}" defer></script>
-
-<script th:fragment="sidebarScript">
-    // Toggle sidebar
-    document.getElementById('sidebar-toggle').addEventListener('click', () => {
-        document.body.classList.toggle('sidebar-collapsed');
-    });
-</script>
-
+<script th:src="@{/js/admin/sidebarActiveMenu.js}" ></script>
 <script>
     document.getElementById("imageUpload").addEventListener("change", function(event) {
         let previewImg = document.querySelector("#imagePreview img");

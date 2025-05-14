@@ -240,7 +240,6 @@ public class OrderController {
         response.getOutputStream().close();
     }
 
-    // Endpoint để hiển thị danh sách khách hàng
     @GetMapping("/showListCustomer")
     public String listCustomers(
             @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword,
@@ -252,6 +251,9 @@ public class OrderController {
         Page<Customer> customers = (keyword != null && !keyword.isEmpty())
                 ? customerService.searchCustomers(keyword, filter, page, size)
                 : customerService.getAllCustomers(page, size);
+        if (customers.isEmpty() && keyword != null && !keyword.isEmpty()) {
+            model.addAttribute("noResultMessage", "Không tìm thấy kết quả phù hợp với dữ liệu tìm kiếm.");
+        }
 
         model.addAttribute("customerDTO", customers);
         model.addAttribute("customers", customers);
@@ -265,7 +267,7 @@ public class OrderController {
         return "admin/order/OldCustomer";
     }
 
-    // Endpoint để hiển thị danh sách sản phẩm
+
     @GetMapping("/showListProduct")
     public String listProducts(
             @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword,
@@ -275,6 +277,10 @@ public class OrderController {
             Model model) {
 
         Page<ProductOrderChoiceDTO> products = productService.getProducts(keyword, page, size);
+        if (products.isEmpty() && keyword != null && !keyword.isEmpty()) {
+            model.addAttribute("noResultMessage", "Không tìm thấy kết quả phù hợp với dữ liệu tìm kiếm.");
+        }
+
         model.addAttribute("products", products.getContent());
         model.addAttribute("keyword", keyword);
         model.addAttribute("currentPage", page);

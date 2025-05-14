@@ -28,9 +28,10 @@ $(document).ready(function () {
     }
 
     // Highlight theo URL
-    $(document).ready(function() {
+    function highlightActiveMenu() {
         // Lấy đường dẫn URL hiện tại
         const currentUrl = window.location.href;
+        console.log("Highlighting for URL:", currentUrl);
 
         // Đánh dấu menu đang hoạt động dựa trên URL
         if (currentUrl.includes('/Admin/order')) {
@@ -60,9 +61,10 @@ $(document).ready(function () {
         else if (currentUrl.includes('/Admin/statistical')) {
             $('#report-menu').addClass('active');
         }
-    });
+    }
 
-    highlightActivePath();
+    // Gọi hàm highlight
+    highlightActiveMenu();
 
     // Click mở rộng treeview
     $('.treeview > a').on('click', function (e) {
@@ -119,4 +121,10 @@ $(document).ready(function () {
             }
         }
     );
+
+    // Toggle sidebar (using jQuery for consistency)
+    $('#sidebar-toggle').on('click', function() {
+        console.log("Sidebar toggle clicked!");
+        $('body').toggleClass('sidebar-collapsed');
+    });
 });
