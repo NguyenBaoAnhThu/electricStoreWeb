@@ -373,6 +373,18 @@
                     return true;
                 }
 
+                // Cập nhật lại kho: cộng lại số lượng cho từng sản phẩm trong đơn hàng
+                if (order.getOrderDetails() != null) {
+                    for (OrderDetail detail : order.getOrderDetails()) {
+                        org.example.electricstore.model.Product product = detail.getProduct();
+                        if (product != null) {
+                            Integer currentStock = product.getStock() != null ? product.getStock() : 0;
+                            product.setStock(currentStock + detail.getQuantity());
+                            productRepository.save(product);
+                        }
+                    }
+                }
+
                 // Cập nhật trạng thái đơn hàng thành CANCELLED
                 order.setStatus(OrderStatus.CANCELLED);
 
