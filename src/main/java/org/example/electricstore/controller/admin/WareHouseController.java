@@ -114,16 +114,22 @@ public class WareHouseController {
         Page<Invoice> invoicePage;
 
         // Nếu có tiêu chí lọc thì thực hiện tìm kiếm
-        if (StringUtils.hasText(filterCode) || StringUtils.hasText(filterBrand) ||
+        boolean hasFilters = StringUtils.hasText(filterCode) || StringUtils.hasText(filterBrand) ||
                 StringUtils.hasText(filterUser) || StringUtils.hasText(filterFromDate) ||
-                StringUtils.hasText(filterToDate)) {
+                StringUtils.hasText(filterToDate);
 
+        if (hasFilters) {
             invoicePage = invoiceRepository.findWithFilters(
                     filterCode, filterBrand, filterUser,
                     filterFromDate, filterToDate, pageable);
         } else {
             // Nếu không có tiêu chí lọc, lấy tất cả
             invoicePage = invoiceRepository.findAll(pageable);
+        }
+
+        // Kiểm tra nếu không có kết quả và có áp dụng bộ lọc
+        if (invoicePage.isEmpty() && hasFilters) {
+            model.addAttribute("noResultMessage", "Không tìm thấy kết quả phù hợp với dữ liệu tìm kiếm.");
         }
 
         // Thêm thông tin tính toán tổng tiền cho mỗi hóa đơn
