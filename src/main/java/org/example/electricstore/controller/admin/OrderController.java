@@ -64,7 +64,7 @@ public class OrderController {
             Model model, RedirectAttributes redirectAttributes) {
 
         if (success != null && success.equals("added")) {
-            return "redirect:/Admin/order?successMessage=Thêm đơn hàng mới thành công!";
+            return "redirect:/Admin/order?successMessage=Thêm đơn hàng mới thành công.";
         }
 
         // Xác định các biến tìm kiếm
