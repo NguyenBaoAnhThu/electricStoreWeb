@@ -30,4 +30,5 @@ public interface ICustomerRepository extends JpaRepository<Customer, Integer> {
     Page<Customer> findByEmailContainingIgnoreCase(String email, Pageable pageable);
     @Query("SELECT MAX(c.customerCode) FROM Customer c WHERE c.customerCode LIKE 'KH%'")
     String findMaxCustomerCode();
+    boolean existsByEmail(String email);
 }

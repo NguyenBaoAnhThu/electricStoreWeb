@@ -18,4 +18,6 @@ public interface ICustomerService<E,D>{
     Optional<Customer> getCustomerByCustomerId(Integer customerId);
 
     Page<Customer> searchCustomers(String keyword, String filter, Integer page, Integer size);
+    boolean existsByPhoneNumber(String phoneNumber);
+    boolean existsByEmail(String email);
 }

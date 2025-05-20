@@ -126,8 +126,10 @@ public class CustomerController {
             // Xử lý các lỗi nghiệp vụ
             if (e.getMessage().contains("INVALID_PHONE_NUMBER")) {
                 errors.put("phoneNumber", "Số điện thoại đã được sử dụng bởi khách hàng khác");
+            } else if (e.getMessage().contains("EMAIL_EXISTS")) {
+                errors.put("email", "Email đã được sử dụng bởi khách hàng khác");
             } else if (e.getMessage().contains("INVALID_EMAIL")) {
-                errors.put("email", "Email đã được sử dụng bởi tài khoản khác");
+                errors.put("email", "Email không hợp lệ, vui lòng nhập đúng định dạng");
             } else if (e.getMessage().contains("CUSTOMER_NOTFOUND")) {
                 errors.put("customerId", "Không tìm thấy khách hàng");
             } else {

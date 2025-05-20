@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // === CÁC BIẾN TOÀN CỤC ===
     const ERROR_MESSAGES = {
         REQUIRED: {
             name: 'Tên không được để trống',
@@ -21,6 +20,10 @@ document.addEventListener('DOMContentLoaded', function() {
             phone: 'Số điện thoại phải có độ dài từ 10 đến 12 ký tự',
             address: 'Địa chỉ không được vượt quá 200 ký tự',
             email: 'Email phải có độ dài từ 5 đến 100 ký tự'
+        },
+        DUPLICATE: {
+            phone: 'Số điện thoại đã tồn tại.',
+            email: 'Email đã tồn tại.'
         }
     };
 
@@ -96,7 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // === VALIDATE SỐ ĐIỆN THOẠI ===
-    function validatePhone(input) {
+    async function validatePhone(input) {
         const value = input.value.trim();
 
         // Kiểm tra trống
@@ -116,6 +119,18 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!phoneRegex.test(value)) {
             showError('customerPhoneNumber', ERROR_MESSAGES.FORMAT.phone);
             return false;
+        }
+
+        try {
+            // Kiểm tra trùng lặp
+            const response = await fetch(`/api/customers/check-phone?phone=${encodeURIComponent(value)}`);
+            const data = await response.json();
+            if (data.exists) {
+                showError('customerPhoneNumber', ERROR_MESSAGES.DUPLICATE.phone);
+                return false;
+            }
+        } catch (error) {
+            console.error('Error checking phone:', error);
         }
 
         clearError('customerPhoneNumber');
@@ -149,7 +164,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // === VALIDATE EMAIL ===
-    function validateEmail(input) {
+    async function validateEmail(input) {
         const value = input.value.trim();
 
         // Kiểm tra trống
@@ -169,6 +184,23 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!emailRegex.test(value)) {
             showError('customerEmail', ERROR_MESSAGES.FORMAT.email);
             return false;
+        }
+
+        try {
+            // Kiểm tra trùng lặp
+            const response = await fetch(`/api/customers/check-email?email=${encodeURIComponent(value)}`);
+            if (response.ok) {
+                const data = await response.json();
+                if (data.exists) {
+                    showError('customerEmail', ERROR_MESSAGES.DUPLICATE.email);
+                    return false;
+                }
+            } else {
+                // Nếu lỗi server, chỉ log ra console
+                console.error('Lỗi khi kiểm tra email:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error checking email:', error);
         }
 
         clearError('customerEmail');
@@ -260,11 +292,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         this.value = filteredValue;
                     }
                 }, 0);
-            });
-
-            // Validate khi blur
-            input.addEventListener('blur', function() {
-                validatePhone(this);
             });
         }
     });
@@ -361,11 +388,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     e.target.value = value.slice(0, 100);
                 }
             });
-
-            // Validate khi blur
-            input.addEventListener("blur", function() {
-                validateEmail(this);
-            });
         }
     });
 
@@ -400,7 +422,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Validate form khi submit
-    function validateOrderForm(form) {
+    async function validateOrderForm(form) {
         // Xoá tất cả lỗi trước khi validate
         clearAllErrors();
 
@@ -422,7 +444,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 isValid = false;
             }
 
-            if (phoneInput && !validatePhone(phoneInput)) {
+            if (phoneInput && !(await validatePhone(phoneInput))) {
                 isValid = false;
             }
 
@@ -430,7 +452,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 isValid = false;
             }
 
-            if (emailInput && !validateEmail(emailInput)) {
+            if (emailInput && !(await validateEmail(emailInput))) {
                 isValid = false;
             }
 
@@ -458,8 +480,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Thêm xử lý submit form
         const originalSubmit = orderForm.onsubmit;
 
-        orderForm.addEventListener('submit', function(e) {
-            if (!validateOrderForm(this)) {
+        orderForm.addEventListener('submit', async function(e) {
+            if (!(await validateOrderForm(this))) {
                 e.preventDefault();
                 e.stopPropagation();
                 return false;
@@ -580,4 +602,56 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     });
+});
+
+// === XỬ LÝ PHẦN TRĂM GIẢM GIÁ ===
+document.addEventListener('DOMContentLoaded', function() {
+    const discountPercentInput = document.getElementById('discountPercent');
+
+    if (discountPercentInput) {
+        // Thay đổi step thành 1 để chỉ cho phép số nguyên
+        discountPercentInput.setAttribute('step', '1');
+
+        // Xử lý khi nhập giá trị
+        discountPercentInput.addEventListener('input', function(e) {
+            let value = this.value;
+
+            // Loại bỏ các ký tự không phải số
+            value = value.replace(/[^\d]/g, '');
+
+            // Chuyển thành số nguyên
+            let numValue = parseInt(value);
+
+            // Kiểm tra giới hạn
+            if (!isNaN(numValue)) {
+                if (numValue > 100) {
+                    numValue = 100;
+                }
+                this.value = numValue;
+            } else if (value === '') {
+                this.value = '';
+            } else {
+                this.value = 0;
+            }
+        });
+
+        // Xử lý khi blur (rời khỏi trường nhập liệu)
+        discountPercentInput.addEventListener('blur', function() {
+            // Nếu trường rỗng hoặc giá trị không hợp lệ, đặt về 0
+            if (this.value === '' || isNaN(parseInt(this.value))) {
+                this.value = 0;
+            } else {
+                // Đảm bảo giá trị là số nguyên
+                this.value = Math.floor(parseFloat(this.value));
+
+                // Đảm bảo giá trị không vượt quá 100
+                if (parseInt(this.value) > 100) {
+                    this.value = 100;
+                }
+            }
+
+            // Tính toán lại tổng sau khi điều chỉnh giá trị
+            calculateTotal();
+        });
+    }
 });

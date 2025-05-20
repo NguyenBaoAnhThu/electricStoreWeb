@@ -56,6 +56,9 @@ public class CustomerService implements ICustomerService <Customer , CustomerDTO
         if (this.customerRepository.existsByPhoneNumber(customerDTO.getPhoneNumber())) {
             throw new CustomerException(CustomerError.INVALID_PHONE_NUMBER);
         }
+        if (this.customerRepository.existsByEmail(customerDTO.getEmail())) {
+            throw new CustomerException(CustomerError.EMAIL_EXISTS);
+        }
         this.customerRepository.save(this.customerMapper.convertToCustomer(customerDTO)) ;
     }
 
@@ -70,8 +73,8 @@ public class CustomerService implements ICustomerService <Customer , CustomerDTO
             throw new CustomerException(CustomerError.INVALID_PHONE_NUMBER);
         }
         if (!customerDTO.getEmail().equals(customer.getEmail())
-                && this.userRepository.existsByEmail(customerDTO.getEmail())) {
-            throw new CustomerException(CustomerError.INVALID_EMAIL);
+                && this.customerRepository.existsByEmail(customerDTO.getEmail())) {
+            throw new CustomerException(CustomerError.EMAIL_EXISTS);
         }
         customer.setCustomerName(customerDTO.getCustomerName());
         customer.setAddress(customerDTO.getAddress());
@@ -108,19 +111,18 @@ public class CustomerService implements ICustomerService <Customer , CustomerDTO
             if (this.customerRepository.existsByPhoneNumber(customerDTO.getPhoneNumber())) {
                 throw new CustomerException(CustomerError.INVALID_PHONE_NUMBER);
             }
-
+            // Kiểm tra email trùng lặp
+            if (this.customerRepository.existsByEmail(customerDTO.getEmail())) {
+                throw new CustomerException(CustomerError.EMAIL_EXISTS);
+            }
             // Chuyển đổi DTO sang entity và đảm bảo mã khách hàng được thiết lập
             Customer customer = this.customerMapper.convertToCustomer(customerDTO);
-
             // In log để debug
             System.out.println("Customer before save: " + customer.getCustomerName() + ", Code: " + customer.getCustomerCode());
-
             // Lưu khách hàng vào CSDL
             Customer savedCustomer = this.customerRepository.save(customer);
-
             // In log sau khi lưu
             System.out.println("Customer after save: " + savedCustomer.getCustomerName() + ", Code: " + savedCustomer.getCustomerCode() + ", ID: " + savedCustomer.getCustomerId());
-
             // Trả về ID khách hàng đã lưu trực tiếp từ đối tượng đã lưu
             return savedCustomer.getCustomerId();
         } catch (Exception e) {
@@ -156,6 +158,17 @@ public class CustomerService implements ICustomerService <Customer , CustomerDTO
 
         return customers;
     }
+
+    @Override
+    public boolean existsByPhoneNumber(String phoneNumber) {
+        return customerRepository.existsByPhoneNumber(phoneNumber);
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return customerRepository.existsByEmail(email);
+    }
+
     public String getNextCustomerCode() {
         return this.customerMapper.generateCustomerCode();
     }

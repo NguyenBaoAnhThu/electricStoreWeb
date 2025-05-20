@@ -339,7 +339,7 @@
                     </div>
                     <div class="col-md-4">
                         <label for="discountPercent" class="form-label">Giảm giá (%):</label>
-                        <input type="number" class="form-control text-end" id="discountPercent" name="discountPercent" min="0" max="100" value="0" step="0.1"
+                        <input type="text" class="form-control text-end" id="discountPercent" name="discountPercent" min="0" max="100" value="0" step="0.1"
                                onchange="calculateTotal();">
                         <span class="text-danger validation-message d-none">Giá trị không hợp lệ</span>
                     </div>
@@ -826,7 +826,7 @@
                         sessionStorage.removeItem("selectedNewCustomer");
                     } catch (e) {
                         console.error("Error processing response:", e, "Raw response:", response);
-                        alert("Đã xảy ra lỗi khi xử lý phản hồi từ máy chủ");
+                        console.error("Lỗi khi xử lý phản hồi từ máy chủ");
                     }
                 },
                 error: function(xhr) {
@@ -841,7 +841,7 @@
                             $('input[name="' + field + '"], select[name="' + field + '"], textarea[name="' + field + '"]').after(errorMessage);
                         }
                     } else {
-                        alert("Lỗi khi gửi yêu cầu: " + xhr.statusText);
+                        console.error("Lỗi khi gửi yêu cầu:", xhr.statusText);
                     }
                 }
             });
