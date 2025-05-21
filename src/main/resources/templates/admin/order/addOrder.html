@@ -324,12 +324,89 @@
 <script th:src="@{/js/admin/sidebarActiveMenu.js}" defer></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Xóa dữ liệu cũ trong sessionStorage khi tải trang
-        sessionStorage.removeItem("selectedProduct");
-        // Lưu ý: chỉ xóa localStorage nếu đang tải trang lần đầu, không phải khi quay lại từ trang chọn sản phẩm
-        if (!document.referrer.includes('/Admin/order/showListProduct')) {
+        // Push thêm một state để đảm bảo back lần đầu sẽ trigger popstate
+        if (window.history && window.history.pushState) {
+            window.history.pushState({form: true}, '');
+            window.history.pushState({form: true}, '');
+        }
+
+        window.addEventListener('popstate', function(e) {
+            // Kiểm tra nếu có dữ liệu trong form
+            const hasCustomerData = sessionStorage.getItem("selectedCustomer") || sessionStorage.getItem("selectedNewCustomer");
+            const hasProductData = sessionStorage.getItem("selectedProduct");
+            if (hasCustomerData || hasProductData) {
+                // Hiện modal xác nhận
+                const cancelModal = new bootstrap.Modal(document.getElementById('cancelConfirmModal'));
+                cancelModal.show();
+                // Đẩy lại state để ngăn back tiếp
+                window.history.pushState({form: true}, '');
+            } else {
+                // Nếu không có dữ liệu, cho phép quay lại trang danh sách
+                window.location.href = '/Admin/order';
+            }
+        });
+
+        // Xử lý nút xác nhận hủy
+        document.getElementById('confirmCancelBtn').onclick = function() {
+            sessionStorage.removeItem("selectedProduct");
+            sessionStorage.removeItem("selectedCustomer");
+            sessionStorage.removeItem("selectedNewCustomer");
+            window.location.href = '/Admin/order';
+        };
+
+        // Kiểm tra nguồn quay lại
+        const referrer = document.referrer;
+
+        // Nếu quay lại từ trang danh sách đơn hàng
+        if (referrer.includes('/Admin/order') && !referrer.includes('/Admin/order/showListProduct')) {
+            // Xóa tất cả dữ liệu
+            sessionStorage.removeItem("selectedProduct");
+            sessionStorage.removeItem("selectedCustomer");
+            sessionStorage.removeItem("selectedNewCustomer");
+            localStorage.removeItem("selectedProduct");
+            // Reset form
+            $('#orderForm')[0].reset();
+            $('#productList').empty();
+            $('#noProductsMessage').show();
+            calculateTotal();
+        }
+        // Nếu quay lại từ trang chọn sản phẩm
+        else if (referrer.includes('/Admin/order/showListProduct')) {
+            // Giữ nguyên dữ liệu khách hàng
+            // Chỉ xử lý dữ liệu sản phẩm từ localStorage/sessionStorage
+            const selectedProduct = localStorage.getItem("selectedProduct") || sessionStorage.getItem("selectedProduct");
+            if (selectedProduct) {
+                try {
+                    let products = JSON.parse(selectedProduct);
+                    $('#productList').empty();
+                    products.forEach(function(product, index) {
+                        addProductRow(product, index);
+                    });
+                    calculateTotal();
+                } catch (e) {
+                    console.error("Error processing selected products:", e);
+                }
+            }
+        }
+        // Nếu là lần đầu vào trang
+        else {
+            // Xóa dữ liệu cũ
+            sessionStorage.removeItem("selectedProduct");
             localStorage.removeItem("selectedProduct");
         }
+
+        // Thêm state vào history khi trang được tải
+        if (window.history && window.history.pushState) {
+            window.history.pushState({form: true}, '');
+        }
+
+        // Cập nhật xử lý nút xác nhận hủy
+        $('#confirmCancelBtn').on('click', function() {
+            sessionStorage.removeItem("selectedProduct");
+            sessionStorage.removeItem("selectedCustomer");
+            sessionStorage.removeItem("selectedNewCustomer");
+            window.location.href = "/Admin/order";
+        });
 
         console.log("DOM loaded. Checking for product data...");
 

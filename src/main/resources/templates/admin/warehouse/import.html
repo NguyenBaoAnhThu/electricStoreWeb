@@ -277,6 +277,33 @@
         const productContainer = $("#productContainer");
         const noProductsMessage = $('#no-products-message');
 
+        // Push thêm một state để đảm bảo back lần đầu sẽ trigger popstate
+        if (window.history && window.history.pushState) {
+            window.history.pushState({form: true}, '');
+            window.history.pushState({form: true}, '');
+        }
+
+        window.addEventListener('popstate', function(e) {
+            // Kiểm tra nếu có dữ liệu trong form
+            const hasData = sessionStorage.getItem(STORAGE_KEY);
+            if (hasData) {
+                // Hiện modal xác nhận
+                const cancelModal = new bootstrap.Modal(document.getElementById('cancelConfirmModal'));
+                cancelModal.show();
+                // Đẩy lại state để ngăn back tiếp
+                window.history.pushState({form: true}, '');
+            } else {
+                // Nếu không có dữ liệu, cho phép quay lại trang danh sách
+                window.location.href = '/Admin/ware-houses';
+            }
+        });
+
+        // Xử lý nút xác nhận hủy
+        document.getElementById('confirmCancelBtn').onclick = function() {
+            sessionStorage.removeItem(STORAGE_KEY);
+            window.location.href = '/Admin/ware-houses';
+        };
+
         // Khởi tạo ban đầu
         initializeForm();
         calculateTotals();
@@ -469,11 +496,6 @@
             $('#cancelBtn').on('click', function() {
                 const cancelModal = new bootstrap.Modal(document.getElementById('cancelConfirmModal'));
                 cancelModal.show();
-            });
-
-            $('#confirmCancelBtn').on('click', function() {
-                sessionStorage.removeItem(STORAGE_KEY);
-                window.location.href = "/Admin/ware-houses";
             });
 
             // Sự kiện cho modal thêm sản phẩm

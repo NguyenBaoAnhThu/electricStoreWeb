@@ -70,6 +70,7 @@
                     <td class="text-center">
                         <button class="btn btn-success select-product"
                                 th:data-id="${item.productId}"
+                                th:data-stock="${item.stockQuantity != null ? item.stockQuantity : 0}"
                                 th:data-oldData="${oldData}">
                             <i class="fas fa-check"></i>
                         </button>
@@ -141,6 +142,28 @@
                 event.preventDefault();
                 let productId = this.getAttribute("data-id");
                 let oldData = this.getAttribute("data-olddata");
+                let stock = parseInt(this.getAttribute("data-stock")) || 0;
+
+                // Lấy số lượng đã chọn trong đơn hàng (nếu có)
+                let selectedProducts = [];
+                if (localStorage.getItem("selectedProduct")) {
+                    try {
+                        selectedProducts = JSON.parse(localStorage.getItem("selectedProduct"));
+                    } catch (e) {}
+                }
+                // Tìm sản phẩm này trong đơn hàng đã chọn
+                let existing = selectedProducts.find(p => p.productId == productId);
+                let currentQty = existing ? (parseInt(existing.quantity) || 0) : 0;
+                // Nếu chọn thêm 1 sản phẩm nữa
+                let newQty = currentQty + 1;
+
+                if (newQty > stock) {
+                    // Hiện modal cảnh báo (dùng modal ở addOrder.html)
+                    let modal = new bootstrap.Modal(document.getElementById('exceedStockModal'));
+                    modal.show();
+                    return;
+                }
+
                 if(oldData === null){
                     oldData = "empty";
                 }
@@ -150,6 +173,15 @@
                     .then(response => response.json())
                     .then(data => {
                         if(data.length > 0){
+                            // Đảm bảo mỗi sản phẩm đều có stockQuantity đúng
+                            data.forEach(p => {
+                                if (p.productId == productId) {
+                                    p.stockQuantity = stock;
+                                } else if (typeof p.stockQuantity === 'undefined' || p.stockQuantity === null) {
+                                    // Nếu API không trả về, gán mặc định 0
+                                    p.stockQuantity = 0;
+                                }
+                            });
                             localStorage.setItem("selectedProduct", JSON.stringify(data));
                             window.location.href = "/Admin/order/add";
                         }else {
