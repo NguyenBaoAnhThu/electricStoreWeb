@@ -147,13 +147,15 @@ public class ProductMapper {
 
         return ProductOrderChoiceDTO.builder()
                 .productId(product.getProductID())
-                .productCode(product.getProductCode()) // Thêm mã sản phẩm vào DTO
+                .productCode(product.getProductCode())
                 .productName(product.getName())
                 .productPrice(product.getFormattedPrice())
-                .importPrice(importPrice) // Thêm giá nhập từ warehouse
+                .importPrice(importPrice)
                 .productCPU(product.getProductDetail() != null ? product.getProductDetail().getCpu() : "Không có dữ liệu")
                 .productRam(product.getProductDetail() != null ? product.getProductDetail().getRam() : "Không có dữ liệu")
                 .productRom(product.getProductDetail() != null ? product.getProductDetail().getRom() : "Không có dữ liệu")
+                .productColor(product.getProductDetail() != null ? product.getProductDetail().getColor() : "Không có dữ liệu")
+                .stockQuantity(product.getStock())
                 .build();
     }
 }

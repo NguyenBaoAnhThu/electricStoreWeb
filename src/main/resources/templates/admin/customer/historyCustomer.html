@@ -148,9 +148,8 @@
           <td th:text="${c.index + 1}"></td>
           <td class="order-code-cell">-</td>
           <td th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm')}"></td>
-          <td th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')}"></td>
+          <td th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'POINT', 0, 'COMMA')}"></td>
           <td>
-            <!-- Thay đổi ở đây: Sửa lại phần hiển thị trạng thái giống trang danh sách đơn hàng -->
             <span class="badge px-3 py-2 w-100" style="min-width: 120px; display: inline-block;"
                   th:classappend="${order.orderStatus == 'COMPLETE'} ? 'bg-success' : 'bg-danger'"
                   th:text="${order.orderStatus == 'COMPLETE' ? 'ĐÃ HOÀN THÀNH' : 'ĐÃ HỦY'}">
@@ -287,19 +286,19 @@
                     totalAmount += itemTotal;
 
                     let row = `
-                            <tr>
-                                <td>${index + 1}</td>
-                                <td>${detail.productName}</td>
-                                <td class="text-center">${detail.productQuantity}</td>
-                                <td class="text-end">${detail.productPrice.toLocaleString()} VND</td>
-                                <td class="text-end">${itemTotal.toLocaleString()} VND</td>
-                            </tr>
-                        `;
+                      <tr>
+                          <td>${index + 1}</td>
+                          <td>${detail.productName}</td>
+                          <td class="text-center">${detail.productQuantity}</td>
+                          <td class="text-end">${detail.productPrice.toLocaleString('vi-VN').replace(/,/g, '.')}</td>
+                          <td class="text-end">${itemTotal.toLocaleString('vi-VN').replace(/,/g, '.')}</td>
+                      </tr>
+                  `;
                     orderDetailTable.innerHTML += row;
                   });
 
                   document.getElementById("totalProducts").textContent = totalProducts;
-                  document.getElementById("orderTotal").textContent = totalAmount.toLocaleString() + " VND";
+                  document.getElementById("orderTotal").textContent = totalAmount.toLocaleString('vi-VN').replace(/,/g, '.');
                 })
                 .catch(error => console.error("Lỗi khi tải chi tiết đơn hàng:", error));
       });

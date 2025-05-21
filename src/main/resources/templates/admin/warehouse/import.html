@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -14,26 +13,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <style>
-        .form-container { background-color: #f8f9fa; padding: 20px; border-radius: 5px; margin-bottom: 20px; }
-        .table-container { background-color: #fff; border-radius: 5px; padding: 15px; margin-bottom: 20px; }
-        .product-table th { background-color: #212529; color: white; padding: 10px; text-align: center; vertical-align: middle;}
-        .product-table td { padding: 8px; vertical-align: middle; }
-        .totals-container { background-color: #f8f9fa; border-radius: 5px; padding: 15px; margin-bottom: 20px; }
-        .btn-action { border-radius: 4px; padding: 10px 20px; font-weight: 600; margin-top: 10px; }
-        .red-bar { background-color: #dc3545; width: 4px; height: 100%; position: absolute; left: 0; top: 0; }
-        .delete-btn { padding: 2px 6px; background-color: #dc3545; color: white; border: none; border-radius: 4px; }
-        .add-product-btn { background-color: #0d6efd; color: white; border: none; border-radius: 4px; padding: 8px 15px; }
-        .text-end { text-align: right !important; }
-        #productModal .table th, #productModal .table td { vertical-align: middle; }
-        #productModal .table th:first-child, #productModal .table td:first-child { text-align: center; }
-        .error {
-            color: #dc3545;
-            font-size: 16px;
-            margin-top: 0.25rem;
-            font-weight: 500;
-        }
-    </style>
 </head>
 <body>
 <div th:replace="~{admin/fragments/header :: header}"></div>
@@ -43,9 +22,6 @@
     <div class="wrapper">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="tittle">Thêm Phiếu Nhập Kho</h1>
-            <a th:href="@{/Admin/ware-houses}" class="btn btn-secondary">
-                Quay Lại
-            </a>
         </div>
 
         <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
@@ -433,6 +409,49 @@
             });
 
             $('#vat').on('input', function() {
+                let value = parseInt($(this).val());
+
+                // Nếu giá trị không phải số hoặc rỗng, đặt về 0
+                if (isNaN(value) || $(this).val() === '') {
+                    value = 0;
+                }
+
+                // Đảm bảo giá trị là số nguyên
+                value = Math.floor(value);
+
+                // Giới hạn giá trị từ 0 đến 100
+                if (value > 100) {
+                    value = 100;
+                }
+
+                // Cập nhật giá trị vào input
+                $(this).val(value);
+
+                // Tính toán lại tổng
+                calculateTotals();
+                saveDataToSession();
+            });
+
+            $('#vat').on('blur', function() {
+                let value = parseInt($(this).val());
+
+                // Nếu giá trị không phải số hoặc rỗng, đặt về 0
+                if (isNaN(value) || $(this).val() === '') {
+                    value = 0;
+                }
+
+                // Đảm bảo giá trị là số nguyên
+                value = Math.floor(value);
+
+                // Giới hạn giá trị từ 0 đến 100
+                if (value > 100) {
+                    value = 100;
+                }
+
+                // Cập nhật giá trị vào input
+                $(this).val(value);
+
+                // Tính toán lại tổng
                 calculateTotals();
                 saveDataToSession();
             });
@@ -493,21 +512,18 @@
             // Kiểm tra nhà cung cấp
             const supplierId = $('#supplier').val();
             if (!supplierId) {
-                $('#supplier').after('<div id="supplierError" class="error">Vui lòng chọn nhà cung cấp</div>');
+                $('#supplier').after('<div id="supplierError" class="error">Nhà cung cấp không được để trống</div>');
                 isValid = false;
             }
 
             // Kiểm tra có sản phẩm hay không
             if (productContainer.children().length === 0) {
                 $('#no-products-message').removeClass('d-none')
-                    .after('<div id="productsError" class="error">Phiếu nhập phải có ít nhất một sản phẩm</div>');
+                    .html('<span class="text-danger">Vui lòng thêm ít nhất một sản phẩm</span>');
                 isValid = false;
             } else {
-                $('#productsError').remove();
+                $('#no-products-message').addClass('d-none');
             }
-
-            // Xóa thông báo lỗi tổng quan nếu có
-            $('#validationErrorsContainer').remove();
 
             return isValid;
         }

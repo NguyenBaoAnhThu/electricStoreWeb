@@ -316,3 +316,241 @@ body {
         width: 100%;
     }
 }
+/*css cho nhap kho va thêm đơn hàng*/
+/* Layout và container */
+.form-container {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    position: relative;
+}
+.table-container {
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+.product-table th {
+    background-color: #212529 !important;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    vertical-align: middle;
+}
+.product-table td {
+    padding: 8px;
+    vertical-align: middle;
+}
+.totals-container {
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 20px;
+    position: relative;
+}
+.btn-action {
+    border-radius: 4px;
+    padding: 10px 20px;
+    font-weight: 600;
+    margin-top: 10px;
+}
+.red-bar {
+    background-color: #dc3545;
+    width: 4px;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+.delete-btn {
+    padding: 2px 6px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+}
+.add-product-btn {
+    background-color: #0d6efd;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 15px;
+}
+.text-end {
+    text-align: right !important;
+}
+
+/* Thông báo lỗi và validation */
+.error {
+    color: #dc3545;
+    font-size: 16px;
+    margin-top: 0.25rem;
+    font-weight: 500;
+}
+.validation-message {
+    color: #dc3545;
+    font-size: 14px;
+    margin-top: 0.25rem;
+}
+
+/* Style cho modals chung */
+.modal-header.bg-dark {
+    background-color: #212529 !important;
+    color: white;
+}
+.modal-header .btn-close-white {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+.modal-body .material-icons {
+    font-size: 48px;
+    color: black;
+}
+.modal-footer.border-0 {
+    border-top: none !important;
+}
+
+/* Style cho bảng trong modal */
+#productModal .table th,
+#productModal .table td {
+    vertical-align: middle;
+}
+#productModal .table th:first-child,
+#productModal .table td:first-child {
+    text-align: center;
+}
+#productModal .table-responsive {
+    max-height: 400px;
+    overflow-y: auto;
+}
+#productModal .table-dark.sticky-top {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+/* Style cho các input */
+.form-control.bg-light {
+    background-color: #f8f9fa !important;
+}
+.form-control.text-end {
+    text-align: right !important;
+}
+.form-control-sm {
+    font-size: 0.875rem;
+    padding: 0.25rem 0.5rem;
+}
+
+/* Trang thái trống */
+.text-center.text-muted {
+    color: #6c757d !important;
+}
+/*css mã qr*/
+.qr-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #15161D;
+    text-align: center;
+}
+.qr-container {
+    background-color: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    display: inline-block;
+    border: 1px solid #e9ecef;
+}
+.qr-code {
+    width: 250px;
+    height: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+.qr-code img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+.qr-info {
+    text-align: center;
+    margin-top: 15px;
+    color: #555;
+    font-size: 14px;
+}
+.bank-details, .order-summary {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+.bank-details h4, .order-summary h4 {
+    color: #15161D;
+    margin-bottom: 15px;
+    font-weight: 600;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e9ecef;
+}
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px dashed #e9ecef;
+}
+.detail-row:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+.detail-label {
+    font-weight: 600;
+    color: #555;
+    min-width: 40%;
+}
+.detail-value {
+    font-weight: 500;
+    color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-grow: 1;
+}
+.note-section {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+}
+.note-section h5 {
+    color: #15161D;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+.note-section ul {
+    padding-left: 20px;
+    margin-bottom: 0;
+}
+.note-section li {
+    margin-bottom: 5px;
+    color: #555;
+}
+.note-section strong {
+    color: #D10024;
+}
+@media (max-width: 768px) {
+    .qr-code {
+        width: 200px;
+        height: 200px;
+    }
+    .detail-row {
+        flex-direction: column;
+        gap: 5px;
+    }
+    .detail-value {
+        justify-content: space-between;
+    }
+}

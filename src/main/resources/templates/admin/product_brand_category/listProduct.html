@@ -116,10 +116,10 @@
                             <td th:text="${product.productCode}"></td>
                             <td class="text-center"><img th:src="${product.mainImageUrl}" alt="Product Image" class="product-image" /></td>
                             <td th:text="${product.name}"></td>
-                            <td th:text="${product.formattedPrice != null ? product.formattedPrice.replace(' VND', '') : ''}"></td>
+                            <td th:text="${product.formattedPrice != null ? product.formattedPrice.replace(' VND', '').replace(',', '.') : ''}"></td>
                             <td th:text="${product.category.categoryName}"></td>
                             <td th:text="${product.brand.brandName}"></td>
-                            <td th:text="${product.supplier != null ? product.supplier.supplierName : 'Không có nhà cung cấp'}"></td>                    <!-- Hide Thao tác column for non-admin roles -->
+                            <td th:text="${product.supplier != null ? product.supplier.supplierName : 'Không có nhà cung cấp'}"></td>
                             <td class="text-center" sec:authorize="hasRole('ROLE_ADMIN')">
                                 <a th:href="@{/Admin/product-manager/edit/{productID}(productID=${product.productID})}"
                                    class="btn btn-warning btn-sm">
