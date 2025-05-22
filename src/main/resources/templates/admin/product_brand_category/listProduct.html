@@ -101,7 +101,6 @@
                         </thead>
                         <tbody>
                         <tr th:if="${products.isEmpty()}">
-                            <!-- Adjust colspan based on visible columns -->
                             <td th:colspan="${#authorization.expression('hasRole(''ROLE_ADMIN'')') ? 10 : 8}" class="text-center">Không có sản phẩm nào để hiển thị</td>
                         </tr>
                         <tr th:each="product,p : ${products}">

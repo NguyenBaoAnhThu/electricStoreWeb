@@ -9,63 +9,13 @@
     <link rel="stylesheet" th:href="@{/css/admin/fragments/footer.css}">
     <link rel="stylesheet" th:href="@{/css/admin/layout/layout.css}">
     <link rel="stylesheet" th:href="@{/css/admin/layout/tablelayout.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/layout/statistical-detail.css}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .card {
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-        }
-        .card-title {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: #6c757d;
-        }
-        .card-text {
-            font-size: 1.5rem;
-            margin-top: 10px;
-        }
-        .tittle {
-            font-weight: 700;
-            color: #3a3a3a;
-            margin-bottom: 1.5rem;
-        }
-        .table {
-            vertical-align: middle;
-        }
-        .table th {
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-        .badge {
-            font-weight: 500;
-            letter-spacing: 0.5px;
-        }
-        .btn-secondary {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 500;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-            background-color: #6c757d;
-            transition: all 0.3s;
-        }
-        .btn-secondary:hover {
-            background-color: #5a6268;
-            transform: translateY(-2px);
-        }
-    </style>
 </head>
 <body>
-<!-- Header Fragment -->
 <div th:replace="~{admin/fragments/header :: header}"></div>
-<!-- Sidebar Fragment -->
 <div th:replace="~{admin/fragments/sidebar :: sidebar}"></div>
 
 <main class="main-content">
@@ -79,11 +29,11 @@
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item">
                             <a th:href="@{/Admin/statistical?type=day}" class="text-decoration-none">
-                                <i class="fas fa-chart-line me-1"></i>Báo cáo doanh thu
+                                Báo cáo doanh thu
                             </a>
                         </li>
                         <li class="breadcrumb-item active" aria-current="page">
-                            <i class="fas fa-clipboard-list me-1"></i>Chi tiết đơn hàng
+                            Chi tiết đơn hàng
                             <span th:if="${day != null}" th:text="'- ' + ${day}"></span>
                             <span th:if="${month != null}" th:text="'/' + ${month}"></span>
                             <span th:text="'/' + ${year}"></span>
@@ -104,7 +54,7 @@
                 <div class="card text-center">
                     <div class="card-body">
                         <h6 class="card-title">
-                            <i class="fas fa-shopping-cart me-2"></i>TỔNG ĐƠN HÀNG
+                            TỔNG ĐƠN HÀNG
                         </h6>
                         <p class="card-text text-primary fw-bold" th:text="${ordersSize}"></p>
                     </div>
@@ -114,19 +64,11 @@
                 <div class="card text-center">
                     <div class="card-body">
                         <h6 class="card-title">
-                            <i class="fas fa-hand-holding-usd me-2"></i>TỔNG DOANH THU
+                            TỔNG DOANH THU (VNĐ)
                         </h6>
-                        <p class="card-text text-success fw-bold" th:text="${#numbers.formatDecimal(totalRevenue, 0, 'COMMA', 0, 'POINT')} + ' VND'">0 VND</p>
+                        <p class="card-text text-success fw-bold" th:text="${#numbers.formatDecimal(totalRevenue, 0, 'POINT', 0, 'COMMA')}">0 VND</p>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- No Data Alert -->
-        <div th:if="${orders.content.isEmpty()}">
-            <div class="alert alert-info alert-dismissible fade show" role="alert">
-                <i class="fas fa-info-circle me-2"></i><span>Chưa có dữ liệu đơn hàng nào!</span>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         </div>
 
@@ -135,23 +77,28 @@
             <table class="table table-striped table-bordered align-middle">
                 <thead class="table-dark">
                 <tr>
-                    <th class="text-center">Mã đơn hàng</th>
-                    <th>Tên khách hàng</th>
-                    <th class="text-center">Ngày tạo</th>
-                    <th class="text-center">Tổng sản phẩm</th>
-                    <th class="text-center">Tổng tiền (VNĐ)</th>
-                    <th class="text-center">Trạng thái</th>
+                    <th class="text-center">Mã Đơn Hàng</th>
+                    <th>Tên Khách Hàng</th>
+                    <th class="text-center">Ngày Tạo</th>
+                    <th class="text-center">Tổng Sản Phẩm</th>
+                    <th class="text-center">Tổng Tiền (VNĐ)</th>
+                    <th class="text-center">Trạng Thái</th>
                 </tr>
                 </thead>
                 <tbody>
+                <tr th:if="${orders.content.isEmpty()}">
+                    <td colspan="6" class="text-center text-muted py-4" style="background-color: white !important;">
+                        Chưa có dữ liệu đơn hàng nào.
+                    </td>
+                </tr>
                 <tr th:each="order : ${orders.content}">
-                    <td class="text-center fw-bold" th:text="${order.code}"></td>
+                    <td class="text-center" th:text="${order.code}"></td>
                     <td th:text="${order.customerName}"></td>
                     <td class="text-center" th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm')}"></td>
                     <td class="text-center" th:text="${order.quantity}"></td>
-                    <td class="text-end fw-bold" th:text="${#numbers.formatDecimal(order.price, 0, 'COMMA', 0, 'POINT')} "></td>
+                    <td class="text-end" th:text="${#numbers.formatDecimal(order.price, 0, 'POINT', 0, 'COMMA')}"></td>
                     <td class="text-center">
-                        <span class="badge px-3 py-2 w-80 bg-success" style="min-width: 120px; display: inline-block; font-weight: bold;">
+                        <span class="badge px-3 py-2 bg-success" style="min-width: 120px; display: inline-block;">
                             ĐÃ HOÀN THÀNH
                         </span>
                     </td>

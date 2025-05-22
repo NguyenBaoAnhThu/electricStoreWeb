@@ -23,7 +23,6 @@
     --radius-lg: 12px;
 }
 
-/* Layout */
 .main-content {
     margin-left: 250px;
     padding: 20px;
@@ -42,7 +41,6 @@
     margin: 0 auto;
 }
 
-/* Titles */
 .tittle {
     color: var(--secondary-color);
     font-weight: 700;
@@ -62,7 +60,6 @@
     background-color: var(--primary-color);
 }
 
-/* Form Elements */
 .form-label {
     font-weight: 600;
     font-size: 0.85rem;
@@ -84,7 +81,6 @@
     box-shadow: 0 0 0 0.2rem rgba(209, 0, 36, 0.15);
 }
 
-/* Buttons */
 .btn-danger {
     background-color: var(--primary-color);
     border-color: var(--primary-color);
@@ -117,7 +113,6 @@
     box-shadow: var(--shadow-sm);
 }
 
-/* Dropdowns */
 .dropdown-menu {
     border: none;
     border-radius: var(--radius-sm);
@@ -146,7 +141,6 @@
     display: inline-block;
 }
 
-/* Stats Cards */
 .card-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -219,7 +213,6 @@
     transform: translateX(3px);
 }
 
-/* Card Variants */
 .stats-card.card-primary {
     background: linear-gradient(135deg, var(--secondary-color) 0%, var(--secondary-hover) 100%);
     color: white;
@@ -272,7 +265,6 @@
     color: white;
 }
 
-/* Chart Cards */
 .chart-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
@@ -315,12 +307,10 @@ canvas {
     height: 300px !important;
 }
 
-/* Utility classes */
 .bg-pink-100 {
     background-color: rgba(209, 0, 36, 0.1);
 }
 
-/* Media Queries */
 @media (max-width: 992px) {
     .chart-container {
         grid-template-columns: 1fr;

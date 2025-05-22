@@ -33,7 +33,7 @@ public interface IRevenueRepository extends JpaRepository <Order, Integer> {
         );
 
         @Query("SELECT new org.example.electricstore.DTO.product.ProductStatisticalDTO( " +
-                "p.productID, p.name, b.brandName, c.categoryName, s.supplierName, p.price, SUM(od.quantity)) " +
+                "p.productCode, p.productID, p.name, b.brandName, c.categoryName, s.supplierName, p.price, SUM(od.quantity)) " +
                 "FROM OrderDetail od " +
                 "JOIN od.order o " +
                 "JOIN od.product p " +
@@ -41,8 +41,8 @@ public interface IRevenueRepository extends JpaRepository <Order, Integer> {
                 "JOIN p.category c " +
                 "JOIN p.supplier s " +
                 "WHERE o.orderID IN :orderIds " +
-                "GROUP BY p.productID, p.name, b.brandName, c.categoryName, s.supplierName, p.price" +
-                " ORDER BY SUM(od.quantity) DESC")
+                "GROUP BY p.productCode, p.productID, p.name, b.brandName, c.categoryName, s.supplierName, p.price " +
+                "ORDER BY SUM(od.quantity) DESC")
         List<ProductStatisticalDTO> findProductsSales(@Param("orderIds") List<Integer> orderIds);
 
         @Query("SELECT o FROM Order o ORDER BY o.createAt ASC")

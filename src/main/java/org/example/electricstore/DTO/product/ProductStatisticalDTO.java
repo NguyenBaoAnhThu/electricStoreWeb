@@ -9,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class ProductStatisticalDTO {
-
+    private String productCode;
     private Integer productId;
     private String productName;
     private String brandName;

@@ -1,0 +1,36 @@
+/* Card Styles - Hover effect bổ sung */
+.card:hover {
+    transform: translateY(-5px);
+}
+
+/* Badge Styles - Trạng thái đơn hàng */
+.badge {
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    min-width: 120px;
+    display: inline-block;
+}
+
+/* Table hover effect bổ sung */
+.table tbody tr:hover {
+    background-color: rgba(0, 123, 255, 0.1);
+    transition: background-color 0.2s ease;
+}
+
+/* Empty message styling */
+.empty-message {
+    background-color: white !important;
+}
+
+/* Responsive adjustments cho badge */
+@media (max-width: 768px) {
+    .badge {
+        min-width: 100px;
+        font-size: 0.7rem;
+        padding: 0.375rem 0.75rem;
+    }
+}
