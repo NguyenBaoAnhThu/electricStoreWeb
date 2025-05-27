@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thống kê chi tiết đơn hàng</title>
+    <title>Chi Tiết Đơn Hàng Thành Công</title>
     <link rel="stylesheet" th:href="@{/css/admin/fragments/sidebar.css}">
     <link rel="stylesheet" th:href="@{/css/admin/fragments/header.css}">
     <link rel="stylesheet" th:href="@{/css/admin/fragments/footer.css}">
@@ -20,20 +20,19 @@
 
 <main class="main-content">
     <div class="wrapper">
-        <h1 class="tittle">Chi tiết đơn hàng thành công</h1>
+        <h1 class="tittle">Chi Tiết Đơn Hàng Thành Công</h1>
 
-        <!-- Breadcrumb and Return Button -->
         <div class="form-mb-4">
             <div class="d-flex justify-content-between align-items-center">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item">
                             <a th:href="@{/Admin/statistical?type=day}" class="text-decoration-none">
-                                Báo cáo doanh thu
+                                Báo Cáo Doanh Thu
                             </a>
                         </li>
                         <li class="breadcrumb-item active" aria-current="page">
-                            Chi tiết đơn hàng
+                            Chi Tiết Đơn Hàng Thành Công
                             <span th:if="${day != null}" th:text="'- ' + ${day}"></span>
                             <span th:if="${month != null}" th:text="'/' + ${month}"></span>
                             <span th:text="'/' + ${year}"></span>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thống kê chi tiết sản phẩm</title>
+    <title>Chi Tiết Sản Phẩm</title>
     <link rel="stylesheet" th:href="@{/css/admin/fragments/sidebar.css}">
     <link rel="stylesheet" th:href="@{/css/admin/fragments/header.css}">
     <link rel="stylesheet" th:href="@{/css/admin/fragments/footer.css}">
@@ -20,7 +20,7 @@
 
 <main class="main-content">
     <div class="wrapper">
-        <h1 class="tittle">Chi tiết sản phẩm</h1>
+        <h1 class="tittle">Chi Tiết Sản Phẩm</h1>
 
         <div class="form-mb-4">
             <div class="d-flex justify-content-between align-items-center">
@@ -28,11 +28,11 @@
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item">
                             <a th:href="@{/Admin/statistical?type=day}" class="text-decoration-none">
-                                Báo cáo doanh thu
+                                Báo Cáo Doanh Thu
                             </a>
                         </li>
                         <li class="breadcrumb-item active" aria-current="page">
-                            Chi tiết sản phẩm
+                            Chi Tiết Sản Phẩm
                             <span th:if="${day != null}" th:text="'- ' + ${day}"></span>
                             <span th:if="${month != null}" th:text="'/' + ${month}"></span>
                             <span th:text="'/' + ${year}"></span>
@@ -41,13 +41,12 @@
                 </nav>
                 <a th:href="@{/Admin/statistical(type=${type}, day=${day}, month=${month}, year=${year})}"
                    class="btn btn-secondary">
-                    Quay lại
+                    Quay Lại
                 </a>
             </div>
             <hr style="border: 1px solid #e9ecef; margin: 20px 0;">
         </div>
 
-        <!-- Summary Cards -->
         <div class="row mb-4">
             <div class="col-md-3">
                 <div class="card text-center">
