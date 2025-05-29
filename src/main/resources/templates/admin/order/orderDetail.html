@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf?.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf?.headerName}"/>
     <title>Chi Tiết Đơn Hàng</title>
     <link rel="stylesheet" th:href="@{/css/admin/fragments/sidebar.css}">
     <link rel="stylesheet" th:href="@{/css/admin/fragments/header.css}">
@@ -129,6 +131,15 @@
                         <div class="p-3">
                             <div class="row mb-2">
                                 <div class="col-sm-6">
+                                    <span class="text-secondary">Tổng tiền hàng:</span>
+                                </div>
+                                <div class="col-sm-6 text-end">
+                                    <strong th:text="${order?.orderDetails != null && !order.orderDetails.isEmpty() ? #numbers.formatDecimal(#aggregates.sum(order.orderDetails.?[price != null && quantity != null].![price * quantity]), 0, 'POINT', 0, 'COMMA') : '0'}"></strong>
+                                </div>
+                            </div>
+
+                            <div class="row mb-2">
+                                <div class="col-sm-6">
                                     <span class="text-secondary">Tổng sản phẩm:</span>
                                 </div>
                                 <div class="col-sm-6 text-end">
@@ -181,7 +192,15 @@
                                     <span class="text-secondary">Tổng thanh toán:</span>
                                 </div>
                                 <div class="col-sm-6 text-end">
-                                    <strong class="text-danger fs-5" th:text="${order?.totalPrice != null ? #numbers.formatDecimal(order.totalPrice, 0, 'POINT', 0, 'COMMA') + ' VNĐ' : '0 VNĐ'}"></strong>
+                                    <strong class="text-danger fs-5"
+                                        th:text="${order?.orderDetails != null && !order.orderDetails.isEmpty() ?
+                                            #numbers.formatDecimal(
+                                                #aggregates.sum(order.orderDetails.?[price != null && quantity != null].![price * quantity])
+                                                - (order.discount != null ? order.discount : 0)
+                                                - (order.discountPercent != null ? (#aggregates.sum(order.orderDetails.?[price != null && quantity != null].![price * quantity]) * order.discountPercent / 100) : 0)
+                                            , 0, 'POINT', 0, 'COMMA') + ' VNĐ'
+                                            : '0 VNĐ'}">
+                                    </strong>
                                 </div>
                             </div>
                         </div>
@@ -236,7 +255,7 @@
     function printInvoice() {
         const url = window.location.href;
         const orderId = url.substring(url.lastIndexOf('/') + 1);
-        window.location.href = `/Admin/order/downloadInvoicePdf?orderId=${orderId}`;
+        window.location.href = `${window.location.origin}/Admin/order/downloadInvoicePdf?orderId=${orderId}`;
     }
     document.addEventListener('DOMContentLoaded', function() {
         const confirmCancelBtn = document.getElementById('confirmCancelBtn');
@@ -258,13 +277,13 @@
                     headers[header] = token;
                 }
 
-                fetch(`/Admin/order/cancel/${orderId}`, {
+                fetch(`${window.location.origin}/Admin/order/cancel/${orderId}`, {
                     method: 'POST',
                     headers: headers
                 })
                     .then(response => {
                         if (response.ok) {
-                            window.location.href = '/Admin/order?msg=cancel_ok';
+                            window.location.href = `${window.location.origin}/Admin/order?msg=cancel_ok`;
                         } else {
                             alert('Không thể hủy đơn hàng. Vui lòng thử lại sau.');
                         }
