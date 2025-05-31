@@ -93,4 +93,9 @@ public class BrandService implements IBrandService {
     public Page<Brand> findByBrandNameContainingPaginated(String brandName, int page, int size) {
         return brandRepository.findByBrandNameContainingIgnoreCase(brandName, PageRequest.of(page, size));
     }
+
+    @Override
+    public Page<Brand> findByBrandCodeContainingPaginated(String brandCode, int page, int size) {
+        return brandRepository.findByBrandCodeContainingIgnoreCase(brandCode, PageRequest.of(page, size));
+    }
 }

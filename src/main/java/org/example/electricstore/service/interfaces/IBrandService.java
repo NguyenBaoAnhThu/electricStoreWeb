@@ -23,5 +23,7 @@ public interface IBrandService {
 
     Page<Brand> findByBrandNameContainingPaginated(String brandName, int page, int size);
 
+    Page<Brand> findByBrandCodeContainingPaginated(String brandCode, int page, int size);
+
     String generateNewBrandCode();
 }

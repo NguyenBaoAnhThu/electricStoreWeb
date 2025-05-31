@@ -114,12 +114,8 @@ public class SupplierController {
                 return supplierService.searchSuppliersByAllFields(keyword, null, null, null, null, pageable);
             case "supplierName":
                 return supplierService.searchSuppliersByAllFields(null, keyword, null, null, null, pageable);
-            case "address":
-                return supplierService.searchSuppliersByAllFields(null, null, keyword, null, null, pageable);
             case "phone":
                 return supplierService.searchSuppliersByAllFields(null, null, null, keyword, null, pageable);
-            case "email":
-                return supplierService.searchSuppliersByAllFields(null, null, null, null, keyword, pageable);
             default:
                 return supplierService.getSuppliers(page, size);
         }

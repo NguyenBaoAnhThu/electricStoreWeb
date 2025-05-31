@@ -70,7 +70,7 @@ public class OrderController {
         // Xác định các biến tìm kiếm
         String orderCode = null;
         String customerName = null;
-        String status = null;
+        String phoneNumber = null;
 
         // Phân loại trường tìm kiếm
         if (searchField != null && searchInput != null && !searchInput.isEmpty()) {
@@ -81,14 +81,14 @@ public class OrderController {
                 case "customerName":
                     customerName = searchInput;
                     break;
-                case "status":
-                    status = searchInput;
+                case "phoneNumber":
+                    phoneNumber = searchInput;
                     break;
             }
         }
 
         // Lấy danh sách đơn hàng với các điều kiện lọc
-        Page<Order> orders = orderService.getAllOrders(orderCode, customerName, status, null, null, page, size);
+        Page<Order> orders = orderService.getAllOrders(orderCode, customerName, phoneNumber, null, null, page, size);
 
         // Kiểm tra nếu không có đơn hàng và có tìm kiếm
         if (orders.isEmpty() && (searchInput != null && !searchInput.isEmpty())) {

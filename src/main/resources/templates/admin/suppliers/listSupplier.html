@@ -42,8 +42,6 @@
           <select class="input-select" name="filter">
             <option value="supplierCode" th:selected="${filter == 'supplierCode'}">Mã NCC</option>
             <option value="supplierName" th:selected="${filter == 'supplierName'}">Tên NCC</option>
-            <option value="address" th:selected="${filter == 'address'}">Địa chỉ</option>
-            <option value="email" th:selected="${filter == 'email'}">Email</option>
             <option value="phone" th:selected="${filter == 'phone'}">Số điện thoại</option>
           </select>
           <input class="form-control" type="search" name="keyword" th:value="${param.keyword}" placeholder="Nhập thông tin cần tìm..." aria-label="Search">

@@ -34,7 +34,8 @@ public class BrandController {
             Authentication authentication,
             @RequestParam(name = "keyword", required = false, defaultValue = "") String keyword,
             @RequestParam(name = "page", required = false, defaultValue = "0") int page,
-            @RequestParam(name = "size", required = false, defaultValue = "10") int size) {
+            @RequestParam(name = "size", required = false, defaultValue = "10") int size,
+            @RequestParam(name = "searchType", required = false, defaultValue = "all") String searchType) {
 
         ModelAndView modelAndView = new ModelAndView("admin/product_brand_category/listBrand");
         String username = authentication.getName();
@@ -42,7 +43,16 @@ public class BrandController {
 
         String filterKeyword = keyword.trim();
         if (!filterKeyword.isEmpty()) {
-            brandPage = brandService.findByBrandNameContainingPaginated(filterKeyword, page, size);
+            switch (searchType) {
+                case "brandName":
+                    brandPage = brandService.findByBrandNameContainingPaginated(filterKeyword, page, size);
+                    break;
+                case "brandCode":
+                    brandPage = brandService.findByBrandCodeContainingPaginated(filterKeyword, page, size);
+                    break;
+                default:
+                    brandPage = brandService.getAllBrandsPaginated(page, size);
+            }
             if (brandPage.isEmpty()) {
                 modelAndView.addObject("noResultMessage", "Không tìm thấy kết quả phù hợp với dữ liệu tìm kiếm.");
             }

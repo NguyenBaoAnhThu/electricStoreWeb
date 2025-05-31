@@ -30,7 +30,7 @@
                     <select class="input-select" name="searchField" id="searchField">
                         <option value="orderCode" th:selected="${param.searchField == 'orderCode'}">Mã Đơn Hàng</option>
                         <option value="customerName" th:selected="${param.searchField == 'customerName'}">Tên Khách Hàng</option>
-                        <option value="status" th:selected="${param.searchField == 'status'}">Trạng Thái</option>
+                        <option value="phoneNumber" th:selected="${param.searchField == 'phoneNumber'}">Số Điện Thoại</option>
                     </select>
                     <input class="form-control" type="search" id="searchInput" name="searchInput"
                            th:value="${param.searchInput}"

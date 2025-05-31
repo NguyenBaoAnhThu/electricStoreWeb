@@ -293,7 +293,7 @@
         }
 
         @Override
-        public Page<Order> getAllOrders(String orderCode, String customerName, String status,
+        public Page<Order> getAllOrders(String orderCode, String customerName, String phoneNumber,
                                         String fromDate, String toDate, int page, int size) {
             Pageable pageable = PageRequest.of(page - 1, size);
 
@@ -312,13 +312,10 @@
                                 "%" + customerName.toLowerCase() + "%"));
             }
 
-            if (status != null && !status.isEmpty()) {
-                try {
-                    OrderStatus orderStatus = OrderStatus.valueOf(status);
-                    spec = spec.and((root, query, cb) -> cb.equal(root.get("status"), orderStatus));
-                } catch (IllegalArgumentException e) {
-                    // Handle invalid status
-                }
+            if (phoneNumber != null && !phoneNumber.isEmpty()) {
+                spec = spec.and((root, query, cb) ->
+                        cb.like(cb.lower(root.get("customer").get("phoneNumber")),
+                                "%" + phoneNumber.toLowerCase() + "%"));
             }
 
             // Handle date range

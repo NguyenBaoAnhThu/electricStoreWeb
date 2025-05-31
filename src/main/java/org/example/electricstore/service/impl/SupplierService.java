@@ -186,6 +186,6 @@ public class SupplierService implements ISupplierService {
             String phone,
             String email,
             Pageable pageable) {
-        return supplierRepository.searchByFields(supplierCode, supplierName, address, phone, email, pageable);
+        return supplierRepository.searchByFields(supplierCode, supplierName, null, phone, null, pageable);
     }
 }

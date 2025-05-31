@@ -17,6 +17,8 @@ public interface IBrandRepository extends JpaRepository<Brand, Integer> {
 
     Page<Brand> findByBrandNameContainingIgnoreCase(String brandName, Pageable pageable);
 
+    Page<Brand> findByBrandCodeContainingIgnoreCase(String brandCode, Pageable pageable);
+
     @Query("SELECT MAX(b.brandCode) FROM Brand b WHERE b.brandCode LIKE 'TH%'")
     String findMaxBrandCode();
 }
