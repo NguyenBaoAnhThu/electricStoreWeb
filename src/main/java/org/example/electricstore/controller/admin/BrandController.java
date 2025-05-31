@@ -12,7 +12,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -29,6 +28,7 @@ public class BrandController {
         this.brandService = brandService;
     }
 
+    // Hiển thị danh sách thương hiệu với tìm kiếm và phân trang
     @GetMapping
     public ModelAndView showListBrand(
             Authentication authentication,
@@ -71,7 +71,7 @@ public class BrandController {
         }
 
         modelAndView.addObject("brands", brandPage.getContent());
-        modelAndView.addObject("currentPage", page + 1); // Hiển thị trang từ 1 (UI), nhưng trang thực tế từ 0 (backend)
+        modelAndView.addObject("currentPage", page + 1);
         modelAndView.addObject("totalPages", brandPage.getTotalPages() > 0 ? brandPage.getTotalPages() : 1);
         modelAndView.addObject("keyword", filterKeyword);
         modelAndView.addObject("brand", new BrandDTO());
@@ -80,12 +80,14 @@ public class BrandController {
         return modelAndView;
     }
 
+    // Tạo mã thương hiệu mới
     @GetMapping("/generate-code")
     @ResponseBody
     public String generateBrandCode() {
         return brandService.generateNewBrandCode();
     }
 
+    // Thêm thương hiệu mới
     @PostMapping("/add")
     @ResponseBody
     public ResponseEntity<?> addBrand(@Valid @RequestBody BrandDTO brandDTO,
@@ -114,6 +116,7 @@ public class BrandController {
         }
     }
 
+    // Cập nhật thông tin thương hiệu
     @PostMapping("/edit")
     @ResponseBody
     public ResponseEntity<?> updateBrand(@Valid @RequestBody BrandDTO brandDTO,
@@ -142,6 +145,7 @@ public class BrandController {
         }
     }
 
+    // Xóa danh sách thương hiệu
     @PostMapping("/delete")
     @ResponseBody
     public ResponseEntity<?> deleteBrands(@RequestBody List<Integer> brandIds) {
@@ -159,6 +163,7 @@ public class BrandController {
         }
     }
 
+    // Kiểm tra tên thương hiệu đã tồn tại
     @GetMapping("/check-name")
     @ResponseBody
     public ResponseEntity<?> checkBrandNameExists(@RequestParam("brandName") String brandName) {
