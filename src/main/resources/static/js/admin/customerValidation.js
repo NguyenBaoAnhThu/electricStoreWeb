@@ -250,7 +250,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (nameInput && nameInput.value.trim() === '') {
             const errorElement = document.getElementById('customerNameError') || document.querySelector('.error[for="customerName"]');
             if (errorElement) {
-                errorElement.textContent = 'Tên không được để trống';
+                errorElement.textContent = 'Họ và tên không được để trống';
                 errorElement.style.display = 'block';
             }
             isValid = false;

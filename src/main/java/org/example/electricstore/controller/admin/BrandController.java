@@ -79,7 +79,6 @@ public class BrandController {
         modelAndView.addObject("size", size);
         return modelAndView;
     }
-
     // Tạo mã thương hiệu mới
     @GetMapping("/generate-code")
     @ResponseBody

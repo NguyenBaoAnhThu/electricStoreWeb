@@ -37,9 +37,7 @@ public class EmployeeController {
 
     @GetMapping("/employee-manager")
     public ModelAndView employeeList(@RequestParam(name = "searchField", required = false) String field,
-                                     @RequestParam(name = "searchInput",
-                                             required = false,
-                                             defaultValue = "") String keyword,
+                                     @RequestParam(name = "searchInput", required = false, defaultValue = "") String keyword,
                                      @RequestParam(name = "page", required = false, defaultValue = "1") int page,
                                      @RequestParam(name = "size", required = false, defaultValue = "10") int size) {
         ModelAndView modelAndView = new ModelAndView("admin/employee/listEmployee");

@@ -15,7 +15,7 @@ import java.time.LocalDate;
 public class CustomerDTO {
     private Integer customerId;
     private String customerCode;
-    @NotBlank(message = "Tên không được để trống")
+    @NotBlank(message = "Họ và tên không được để trống")
     @Size(min = 2, max = 50, message = "Tên phải có độ dài từ 2 đến 50 ký tự")
     @Pattern(regexp = "^[A-Za-zÀ-ỹ\\s]+$",
             message = "Tên chỉ được chứa chữ cái và khoảng trắng")
@@ -34,8 +34,8 @@ public class CustomerDTO {
 
 
     @DateTimeFormat(pattern = "dd/MM/yyyy") // Sửa lại pattern để phù hợp với giao diện người dùng
-    @NotNull(message = "Ngày sinh không được để trống !")
-    @DobConstraint(min = 15 , message = "Không đủ điều kiện , tuổi phải lớn hơn 15 !")
+    @NotNull(message = "Ngày sinh không được để trống.")
+    @DobConstraint(min = 15 , message = "Không đủ điều kiện , tuổi phải lớn hơn 15.")
     private LocalDate birthDate;
 
     @NotBlank(message = "Email không được để trống")

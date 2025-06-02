@@ -145,7 +145,7 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="editCustomerModalLabel">Sửa Khách Hàng</h5>
+                        <h5 class="modal-title" id="editCustomerModalLabel">Cập Nhập Khách Hàng</h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
@@ -208,30 +208,30 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function () {
         const editButtons = document.querySelectorAll(".edit-btn");
 
         editButtons.forEach(button => {
-            button.addEventListener("click", function () {
-                let id = this.getAttribute("data-id");
-                let code = this.getAttribute("data-code");
-                let name = this.getAttribute("data-name");
-                let phone = this.getAttribute("data-phone");
-                let address = this.getAttribute("data-address");
-                let birthdate = this.getAttribute("data-birthdate");
-                let email = this.getAttribute("data-email");
+        button.addEventListener("click", function () {
+        let id = this.getAttribute("data-id");
+        let code = this.getAttribute("data-code");
+        let name = this.getAttribute("data-name");
+        let phone = this.getAttribute("data-phone");
+        let address = this.getAttribute("data-address");
+        let birthdate = this.getAttribute("data-birthdate");
+        let email = this.getAttribute("data-email");
 
-                document.getElementById("customerId").value = id;
-                document.getElementById("customerCode").value = code;
-                document.getElementById("customerName").value = name;
-                document.getElementById("phoneNumber").value = phone;
-                document.getElementById("address").value = address;
-                document.getElementById("birthDate").value = birthdate;
-                document.getElementById("email").value = email;
-            });
-        });
+        document.getElementById("customerId").value = id;
+        document.getElementById("customerCode").value = code;
+        document.getElementById("customerName").value = name;
+        document.getElementById("phoneNumber").value = phone;
+        document.getElementById("address").value = address;
+        document.getElementById("birthDate").value = birthdate;
+        document.getElementById("email").value = email;
     });
-    $(document).ready(function () {
+    });
+    });
+        $(document).ready(function () {
         $("#editCustomerForm").submit(function (event) {
             event.preventDefault();
 
@@ -257,10 +257,18 @@
                     window.location.href = '/Admin/customers?successMessage=' + encodeURIComponent('Cập nhật khách hàng thành công!');
                 },
                 error: function (xhr) {
+                    // Xóa các thông báo lỗi cũ
                     $(".error").text("");
                     let errors = xhr.responseJSON;
+                    // Hiển thị lỗi cho từng trường
                     for (let field in errors) {
-                        $("#" + field + "Error").text(errors[field]);
+                        // Chuẩn hóa tên trường để khớp với ID của phần tử lỗi
+                        let errorField = field === 'birthDate' ? 'birthDate' : field;
+                        let errorElement = $("#" + errorField + "Error");
+                        if (errorElement.length) {
+                            errorElement.text(errors[field]);
+                            errorElement.show();
+                        }
                     }
                 }
             });
