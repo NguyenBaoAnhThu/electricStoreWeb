@@ -3,7 +3,7 @@
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Quản lý Sản phẩm</title>
+            <title>Sản phẩm</title>
             <meta name="_csrf" th:content="${_csrf != null ? _csrf.token : ''}"/>
             <meta name="_csrf_header" th:content="${_csrf != null ? _csrf.headerName : ''}"/>
             <link rel="stylesheet" th:href="@{/css/admin/fragments/sidebar.css}">
@@ -111,8 +111,7 @@
                                            th:id="'productCheck-' + ${p.index}" th:data-code="${product.productCode}">
                                 </div>
                             </td>
-                            <td th:text="${p.index + 1}"></td>
-                            <td th:text="${product.productCode}"></td>
+                            <td th:text="${(currentPage - 1) * (size ?: 10) + p.index + 1}"></td>                            <td th:text="${product.productCode}"></td>
                             <td class="text-center"><img th:src="${product.mainImageUrl}" alt="Product Image" class="product-image" /></td>
                             <td th:text="${product.name}"></td>
                             <td th:text="${product.formattedPrice != null ? product.formattedPrice.replace(' VND', '').replace(',', '.') : ''}"></td>

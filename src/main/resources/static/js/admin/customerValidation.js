@@ -272,7 +272,7 @@ document.addEventListener('DOMContentLoaded', function() {
             } else if (!phoneRegex.test(phoneValue)) {
                 const errorElement = document.getElementById('phoneNumberError') || document.querySelector('.error[for="phoneNumber"]');
                 if (errorElement) {
-                    errorElement.textContent = 'Số điện thoại phải bắt đầu bằng +84 hoặc 0, theo sau là 3,5,7,8,9 và 8 chữ số';
+                    errorElement.textContent = 'Số điện thoại phải đủ 10 số';
                     errorElement.style.display = 'block';
                 }
                 isValid = false;

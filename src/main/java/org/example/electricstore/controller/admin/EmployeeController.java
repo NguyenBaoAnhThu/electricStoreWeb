@@ -62,6 +62,7 @@ public class EmployeeController {
         modelAndView.addObject("currentPage", page);
         modelAndView.addObject("totalPages", usersPage.getTotalPages());
         modelAndView.addObject("userDTO", new UserDTO());
+        modelAndView.addObject("size", size);
 
         return modelAndView;
     }

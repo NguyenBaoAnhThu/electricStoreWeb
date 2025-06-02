@@ -23,7 +23,7 @@ public class CustomerDTO {
 
     @NotBlank(message = "Số điện thoại không được để trống")
     @Pattern(regexp = "^(\\+84|0)[35789][0-9]{8}$",
-            message = "Số điện thoại phải bắt đầu bằng +84 hoặc 0, theo sau là 3,5,7,8,9 và 8 chữ số")
+            message = "Số điện thoại phải đủ 10 số ")
     private String phoneNumber;
 
     @NotBlank(message = "Địa chỉ không được để trống")

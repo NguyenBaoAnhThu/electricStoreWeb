@@ -76,7 +76,7 @@ public class BrandController {
         modelAndView.addObject("keyword", filterKeyword);
         modelAndView.addObject("brand", new BrandDTO());
         modelAndView.addObject("username", username);
-
+        modelAndView.addObject("size", size);
         return modelAndView;
     }
 

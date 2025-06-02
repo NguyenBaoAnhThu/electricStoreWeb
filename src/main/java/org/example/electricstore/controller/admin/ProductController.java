@@ -90,6 +90,8 @@ public class ProductController {
         model.addAttribute("categories", categoryService.getAllCategories());
         model.addAttribute("brands", brandService.getAllBrands());
         model.addAttribute("suppliers", supplierService.getAllSuppliers());
+        model.addAttribute("size", size);
+
 
         if (page > productPage.getTotalPages() && productPage.getTotalPages() > 0) {
             int newPage = Math.max(1, productPage.getTotalPages());
@@ -147,11 +149,8 @@ public class ProductController {
             model.addAttribute("brands", brandService.getAllBrands());
             model.addAttribute("suppliers", supplierService.getAllSuppliers());
             model.addAttribute("mainImageUrl", productDTO.getMainImageUrl());
-
-            // Thêm các thuộc tính cho validation
-            model.addAttribute("imageError", null); // Để hiển thị lỗi ảnh nếu có
-            model.addAttribute("validationErrors", new HashMap<String, String>()); // Lưu trữ lỗi validation
-
+            model.addAttribute("imageError", null);
+            model.addAttribute("validationErrors", new HashMap<String, String>());
             return "admin/product_brand_category/editProduct";
         } else {
             redirectAttributes.addFlashAttribute("errorMessage", "Không tìm thấy sản phẩm!");

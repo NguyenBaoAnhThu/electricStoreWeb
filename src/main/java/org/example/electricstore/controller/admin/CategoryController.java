@@ -85,6 +85,7 @@ public class CategoryController {
         modelAndView.addObject("searchType", searchType);
         modelAndView.addObject("category", new CategoryDTO());
         modelAndView.addObject("username", username);
+        modelAndView.addObject("size", size);
 
         return modelAndView;
     }

@@ -73,7 +73,7 @@
                             <input type="checkbox" class="form-check-input categoryCheckbox" th:value="${category.categoryID}" th:id="'categoryCheck-' + ${c.index}">
                         </div>
                     </td>
-                    <td th:text="${c.index + 1}"></td>
+                    <td th:text="${(currentPage - 1) * size + c.index + 1}"></td>
                     <td th:text="${category.categoryCode}"></td>
                     <td th:text="${category.categoryName}"></td>
                     <td th:text="${category.description}"></td>

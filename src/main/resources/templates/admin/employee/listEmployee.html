@@ -78,7 +78,7 @@
                             <input type="checkbox" class="form-check-input employeeCheckbox" th:value="${user.userId}" th:id="'employeeCheck-' + ${status.index}">
                         </div>
                     </td>
-                    <td th:text="${status.index + 1}"></td>
+                    <td th:text="${(currentPage - 1) * (size ?: 10) + status.index + 1}"></td>
                     <td th:text="${user.employeeCode}"></td>
                     <td th:text="${user.employeeName}"></td>
                     <td th:text="${#temporals.format(user.employeeBirthday, 'dd/MM/yyyy')}"></td>

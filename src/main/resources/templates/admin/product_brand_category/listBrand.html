@@ -74,7 +74,7 @@
               <input type="checkbox" class="form-check-input brandCheckbox" th:value="${brand.brandID}" th:id="'brandCheck-' + ${b.index}">
             </div>
           </td>
-          <td th:text="${b.index + 1}"></td>
+          <td th:text="${(currentPage - 1) * size + b.index + 1}"></td>
           <td th:text="${brand.brandCode}"></td>
           <td th:text="${brand.brandName}"></td>
           <td th:text="${brand.country}"></td>
