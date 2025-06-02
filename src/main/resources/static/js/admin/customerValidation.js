@@ -8,14 +8,14 @@ document.addEventListener('DOMContentLoaded', function() {
             input.addEventListener("input", function(e) {
                 const value = e.target.value;
 
-                // Chỉ cho phép số và dấu +
-                if (!/^[+\d]*$/.test(value)) {
-                    e.target.value = value.replace(/[^+\d]/g, '');
+                // Chỉ cho phép số (loại bỏ dấu + vì chỉ cần 10 số)
+                if (!/^[\d]*$/.test(value)) {
+                    e.target.value = value.replace(/[^\d]/g, '');
                 }
 
-                // Giới hạn độ dài
-                if (value.length > 12) {
-                    e.target.value = value.slice(0, 12);
+                // Giới hạn độ dài 10 số
+                if (value.length > 10) {
+                    e.target.value = value.slice(0, 10);
                 }
             });
 
@@ -24,12 +24,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 setTimeout(() => {
                     const currentValue = this.value;
 
-                    // Lọc ký tự không phải số và dấu +
-                    const filteredValue = currentValue.replace(/[^+\d]/g, '');
+                    // Lọc ký tự không phải số
+                    const filteredValue = currentValue.replace(/[^\d]/g, '');
 
-                    // Giới hạn độ dài
-                    if (filteredValue.length > 12) {
-                        this.value = filteredValue.substring(0, 12);
+                    // Giới hạn độ dài 10 số
+                    if (filteredValue.length > 10) {
+                        this.value = filteredValue.substring(0, 10);
                     } else {
                         this.value = filteredValue;
                     }
@@ -241,53 +241,131 @@ document.addEventListener('DOMContentLoaded', function() {
     const editCustomerForm = document.getElementById('editCustomerForm');
     const orderForm = document.getElementById('orderForm');
 
+    // Hàm hiển thị lỗi
+    function showError(fieldId, message) {
+        const errorElement = document.getElementById(fieldId + 'Error');
+        if (errorElement) {
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+    }
+
+    function clearError(fieldId) {
+        const errorElement = document.getElementById(fieldId + 'Error');
+        if (errorElement) {
+            errorElement.textContent = '';
+            errorElement.style.display = 'none';
+        }
+    }
+
+    // Hàm kiểm tra trùng số điện thoại
+    async function checkPhoneDuplicate(phoneValue, currentCustomerId = null) {
+        try {
+            let url = `/api/customers/check-phone?phone=${encodeURIComponent(phoneValue)}`;
+            if (currentCustomerId) {
+                url += `&excludeId=${currentCustomerId}`;
+            }
+
+            const response = await fetch(url);
+            const data = await response.json();
+            return data.exists;
+        } catch (error) {
+            console.error('Error checking phone:', error);
+            return false;
+        }
+    }
+
+    // Hàm kiểm tra trùng email
+    async function checkEmailDuplicate(emailValue, currentCustomerId = null) {
+        try {
+            let url = `/api/customers/check-email?email=${encodeURIComponent(emailValue)}`;
+            if (currentCustomerId) {
+                url += `&excludeId=${currentCustomerId}`;
+            }
+
+            const response = await fetch(url);
+            if (response.ok) {
+                const data = await response.json();
+                return data.exists;
+            }
+            return false;
+        } catch (error) {
+            console.error('Error checking email:', error);
+            return false;
+        }
+    }
+
     // Hàm kiểm tra form
-    function validateCustomerForm(form) {
+    async function validateCustomerForm(form) {
         let isValid = true;
+
+        // Lấy ID khách hàng hiện tại (cho trường hợp edit)
+        const customerIdInput = form.querySelector('#customerId') || form.querySelector('[name="customerId"]');
+        const currentCustomerId = customerIdInput ? customerIdInput.value : null;
 
         // Kiểm tra tên khách hàng
         const nameInput = form.querySelector('#customerName') || form.querySelector('[name="customerName"]');
-        if (nameInput && nameInput.value.trim() === '') {
-            const errorElement = document.getElementById('customerNameError') || document.querySelector('.error[for="customerName"]');
-            if (errorElement) {
-                errorElement.textContent = 'Họ và tên không được để trống';
-                errorElement.style.display = 'block';
+        if (nameInput) {
+            const nameValue = nameInput.value.trim();
+
+            if (nameValue === '') {
+                showError('customerName', 'Họ và tên không được để trống');
+                isValid = false;
+            } else if (nameValue.length < 2 || nameValue.length > 50) {
+                showError('customerName', 'Tên phải có độ dài từ 2 đến 50 ký tự');
+                isValid = false;
+            } else if (!/^[A-Za-zÀ-ỹ\s]*$/.test(nameValue)) {
+                showError('customerName', 'Tên chỉ được chứa chữ cái và khoảng trắng');
+                isValid = false;
+            } else {
+                clearError('customerName');
             }
-            isValid = false;
         }
 
         // Kiểm tra số điện thoại
         const phoneInput = form.querySelector('#customerPhoneNumber') || form.querySelector('#phoneNumber') || form.querySelector('[name="phoneNumber"]');
         if (phoneInput) {
             const phoneValue = phoneInput.value.trim();
-            const phoneRegex = /^(\+84|0)[35789][0-9]{8}$/;
+            const phoneRegex = /^0[35789][0-9]{8}$/; // Chỉ cho phép 10 số bắt đầu bằng 0
 
             if (phoneValue === '') {
-                const errorElement = document.getElementById('phoneNumberError') || document.querySelector('.error[for="phoneNumber"]');
-                if (errorElement) {
-                    errorElement.textContent = 'Số điện thoại không được để trống';
-                    errorElement.style.display = 'block';
-                }
+                showError('customerPhoneNumber', 'Số điện thoại không được để trống');
+                isValid = false;
+            } else if (phoneValue.length !== 10) {
+                showError('customerPhoneNumber', 'Số điện thoại phải có đúng 10 số');
                 isValid = false;
             } else if (!phoneRegex.test(phoneValue)) {
-                const errorElement = document.getElementById('phoneNumberError') || document.querySelector('.error[for="phoneNumber"]');
-                if (errorElement) {
-                    errorElement.textContent = 'Số điện thoại phải đủ 10 số';
-                    errorElement.style.display = 'block';
-                }
+                showError('customerPhoneNumber', 'Số điện thoại phải đủ 10 số và bắt đầu bằng 0');
                 isValid = false;
+            } else {
+                // Kiểm tra trùng lặp
+                const isDuplicate = await checkPhoneDuplicate(phoneValue, currentCustomerId);
+                if (isDuplicate) {
+                    showError('customerPhoneNumber', 'Số điện thoại đã tồn tại');
+                    isValid = false;
+                } else {
+                    clearError('customerPhoneNumber');
+                }
             }
         }
 
         // Kiểm tra địa chỉ
         const addressInput = form.querySelector('#customerAddress') || form.querySelector('#address') || form.querySelector('[name="address"]');
-        if (addressInput && addressInput.value.trim() === '') {
-            const errorElement = document.getElementById('addressError') || document.querySelector('.error[for="address"]');
-            if (errorElement) {
-                errorElement.textContent = 'Địa chỉ không được để trống';
-                errorElement.style.display = 'block';
+        if (addressInput) {
+            const addressValue = addressInput.value.trim();
+
+            if (addressValue === '') {
+                showError('customerAddress', 'Địa chỉ không được để trống');
+                isValid = false;
+            } else if (addressValue.length > 200) {
+                showError('customerAddress', 'Địa chỉ không được vượt quá 200 ký tự');
+                isValid = false;
+            } else if (!/^[A-Za-z0-9À-ỹ,\s.-]*$/.test(addressValue)) {
+                showError('customerAddress', 'Địa chỉ chỉ được chứa chữ cái, số, khoảng trắng và các ký tự đặc biệt cho phép');
+                isValid = false;
+            } else {
+                clearError('customerAddress');
             }
-            isValid = false;
         }
 
         // Kiểm tra email
@@ -297,19 +375,39 @@ document.addEventListener('DOMContentLoaded', function() {
             const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
 
             if (emailValue === '') {
-                const errorElement = document.getElementById('emailError') || document.querySelector('.error[for="email"]');
-                if (errorElement) {
-                    errorElement.textContent = 'Email không được để trống';
-                    errorElement.style.display = 'block';
-                }
+                showError('customerEmail', 'Email không được để trống');
+                isValid = false;
+            } else if (emailValue.length < 5 || emailValue.length > 100) {
+                showError('customerEmail', 'Email phải có độ dài từ 5 đến 100 ký tự');
                 isValid = false;
             } else if (!emailRegex.test(emailValue)) {
-                const errorElement = document.getElementById('emailError') || document.querySelector('.error[for="email"]');
-                if (errorElement) {
-                    errorElement.textContent = 'Email không hợp lệ, vui lòng nhập đúng định dạng';
-                    errorElement.style.display = 'block';
-                }
+                showError('customerEmail', 'Email không hợp lệ, vui lòng nhập đúng định dạng');
                 isValid = false;
+            } else {
+                // Kiểm tra trùng lặp
+                const isDuplicate = await checkEmailDuplicate(emailValue, currentCustomerId);
+                if (isDuplicate) {
+                    showError('customerEmail', 'Email đã tồn tại');
+                    isValid = false;
+                } else {
+                    clearError('customerEmail');
+                }
+            }
+        }
+
+        // Kiểm tra ngày sinh
+        const birthdateInput = form.querySelector('#customerBirthdate') || form.querySelector('#birthDate') || form.querySelector('[name="birthDate"]');
+        if (birthdateInput && birthdateInput.value) {
+            const birthDate = new Date(birthdateInput.value);
+            const today = new Date();
+            const ageDate = new Date(today - birthDate);
+            const age = Math.abs(ageDate.getUTCFullYear() - 1970);
+
+            if (age < 15) {
+                showError('customerBirthdate', 'Không đủ điều kiện, tuổi phải lớn hơn 15');
+                isValid = false;
+            } else {
+                clearError('customerBirthdate');
             }
         }
 

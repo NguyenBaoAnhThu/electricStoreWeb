@@ -234,7 +234,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editEmployeeModalLabel">Cập Nhập Nhân Viên</h5>
+                    <h5 class="modal-title" id="editEmployeeModalLabel">Chỉnh Sửa Nhân Viên</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -607,7 +607,7 @@
                     $('#editEmployeeModal').modal('hide');
 
                     // Chuyển hướng với thông báo thành công
-                    window.location.href = '/Admin/employee-manager?successMessage=' + encodeURIComponent('Cập nhật nhân viên thành công!');
+                    window.location.href = '/Admin/employee-manager?successMessage=' + encodeURIComponent('Chỉnh sửa nhân viên thành công.');
                 },
                 error: function(xhr) {
                     // Xóa thông báo lỗi cũ

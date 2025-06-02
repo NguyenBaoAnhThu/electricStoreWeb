@@ -64,7 +64,8 @@
                 </thead>
                 <tbody>
                 <tr th:each="item, c : ${customers}">
-                    <td th:text="${(customers.number * customers.size) + c.index + 1}"></td>                    <td th:text="${item.customerCode}"></td>
+                    <td th:text="${(customers.number * customers.size) + c.index + 1}"></td>
+                    <td th:text="${item.customerCode}"></td>
                     <td th:text="${item.customerName}"></td>
                     <td th:text="${item.phoneNumber}"></td>
                     <td th:text="${item.address}"></td>
@@ -145,7 +146,7 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="editCustomerModalLabel">Cập Nhập Khách Hàng</h5>
+                        <h5 class="modal-title" id="editCustomerModalLabel">Chỉnh Sửa Khách Hàng</h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
@@ -254,7 +255,7 @@
                     $("#editCustomerModal").modal("hide");
 
                     // Chuyển hướng với tham số thông báo thành công
-                    window.location.href = '/Admin/customers?successMessage=' + encodeURIComponent('Cập nhật khách hàng thành công!');
+                    window.location.href = '/Admin/customers?successMessage=' + encodeURIComponent('Chỉnh sửa khách hàng thành công.');
                 },
                 error: function (xhr) {
                     // Xóa các thông báo lỗi cũ

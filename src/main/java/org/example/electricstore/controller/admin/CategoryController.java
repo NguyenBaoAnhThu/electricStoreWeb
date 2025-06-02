@@ -176,7 +176,7 @@ public class CategoryController {
                 // Trả về phản hồi thành công
                 Map<String, String> response = new HashMap<>();
                 response.put("success", "true");
-                response.put("message", "Cập nhật danh mục thành công.");
+                response.put("message", "Chỉnh sửa danh mục thành công.");
                 return ResponseEntity.ok(response);
             } else {
                 // Trả về lỗi nếu không tìm thấy danh mục
@@ -187,7 +187,7 @@ public class CategoryController {
         } catch (Exception e) {
             // Trả về lỗi nếu có ngoại lệ xảy ra
             Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("error", "Lỗi khi cập nhật danh mục: " + e.getMessage());
+            errorResponse.put("error", "Lỗi khi chỉnh sửa danh mục: " + e.getMessage());
             return ResponseEntity.badRequest().body(errorResponse);
         }
     }

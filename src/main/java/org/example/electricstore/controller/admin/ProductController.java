@@ -274,7 +274,7 @@ public class ProductController {
                 productService.updateProduct(product, filesToUpdate);
             }
             logger.info("Cập nhật sản phẩm thành công");
-            redirectAttributes.addFlashAttribute("successMessage", "Cập nhật sản phẩm thành công.");
+            redirectAttributes.addFlashAttribute("successMessage", "Chỉnh sửa sản phẩm thành công.");
             return "redirect:/Admin/product-manager";
         } catch (Exception e) {
             logger.error("Lỗi khi cập nhật sản phẩm: {}", e.getMessage(), e);

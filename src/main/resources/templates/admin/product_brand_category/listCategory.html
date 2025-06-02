@@ -174,12 +174,12 @@
         </div>
     </div>
 
-    <!-- Modal Chỉnh Cập Nhập Danh Muc -->
+    <!-- Modal Chỉnh Chỉnh Sửa  Danh Muc -->
     <div class="modal fade" id="editCategoryModal" tabindex="-1" sec:authorize="hasRole('ROLE_ADMIN')">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Cập Nhập Danh Mục</h5>
+                    <h5 class="modal-title">Chỉnh Sửa  Danh Mục</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
@@ -352,7 +352,7 @@
                             window.location.href = '/Admin/category-manager?successMessage=' + encodeURIComponent(data.message || 'Xóa danh mục thành công');
                         } else {
                             // Thêm thông báo lỗi vào URL và chuyển hướng
-                            window.location.href = '/Admin/category-manager?errorMessage=' + encodeURIComponent(data.message || 'Có lỗi xảy ra khi xóa danh mục!');
+                            window.location.href = '/Admin/category-manager?errorMessage=' + encodeURIComponent(data.message || 'Có lỗi xảy ra khi xóa danh mục.');
                         }
                     })
                     .catch(error => {
@@ -362,7 +362,7 @@
                         const deleteModal = bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal'));
                         deleteModal.hide();
 
-                        window.location.href = '/Admin/category-manager?errorMessage=' + encodeURIComponent('Có lỗi xảy ra khi xóa danh mục!');
+                        window.location.href = '/Admin/category-manager?errorMessage=' + encodeURIComponent('Có lỗi xảy ra khi xóa danh mục.');
                     });
             });
         }

@@ -241,12 +241,12 @@ public class SupplierController {
             supplier.setEmail(supplierDTO.getEmail());
 
             supplierService.updateSupplier(supplier.getSupplierID(), supplier);
-            return ResponseEntity.ok("Cập nhật nhà cung cấp thành công");
+            return ResponseEntity.ok("Chỉnh sửa nhà cung cấp thành công.");
         } catch (SupplierException ex) {
             errors.put(mapErrorCodeToField(ex.getErrorCode()), ex.getMessage());
             return ResponseEntity.badRequest().body(errors);
         } catch (Exception e) {
-            errors.put("globalError", "Lỗi khi cập nhật nhà cung cấp: " + e.getMessage());
+            errors.put("globalError", "Lỗi khi chỉnh sửa nhà cung cấp: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errors);
         }
     }

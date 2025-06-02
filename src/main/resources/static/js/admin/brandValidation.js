@@ -165,7 +165,7 @@ $(document).ready(function() {
                 $('#editBrandModal').modal('hide');
 
                 // Chuyển hướng với tham số thông báo thành công
-                window.location.href = '/Admin/brand-manager?successMessage=' + encodeURIComponent('Cập nhật thương hiệu thành công!');
+                window.location.href = '/Admin/brand-manager?successMessage=' + encodeURIComponent('Chỉnh sửa thương hiệu thành công.');
             },
             error: function(xhr) {
                 $('.error').text('');

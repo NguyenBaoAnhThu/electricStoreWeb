@@ -231,7 +231,7 @@ $(document).ready(function() {
                 $('#editCategoryModal').modal('hide');
 
                 // Thay thế SweetAlert2 bằng chuyển hướng có tham số thông báo
-                window.location.href = '/Admin/category-manager?successMessage=' + encodeURIComponent('Cập nhật danh mục thành công!');
+                window.location.href = '/Admin/category-manager?successMessage=' + encodeURIComponent('Chỉnh sửa danh mục thành công.');
             },
             error: function(xhr) {
                 $('.error').text('');

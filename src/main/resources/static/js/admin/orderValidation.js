@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
             birthdate: 'Ngày sinh không được để trống'
         },
         FORMAT: {
-            phone: 'Số điện thoại phải bắt đầu bằng +84 hoặc 0, theo sau là 3,5,7,8,9 và 8 chữ số',
+            phone: 'Số điện thoại phải đủ 10 số.',
             email: 'Email không hợp lệ, vui lòng nhập đúng định dạng',
             name: 'Tên chỉ được chứa chữ cái và khoảng trắng',
             address: 'Địa chỉ chỉ được chứa chữ cái, số, khoảng trắng và các ký tự đặc biệt cho phép',
@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         LENGTH: {
             name: 'Tên phải có độ dài từ 2 đến 50 ký tự',
-            phone: 'Số điện thoại phải có độ dài từ 10 đến 12 ký tự',
+            phone: 'Số điện thoại phải có đúng 10 số',
             address: 'Địa chỉ không được vượt quá 200 ký tự',
             email: 'Email phải có độ dài từ 5 đến 100 ký tự'
         },
@@ -108,15 +108,14 @@ document.addEventListener('DOMContentLoaded', function() {
             return false;
         }
 
-        // Kiểm tra độ dài
-        if (value.length < 10 || value.length > 12) {
+        // Kiểm tra độ dài - chỉ chấp nhận đúng 10 số
+        if (value.length !== 10) {
             showError('customerPhoneNumber', ERROR_MESSAGES.LENGTH.phone);
             return false;
         }
 
-        // Kiểm tra định dạng
-        const phoneRegex = /^(\+84|0)[35789][0-9]{8}$/;
-        if (!phoneRegex.test(value)) {
+        // Kiểm tra định dạng - chỉ số, bắt đầu bằng 0 và số thứ 2 phải là 3, 5, 7, 8, 9
+        if (!/^0[35789]\d{8}$/.test(value)) {
             showError('customerPhoneNumber', ERROR_MESSAGES.FORMAT.phone);
             return false;
         }
@@ -269,13 +268,16 @@ document.addEventListener('DOMContentLoaded', function() {
             // Xử lý khi nhập số điện thoại
             input.addEventListener("input", function(e) {
                 const value = e.target.value;
-                // Chỉ cho phép số và dấu +
-                if (!/^[+\d]*$/.test(value)) {
-                    e.target.value = value.replace(/[^+\d]/g, '');
-                }
-                // Giới hạn độ dài
-                if (value.length > 12) {
-                    e.target.value = value.slice(0, 12);
+
+                // Chỉ cho phép số và loại bỏ tất cả ký tự khác
+                const cleanValue = value.replace(/[^\d]/g, '');
+
+                // Giới hạn chỉ 10 số - không cho nhập thêm khi đã đủ 10 số
+                if (cleanValue.length <= 10) {
+                    e.target.value = cleanValue;
+                } else {
+                    // Giữ nguyên giá trị cũ nếu cố gắng nhập số thứ 11
+                    e.target.value = cleanValue.slice(0, 10);
                 }
             });
 
@@ -283,15 +285,39 @@ document.addEventListener('DOMContentLoaded', function() {
             input.addEventListener('paste', function(e) {
                 setTimeout(() => {
                     const currentValue = this.value;
-                    // Lọc ký tự không phải số và dấu +
-                    const filteredValue = currentValue.replace(/[^+\d]/g, '');
-                    // Giới hạn độ dài
-                    if (filteredValue.length > 12) {
-                        this.value = filteredValue.substring(0, 12);
-                    } else {
-                        this.value = filteredValue;
-                    }
+                    // Lọc chỉ giữ lại số
+                    const filteredValue = currentValue.replace(/[^\d]/g, '');
+                    // Giới hạn chỉ 10 số
+                    this.value = filteredValue.slice(0, 10);
                 }, 0);
+            });
+
+            // Ngăn chặn việc nhập ký tự khi đã đủ 10 số
+            input.addEventListener("keypress", function(e) {
+                const currentLength = this.value.length;
+                // Cho phép các phím điều khiển (Backspace, Delete, Tab, Enter, v.v.)
+                if (e.ctrlKey || e.altKey || e.metaKey ||
+                    [8, 9, 13, 27, 46].includes(e.keyCode) ||
+                    (e.keyCode >= 35 && e.keyCode <= 40)) {
+                    return;
+                }
+
+                // Nếu đã đủ 10 số, không cho nhập thêm
+                if (currentLength >= 10) {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // Chỉ cho phép nhập số (0-9)
+                if (!/[0-9]/.test(e.key)) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+
+            // Validate khi blur
+            input.addEventListener('blur', function() {
+                validatePhone(this);
             });
         }
     });
