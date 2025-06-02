@@ -160,8 +160,7 @@
                 <!-- Nút trang đầu tiên -->
                 <li class="page-item" th:classappend="${wareHousePage.first} ? 'disabled'">
                     <a class="page-link"
-                       th:href="@{/Admin/ware-houses(page=1,
-                       importDate=${importDate}, brand=${brand}, statusStock=${statusStock}, productCode=${productCode}, productName=${productName})}"
+                       th:href="@{/Admin/ware-houses(page=1)}"
                        aria-label="First">
                         <span aria-hidden="true">&laquo;&laquo;</span>
                     </a>
@@ -170,8 +169,7 @@
                 <!-- Nút lùi về trang trước -->
                 <li class="page-item" th:classappend="${wareHousePage.first} ? 'disabled'">
                     <a class="page-link"
-                       th:href="@{/Admin/ware-houses(page=${wareHousePage.number > 0 ? wareHousePage.number : 1},
-                       importDate=${importDate}, brand=${brand}, statusStock=${statusStock}, productCode=${productCode}, productName=${productName})}"
+                       th:href="@{/Admin/ware-houses(page=${wareHousePage.number > 0 ? wareHousePage.number : 1})}"
                        aria-label="Previous">
                         <span aria-hidden="true">&laquo;</span>
                     </a>
@@ -185,8 +183,7 @@
                 <!-- Nút chuyển sang trang sau -->
                 <li class="page-item" th:classappend="${wareHousePage.last} ? 'disabled'">
                     <a class="page-link"
-                       th:href="@{/Admin/ware-houses(page=${wareHousePage.number + 2},
-                       importDate=${importDate}, brand=${brand}, statusStock=${statusStock}, productCode=${productCode}, productName=${productName})}"
+                       th:href="@{/Admin/ware-houses(page=${wareHousePage.number + 2})}"
                        aria-label="Next">
                         <span aria-hidden="true">&raquo;</span>
                     </a>
@@ -195,8 +192,7 @@
                 <!-- Nút trang cuối cùng -->
                 <li class="page-item" th:classappend="${wareHousePage.last} ? 'disabled'">
                     <a class="page-link"
-                       th:href="@{/Admin/ware-houses(page=${wareHousePage.totalPages},
-                       importDate=${importDate}, brand=${brand}, statusStock=${statusStock}, productCode=${productCode}, productName=${productName})}"
+                       th:href="@{/Admin/ware-houses(page=${wareHousePage.totalPages})}"
                        aria-label="Last">
                         <span aria-hidden="true">&raquo;&raquo;</span>
                     </a>

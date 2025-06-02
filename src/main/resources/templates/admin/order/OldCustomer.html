@@ -88,7 +88,7 @@
                     <!-- Nút trang đầu tiên -->
                     <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
                         <a class="page-link"
-                           th:href="@{/Admin/order/showListCustomer(page=1, size=${pageSize}, keyword=${keyword}, filter=${filter})}"
+                           th:href="@{/Admin/order/showListCustomer(page=1)}"
                            aria-label="First">
                             <span aria-hidden="true">&laquo;&laquo;</span>
                         </a>
@@ -97,7 +97,7 @@
                     <!-- Nút lùi về trang trước -->
                     <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
                         <a class="page-link"
-                           th:href="@{/Admin/order/showListCustomer(page=${currentPage - 1}, size=${pageSize}, keyword=${keyword}, filter=${filter})}"
+                           th:href="@{/Admin/order/showListCustomer(page=${currentPage - 1})}"
                            aria-label="Previous">
                             <span aria-hidden="true">&laquo;</span>
                         </a>
@@ -112,7 +112,7 @@
                     <!-- Nút chuyển sang trang sau -->
                     <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
                         <a class="page-link"
-                           th:href="@{/Admin/order/showListCustomer(page=${currentPage + 1}, size=${pageSize}, keyword=${keyword}, filter=${filter})}"
+                           th:href="@{/Admin/order/showListCustomer(page=${currentPage + 1})}"
                            aria-label="Next">
                             <span aria-hidden="true">&raquo;</span>
                         </a>
@@ -121,7 +121,7 @@
                     <!-- Nút trang cuối cùng -->
                     <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
                         <a class="page-link"
-                           th:href="@{/Admin/order/showListCustomer(page=${totalPages}, size=${pageSize}, keyword=${keyword}, filter=${filter})}"
+                           th:href="@{/Admin/order/showListCustomer(page=${totalPages})}"
                            aria-label="Last">
                             <span aria-hidden="true">&raquo;&raquo;</span>
                         </a>

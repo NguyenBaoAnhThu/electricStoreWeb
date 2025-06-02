@@ -154,16 +154,16 @@ VALUES
 INSERT INTO products (product_id, product_name, main_image_url, description, price, stock, create_at, update_at, brand_id, category_id, supplier_id, product_code)
 VALUES
 -- Điện thoại (15 sản phẩm)
-(1, 'Xiaomi Redmi Note 12 Pro', 'https://byvn.net/2qP6', 'Xiaomi Redmi Note 12 Pro - Hiệu năng ổn định', 8990000, 100, NOW(), NOW(), 6, 1, 4, 'SP0001'),
+(1, 'Xiaomi Redmi Note 12 Pro - Blue Edition', 'https://url.spa/q2mm3', 'Xiaomi Redmi Note 12 Pro - Hiệu năng ổn định', 8990000, 100, NOW(), NOW(), 6, 1, 4, 'SP0001'),
 (2, 'Realme GT Neo 5', 'https://byvn.net/kvZe', 'Realme GT Neo 5 - Sạc siêu nhanh', 10990000, 80, NOW(), NOW(), 16, 1, 9, 'SP0002'),
 (3, 'Oppo Find X5 Pro', 'https://byvn.net/XHnW', 'Oppo Find X5 Pro - Thiết kế sang trọng', 19990000, 50, NOW(), NOW(), 9, 1, 3, 'SP0003'),
 (4, 'Vivo X90 Pro', 'https://byvn.net/3hgh', 'Vivo X90 Pro - Camera chuyên nghiệp', 22990000, 60, NOW(), NOW(), 17, 1, 1, 'SP0004'),
 (5, 'Honor Magic5 Pro', 'https://url.spa/78lum', 'Honor Magic5 Pro - Công nghệ cao cấp', 20990000, 45, NOW(), NOW(), 7, 1, 1, 'SP0005'),
-(6, 'Samsung Galaxy S23 Ultra', 'https://byvn.net/s23u', 'Samsung Galaxy S23 Ultra - Flagship hàng đầu', 29990000, 40, NOW(), NOW(), 2, 1, 2, 'SP0006'),
-(7, 'iPhone 15 Pro Max', 'https://byvn.net/ip15pm', 'iPhone 15 Pro Max - Đỉnh cao công nghệ', 33990000, 55, NOW(), NOW(), 1, 1, 1, 'SP0007'),
-(8, 'Xiaomi 14 Ultra', 'https://byvn.net/xm14u', 'Xiaomi 14 Ultra - Camera đỉnh cao', 25990000, 35, NOW(), NOW(), 6, 1, 4, 'SP0008'),
-(9, 'Google Pixel 8 Pro', 'https://byvn.net/pixel8pro', 'Google Pixel 8 Pro - Camera AI tốt nhất', 26990000, 30, NOW(), NOW(), 11, 1, 1, 'SP0009'),
-(10, 'Nothing Phone 2', 'https://byvn.net/nphone2', 'Nothing Phone 2 - Thiết kế Glyph độc đáo', 15990000, 45, NOW(), NOW(), 15, 1, 4, 'SP0010'),
+(6, 'Samsung Galaxy S23 Ultra', 'https://url.spa/yuh8e', 'Samsung Galaxy S23 Ultra - Flagship hàng đầu', 29990000, 40, NOW(), NOW(), 2, 1, 2, 'SP0006'),
+(7, 'iPhone 15 Pro Max', 'https://url.spa/u8s2l', 'iPhone 15 Pro Max - Đỉnh cao công nghệ', 33990000, 55, NOW(), NOW(), 1, 1, 1, 'SP0007'),
+(8, 'Xiaomi 14 Ultra', 'https://url.spa/sensr', 'Xiaomi 14 Ultra - Camera đỉnh cao', 25990000, 35, NOW(), NOW(), 6, 1, 4, 'SP0008'),
+(9, 'Google Pixel 8 Pro', 'https://url.spa/1a61m', 'Google Pixel 8 Pro - Camera AI tốt nhất', 26990000, 30, NOW(), NOW(), 11, 1, 1, 'SP0009'),
+(10, 'Nothing Phone 2', 'https://url.spa/qj4e2', 'Nothing Phone 2 - Thiết kế Glyph độc đáo', 15990000, 45, NOW(), NOW(), 15, 1, 4, 'SP0010'),
 (11, 'OnePlus 12', 'https://byvn.net/op12', 'OnePlus 12 - Hiệu năng mạnh mẽ', 24990000, 40, NOW(), NOW(), 15, 1, 5, 'SP0011'),
 (12, 'Samsung Galaxy Z Fold 5', 'https://byvn.net/zfold5', 'Samsung Galaxy Z Fold 5 - Màn hình gập cao cấp', 39990000, 25, NOW(), NOW(), 2, 1, 2, 'SP0012'),
 (13, 'iPhone 15', 'https://byvn.net/ip15', 'iPhone 15 - Thiết kế tinh tế', 22990000, 70, NOW(), NOW(), 1, 1, 1, 'SP0013'),

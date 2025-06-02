@@ -8,27 +8,27 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-
 @Repository
 public interface ICustomerRepository extends JpaRepository<Customer, Integer> {
     boolean existsByPhoneNumber(String phoneNumber);
+    boolean existsByEmail(String email);
+
     Page<Customer> findByCustomerId(int customerId, Pageable pageable);
 
+    Page<Customer> findByCustomerNameContainingIgnoreCase(String name, Pageable pageable);
+    Page<Customer> findByCustomerCodeContainingIgnoreCase(String code, Pageable pageable);
+    Page<Customer> findByPhoneNumberContaining(String phone, Pageable pageable);
+
+    Customer findByPhoneNumber(String phoneNumber);
+
     @Query("SELECT c FROM Customer c WHERE " +
-            "(:field = 'name' AND c.customerName LIKE %:keyword%) OR " +
-            "(:field = 'phone' AND c.phoneNumber LIKE %:keyword%) OR " +
-            "(:field = 'address' AND c.address LIKE %:keyword%) OR " +
-            "(:field = 'email' AND c.email LIKE %:keyword%)")
+            "(:field = 'customerName' AND c.customerName LIKE %:keyword%) OR " +
+            "(:field = 'customerCode' AND c.customerCode LIKE %:keyword%) OR " +
+            "(:field = 'phoneNumber' AND c.phoneNumber LIKE %:keyword%)")
     Page<Customer> searchCustomers(@Param("field") String field,
                                    @Param("keyword") String keyword,
                                    Pageable pageable);
-    Customer findByPhoneNumber(String phoneNumber);
 
-    Page<Customer> findByCustomerNameContainingIgnoreCase(String name, Pageable pageable);
-    Page<Customer> findByPhoneNumberContaining(String phone, Pageable pageable);
-    Page<Customer> findByAddressContainingIgnoreCase(String address, Pageable pageable);
-    Page<Customer> findByEmailContainingIgnoreCase(String email, Pageable pageable);
     @Query("SELECT MAX(c.customerCode) FROM Customer c WHERE c.customerCode LIKE 'KH%'")
     String findMaxCustomerCode();
-    boolean existsByEmail(String email);
 }

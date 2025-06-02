@@ -33,9 +33,9 @@
             <div class="search-container">
                 <form class="search-form" th:action="@{/Admin/customers}" method="get">
                     <select class="input-select" name="searchField" id="searchField">
-                        <option value="name" th:selected="${field == 'name'}">Tên Khách Hàng </option>
-                        <option value="phone" th:selected="${field == 'phone'}">Số điện thoại</option>
-                        <option value="address" th:selected="${field == 'address'}">Địa chỉ</option>
+                        <option value="customerName" th:selected="${field == 'customerName'}">Tên Khách Hàng</option>
+                        <option value="customerCode" th:selected="${field == 'customerCode'}">Mã KH</option>
+                        <option value="phoneNumber" th:selected="${field == 'phoneNumber'}">Số điện thoại</option>
                     </select>
                     <input class="form-control" type="search" id="searchInput" name="searchInput"
                            th:value="${filterKeyWord}"
@@ -64,8 +64,7 @@
                 </thead>
                 <tbody>
                 <tr th:each="item, c : ${customers}">
-                    <td th:text="${c.index + 1}"></td>
-                    <td th:text="${item.customerCode}"></td>
+                    <td th:text="${(customers.number * customers.size) + c.index + 1}"></td>                    <td th:text="${item.customerCode}"></td>
                     <td th:text="${item.customerName}"></td>
                     <td th:text="${item.phoneNumber}"></td>
                     <td th:text="${item.address}"></td>
@@ -100,7 +99,7 @@
                     <!-- First Page Button -->
                     <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
                         <a class="page-link text-dark bg-light border"
-                           th:href="@{/Admin/customers(page=1, searchField=${field}, searchInput=${filterKeyWord})}"
+                           th:href="@{/Admin/customers(page=1)}"
                            aria-label="First">
                             <span aria-hidden="true">&laquo;&laquo;</span>
                         </a>
@@ -109,7 +108,7 @@
                     <!-- Previous Page Button -->
                     <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
                         <a class="page-link text-dark bg-light border"
-                           th:href="@{/Admin/customers(page=${currentPage - 1}, searchField=${field}, searchInput=${filterKeyWord})}"
+                           th:href="@{/Admin/customers(page=${currentPage - 1})}"
                            aria-label="Previous">
                             <span aria-hidden="true">&laquo;</span>
                         </a>
@@ -124,7 +123,7 @@
                     <!-- Next Page Button -->
                     <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
                         <a class="page-link text-dark bg-light border"
-                           th:href="@{/Admin/customers(page=${currentPage + 1}, searchField=${field}, searchInput=${filterKeyWord})}"
+                           th:href="@{/Admin/customers(page=${currentPage + 1})}"
                            aria-label="Next">
                             <span aria-hidden="true">&raquo;</span>
                         </a>
@@ -133,7 +132,7 @@
                     <!-- Last Page Button -->
                     <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
                         <a class="page-link text-dark bg-light border"
-                           th:href="@{/Admin/customers(page=${totalPages}, searchField=${field}, searchInput=${filterKeyWord})}"
+                           th:href="@{/Admin/customers(page=${totalPages})}"
                            aria-label="Last">
                             <span aria-hidden="true">&raquo;&raquo;</span>
                         </a>

@@ -101,7 +101,7 @@
                 <ul class="pagination m-0">
                     <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
                         <a class="page-link"
-                           th:href="@{/Admin/category-manager(page=0, keyword=${keyword}, searchType=${searchType})}"
+                           th:href="@{/Admin/category-manager}"
                            aria-label="First">
                             <span aria-hidden="true">««</span>
                         </a>
@@ -109,7 +109,7 @@
 
                     <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
                         <a class="page-link"
-                           th:href="@{/Admin/category-manager(page=${currentPage - 2}, keyword=${keyword}, searchType=${searchType})}"
+                           th:href="@{/Admin/category-manager(page=${currentPage - 2})}"
                            aria-label="Previous">
                             <span aria-hidden="true">«</span>
                         </a>
@@ -122,14 +122,14 @@
                     </li>
                     <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
                         <a class="page-link"
-                           th:href="@{/Admin/category-manager(page=${currentPage}, keyword=${keyword}, searchType=${searchType})}"
+                           th:href="@{/Admin/category-manager(page=${currentPage})}"
                            aria-label="Next">
                             <span aria-hidden="true">»</span>
                         </a>
                     </li>
                     <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
                         <a class="page-link"
-                           th:href="@{/Admin/category-manager(page=${totalPages - 1}, keyword=${keyword}, searchType=${searchType})}"
+                           th:href="@{/Admin/category-manager(page=${totalPages - 1})}"
                            aria-label="Last">
                             <span aria-hidden="true">»»</span>
                         </a>

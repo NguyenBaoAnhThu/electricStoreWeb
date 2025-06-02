@@ -113,7 +113,7 @@
                     <!-- First page button -->
                     <li class="page-item" th:classappend="${employees.number == 0} ? 'disabled'">
                         <a class="page-link"
-                           th:href="@{/Admin/employee-manager(page=1, searchField=${field}, searchInput=${filterKeyWord})}"
+                           th:href="@{/Admin/employee-manager(page=1)}"
                            aria-label="First">
                             <span aria-hidden="true">&laquo;&laquo;</span>
                         </a>
@@ -122,7 +122,7 @@
                     <!-- Previous page button -->
                     <li class="page-item" th:classappend="${employees.first} ? 'disabled'">
                         <a class="page-link"
-                           th:href="@{/Admin/employee-manager(page=${employees.number}, searchField=${field}, searchInput=${filterKeyWord})}"
+                           th:href="@{/Admin/employee-manager(page=${employees.number})}"
                            aria-label="Previous">
                             <span aria-hidden="true">&laquo;</span>
                         </a>
@@ -138,7 +138,7 @@
                     <!-- Next page button -->
                     <li class="page-item" th:classappend="${employees.last} ? 'disabled'">
                         <a class="page-link"
-                           th:href="@{/Admin/employee-manager(page=${employees.number + 2}, searchField=${field}, searchInput=${filterKeyWord})}"
+                           th:href="@{/Admin/employee-manager(page=${employees.number + 2})}"
                            aria-label="Next">
                             <span aria-hidden="true">&raquo;</span>
                         </a>
@@ -147,7 +147,7 @@
                     <!-- Last page button -->
                     <li class="page-item" th:classappend="${employees.number == employees.totalPages - 1} ? 'disabled'">
                         <a class="page-link"
-                           th:href="@{/Admin/employee-manager(page=${employees.totalPages}, searchField=${field}, searchInput=${filterKeyWord})}"
+                           th:href="@{/Admin/employee-manager(page=${employees.totalPages})}"
                            aria-label="Last">
                             <span aria-hidden="true">&raquo;&raquo;</span>
                         </a>

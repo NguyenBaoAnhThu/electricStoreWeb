@@ -18,9 +18,12 @@
             <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
             <style>
                 .product-image {
-                    max-width: 80px;
-                    max-height: 80px;
-                    object-fit: contain;
+                    width: 80px;
+                    height: 80px;
+                    object-fit: cover;
+                    object-position: center;
+                    border: 1px solid #e9ecef;
+                    transition: transform 0.2s ease;
                 }
             </style>
         </head>
@@ -141,7 +144,7 @@
                             <!-- Nút trang đầu tiên -->
                             <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
                                 <a class="page-link"
-                                   th:href="@{/Admin/product-manager(page=1, keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice}, category=${category})}"
+                                   th:href="@{/Admin/product-manager}"
                                    aria-label="First">
                                     <span aria-hidden="true">««</span>
                                 </a>
@@ -150,7 +153,7 @@
                             <!-- Nút lùi về trang trước -->
                             <li class="page-item" th:classappend="${productPage.first} ? 'disabled'">
                                 <a class="page-link"
-                                   th:href="@{/Admin/product-manager(page=${productPage.number > 0 ? productPage.number : 1}, keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice}, category=${category})}"
+                                   th:href="@{/Admin/product-manager(page=${productPage.number > 0 ? productPage.number : 1})}"
                                    aria-label="Previous">
                                     <span aria-hidden="true">«</span>
                                 </a>
@@ -165,7 +168,7 @@
                             <!-- Nút chuyển sang trang sau -->
                             <li class="page-item" th:classappend="${productPage.last} ? 'disabled'">
                                 <a class="page-link"
-                                   th:href="@{/Admin/product-manager(page=${productPage.number + 2}, keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice}, category=${category})}"
+                                   th:href="@{/Admin/product-manager(page=${productPage.number + 2})}"
                                    aria-label="Next">
                                     <span aria-hidden="true">»</span>
                                 </a>
@@ -174,7 +177,7 @@
                             <!-- Nút trang cuối cùng -->
                             <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
                                 <a class="page-link"
-                                   th:href="@{/Admin/product-manager(page=${totalPages}, keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice}, category=${category})}"
+                                   th:href="@{/Admin/product-manager(page=${totalPages})}"
                                    aria-label="Last">
                                     <span aria-hidden="true">»»</span>
                                 </a>

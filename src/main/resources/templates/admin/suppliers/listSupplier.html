@@ -116,7 +116,7 @@
           <!-- First page button -->
           <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
             <a class="page-link"
-               th:href="@{/Admin/suppliers-manager(page=0, size=${pageSize}, filter=${param.filter}, keyword=${param.keyword})}"
+               th:href="@{/Admin/suppliers-manager(page=0, size=${pageSize})}"
                aria-label="First">
               <span aria-hidden="true">&laquo;&laquo;</span>
             </a>
@@ -125,7 +125,7 @@
           <!-- Previous page button -->
           <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
             <a class="page-link"
-               th:href="@{/Admin/suppliers-manager(page=${currentPage - 1}, size=${pageSize}, filter=${param.filter}, keyword=${param.keyword})}"
+               th:href="@{/Admin/suppliers-manager(page=${currentPage - 1})}"
                aria-label="Previous">
               <span aria-hidden="true">&laquo;</span>
             </a>
@@ -141,7 +141,7 @@
           <!-- Next page button -->
           <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
             <a class="page-link"
-               th:href="@{/Admin/suppliers-manager(page=${currentPage + 1}, size=${pageSize}, filter=${param.filter}, keyword=${param.keyword})}"
+               th:href="@{/Admin/suppliers-manager(page=${currentPage + 1})}"
                aria-label="Next">
               <span aria-hidden="true">&raquo;</span>
             </a>
@@ -150,7 +150,7 @@
           <!-- Last page button -->
           <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
             <a class="page-link"
-               th:href="@{/Admin/suppliers-manager(page=${totalPages - 1}, size=${pageSize}, filter=${param.filter}, keyword=${param.keyword})}"
+               th:href="@{/Admin/suppliers-manager(page=${totalPages - 1})}"
                aria-label="Last">
               <span aria-hidden="true">&raquo;&raquo;</span>
             </a>
