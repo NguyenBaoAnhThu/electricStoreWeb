@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản Lý Kho</title>
+    <title>Kho Hàng</title>
     <link rel="stylesheet" th:href="@{/css/admin/fragments/sidebar.css}">
     <link rel="stylesheet" th:href="@{/css/admin/fragments/header.css}">
     <link rel="stylesheet" th:href="@{/css/admin/fragments/footer.css}">
@@ -98,7 +98,7 @@
 <div th:replace="~{admin/fragments/sidebar :: sidebar}"></div>
 <main class="main-content">
     <div class="wrapper">
-        <h1 class="tittle">Quản Lý Kho</h1>
+        <h1 class="tittle">Kho Hàng</h1>
         <div class="warehouse-manager-search mb-4">
             <div class="supplier-form">
                 <div class="red-bar"></div>
@@ -230,8 +230,7 @@
                 <!-- Nút trang đầu tiên -->
                 <li class="page-item" th:classappend="${wareHousePage.first} ? 'disabled'">
                     <a class="page-link"
-                       th:href="@{/Admin/ware-houses(page=1,
-                       importDate=${importDate}, brand=${brand}, statusStock=${statusStock}, productCode=${productCode}, productName=${productName})}"
+                       th:href="@{/Admin/ware-houses(page=1)}"
                        aria-label="First">
                         <span aria-hidden="true">&laquo;&laquo;</span>
                     </a>
@@ -240,8 +239,7 @@
                 <!-- Nút lùi về trang trước -->
                 <li class="page-item" th:classappend="${wareHousePage.first} ? 'disabled'">
                     <a class="page-link"
-                       th:href="@{/Admin/ware-houses(page=${wareHousePage.number > 0 ? wareHousePage.number : 1},
-                       importDate=${importDate}, brand=${brand}, statusStock=${statusStock}, productCode=${productCode}, productName=${productName})}"
+                       th:href="@{/Admin/ware-houses(page=${wareHousePage.number > 0 ? wareHousePage.number : 1})}"
                        aria-label="Previous">
                         <span aria-hidden="true">&laquo;</span>
                     </a>
@@ -255,8 +253,7 @@
                 <!-- Nút chuyển sang trang sau -->
                 <li class="page-item" th:classappend="${wareHousePage.last} ? 'disabled'">
                     <a class="page-link"
-                       th:href="@{/Admin/ware-houses(page=${wareHousePage.number + 2},
-                       importDate=${importDate}, brand=${brand}, statusStock=${statusStock}, productCode=${productCode}, productName=${productName})}"
+                       th:href="@{/Admin/ware-houses(page=${wareHousePage.number + 2})}"
                        aria-label="Next">
                         <span aria-hidden="true">&raquo;</span>
                     </a>
@@ -265,8 +262,7 @@
                 <!-- Nút trang cuối cùng -->
                 <li class="page-item" th:classappend="${wareHousePage.last} ? 'disabled'">
                     <a class="page-link"
-                       th:href="@{/Admin/ware-houses(page=${wareHousePage.totalPages},
-                       importDate=${importDate}, brand=${brand}, statusStock=${statusStock}, productCode=${productCode}, productName=${productName})}"
+                       th:href="@{/Admin/ware-houses(page=${wareHousePage.totalPages})}"
                        aria-label="Last">
                         <span aria-hidden="true">&raquo;&raquo;</span>
                     </a>

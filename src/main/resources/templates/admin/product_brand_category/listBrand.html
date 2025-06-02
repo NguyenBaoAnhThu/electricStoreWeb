@@ -103,14 +103,14 @@
         <ul class="pagination m-0">
           <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
             <a class="page-link"
-               th:href="@{/Admin/brand-manager(page=0, keyword=${keyword})}"
+               th:href="@{/Admin/brand-manager(page=0)}"
                aria-label="First">
               <span aria-hidden="true">««</span>
             </a>
           </li>
           <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
             <a class="page-link"
-               th:href="@{/Admin/brand-manager(page=${currentPage - 2}, keyword=${keyword})}"
+               th:href="@{/Admin/brand-manager(page=${currentPage - 2})}"
                aria-label="Previous">
               <span aria-hidden="true">«</span>
             </a>
@@ -123,14 +123,14 @@
           </li>
           <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
             <a class="page-link"
-               th:href="@{/Admin/brand-manager(page=${currentPage}, keyword=${keyword})}"
+               th:href="@{/Admin/brand-manager(page=${currentPage})}"
                aria-label="Next">
               <span aria-hidden="true">»</span>
             </a>
           </li>
           <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
             <a class="page-link"
-               th:href="@{/Admin/brand-manager(page=${totalPages - 1}, keyword=${keyword})}"
+               th:href="@{/Admin/brand-manager(page=${totalPages - 1})}"
                aria-label="Last">
               <span aria-hidden="true">»»</span>
             </a>

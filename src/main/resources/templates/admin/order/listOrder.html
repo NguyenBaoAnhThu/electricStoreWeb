@@ -106,7 +106,7 @@
                     <!-- Nút trang đầu tiên -->
                     <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
                         <a class="page-link text-dark bg-light border"
-                           th:href="@{/Admin/order(page=1, searchField=${param.searchField}, searchInput=${param.searchInput})}"
+                           th:href="@{/Admin/order(page=1)}"
                            aria-label="First">
                             <span aria-hidden="true">&laquo;&laquo;</span>
                         </a>
@@ -115,7 +115,7 @@
                     <!-- Nút lùi về trang trước -->
                     <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
                         <a class="page-link text-dark bg-light border"
-                           th:href="@{/Admin/order(page=${currentPage - 1}, searchField=${param.searchField}, searchInput=${param.searchInput})}"
+                           th:href="@{/Admin/order(page=${currentPage - 1})}"
                            aria-label="Previous">
                             <span aria-hidden="true">&laquo;</span>
                         </a>
@@ -130,7 +130,7 @@
                     <!-- Nút chuyển sang trang sau -->
                     <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
                         <a class="page-link text-dark bg-light border"
-                           th:href="@{/Admin/order(page=${currentPage + 1}, searchField=${param.searchField}, searchInput=${param.searchInput})}"
+                           th:href="@{/Admin/order(page=${currentPage + 1})}"
                            aria-label="Next">
                             <span aria-hidden="true">&raquo;</span>
                         </a>
@@ -139,7 +139,7 @@
                     <!-- Nút trang cuối cùng -->
                     <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
                         <a class="page-link text-dark bg-light border"
-                           th:href="@{/Admin/order(page=${totalPages}, searchField=${param.searchField}, searchInput=${param.searchInput})}"
+                           th:href="@{/Admin/order(page=${totalPages})}"
                            aria-label="Last">
                             <span aria-hidden="true">&raquo;&raquo;</span>
                         </a>
@@ -180,7 +180,6 @@
 <script th:src="@{/js/admin/header.js}" type="text/javascript"></script>
 <script th:src="@{/js/admin/sidebarActiveMenu.js}" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 <script>
     function confirmCancelOrder(orderId) {
         document.getElementById('orderIdToCancel').value = orderId;

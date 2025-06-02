@@ -106,7 +106,7 @@
                     <!-- Previous Page Button -->
                     <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
                         <a class="page-link text-dark bg-light border"
-                           th:href="@{/Admin/customers(page=${currentPage - 1}, searchField=${field}, searchInput=${filterKeyWord})}"
+                           th:href="@{/Admin/customers(page=${currentPage - 1})}"
                            aria-label="Previous">
                             <span aria-hidden="true">&laquo;</span>
                         </a>
@@ -121,7 +121,7 @@
                     <!-- Next Page Button -->
                     <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
                         <a class="page-link text-dark bg-light border"
-                           th:href="@{/Admin/customers(page=${currentPage + 1}, searchField=${field}, searchInput=${filterKeyWord})}"
+                           th:href="@{/Admin/customers(page=${currentPage + 1})}"
                            aria-label="Next">
                             <span aria-hidden="true">&raquo;</span>
                         </a>
@@ -130,7 +130,7 @@
                     <!-- Last Page Button -->
                     <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
                         <a class="page-link text-dark bg-light border"
-                           th:href="@{/Admin/customers(page=${totalPages}, searchField=${field}, searchInput=${filterKeyWord})}"
+                           th:href="@{/Admin/customers(page=${totalPages})}"
                            aria-label="Last">
                             <span aria-hidden="true">&raquo;&raquo;</span>
                         </a>
@@ -152,31 +152,31 @@
 
                         <div class="mb-3">
                             <label class="form-label">Họ và Tên:</label>
-                            <input type="text" class="form-control" name="customerName" id="customerName" required>
+                            <input type="text" class="form-control" name="customerName" id="customerName">
                             <p class="error text-danger" id="customerNameError"></p>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Số điện thoại:</label>
-                            <input type="text" class="form-control" name="phoneNumber" id="phoneNumber" required>
+                            <input type="text" class="form-control" name="phoneNumber" id="phoneNumber">
                             <p class="error text-danger" id="phoneNumberError"></p>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Địa chỉ:</label>
-                            <input type="text" class="form-control" name="address" id="address" required>
+                            <input type="text" class="form-control" name="address" id="address">
                             <p class="error text-danger" id="addressError"></p>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Ngày Sinh:</label>
-                            <input type="date" class="form-control" name="birthDate" id="birthDate" required>
+                            <input type="date" class="form-control" name="birthDate" id="birthDate" >
                             <p class="error text-danger" id="birthDateError"></p>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Email:</label>
-                            <input type="text" class="form-control" name="email" id="email" required>
+                            <input type="text" class="form-control" name="email" id="email" >
                             <p class="error text-danger" id="emailError"></p>
                         </div>
 
