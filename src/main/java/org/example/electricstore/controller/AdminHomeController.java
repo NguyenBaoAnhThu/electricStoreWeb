@@ -1,4 +1,4 @@
-package org.example.electricstore.controller.admin;
+package org.example.electricstore.controller;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;

@@ -1,4 +1,4 @@
-package org.example.electricstore.controller.admin;
+package org.example.electricstore.controller;
 
 import jakarta.servlet.http.HttpSession;
 import org.example.electricstore.DTO.product.ProductDTO;
@@ -30,7 +30,6 @@ import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Controller

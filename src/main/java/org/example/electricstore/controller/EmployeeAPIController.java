@@ -1,4 +1,4 @@
-package org.example.electricstore.controller.api;
+package org.example.electricstore.controller;
 
 import org.example.electricstore.DTO.user.UserDTO;
 import org.example.electricstore.service.interfaces.IUserService;

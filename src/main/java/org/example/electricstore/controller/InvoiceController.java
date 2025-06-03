@@ -1,4 +1,4 @@
-package org.example.electricstore.controller.admin;
+package org.example.electricstore.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.electricstore.model.Invoice;

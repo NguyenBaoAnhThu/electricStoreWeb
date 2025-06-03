@@ -1,4 +1,4 @@
-package org.example.electricstore.controller.api;
+package org.example.electricstore.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.electricstore.service.common.PDFImportService;

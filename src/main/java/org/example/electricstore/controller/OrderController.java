@@ -1,4 +1,4 @@
-package org.example.electricstore.controller.admin;
+package org.example.electricstore.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.example.electricstore.DTO.customer.CustomerDTO;
@@ -25,14 +25,10 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/Admin/order")

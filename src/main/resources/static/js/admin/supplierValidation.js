@@ -6,21 +6,63 @@ document.addEventListener('DOMContentLoaded', function() {
         if (input) {
             // Xử lý khi nhập số điện thoại
             input.addEventListener("input", function(e) {
-                const value = e.target.value;
+                let value = e.target.value;
 
-                // Chỉ cho phép số
-                if (!/^\d*$/.test(value)) {
-                    e.target.value = value.replace(/\D/g, '');
-                }
+                // BƯỚC 1: Loại bỏ TẤT CẢ ký tự không phải số
+                value = value.replace(/\D/g, '');
 
-                // Kiểm tra số đầu tiên phải là số 0
+                // BƯỚC 2: Kiểm tra số đầu tiên phải là số 0
                 if (value.length > 0 && value[0] !== '0') {
-                    e.target.value = '0' + value.slice(1);
+                    value = '0' + value.replace(/^0*/, ''); // Loại bỏ các số 0 đầu thừa và thêm 1 số 0
                 }
 
-                // Giới hạn độ dài
+                // BƯỚC 3: Giới hạn độ dài tối đa 10 số
                 if (value.length > 10) {
-                    e.target.value = value.slice(0, 10);
+                    value = value.slice(0, 10);
+                }
+
+                // Cập nhật giá trị đã được làm sạch
+                e.target.value = value;
+            });
+
+            // Thêm validation khi paste
+            input.addEventListener("paste", function(e) {
+                // Delay để đợi paste hoàn tất
+                setTimeout(() => {
+                    let value = e.target.value;
+
+                    // Loại bỏ tất cả ký tự không phải số
+                    value = value.replace(/\D/g, '');
+
+                    // Kiểm tra số đầu tiên phải là số 0
+                    if (value.length > 0 && value[0] !== '0') {
+                        value = '0' + value.replace(/^0*/, '');
+                    }
+
+                    // Giới hạn độ dài
+                    if (value.length > 10) {
+                        value = value.slice(0, 10);
+                    }
+
+                    e.target.value = value;
+                }, 10);
+            });
+
+            // Ngăn không cho nhập ký tự không phải số bằng keypress
+            input.addEventListener("keypress", function(e) {
+                // Cho phép: backspace, delete, tab, escape, enter
+                if ([8, 9, 27, 13, 46].indexOf(e.keyCode) !== -1 ||
+                    // Cho phép Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+                    (e.keyCode === 65 && e.ctrlKey === true) ||
+                    (e.keyCode === 67 && e.ctrlKey === true) ||
+                    (e.keyCode === 86 && e.ctrlKey === true) ||
+                    (e.keyCode === 88 && e.ctrlKey === true)) {
+                    return;
+                }
+
+                // Chỉ cho phép số (0-9)
+                if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                    e.preventDefault();
                 }
             });
         }
@@ -33,16 +75,24 @@ document.addEventListener('DOMContentLoaded', function() {
         if (input) {
             // Xử lý khi nhập tên nhà cung cấp
             input.addEventListener("input", function(e) {
-                const value = e.target.value;
+                let value = e.target.value;
 
-                // Chỉ cho phép chữ cái và khoảng trắng (không có số)
-                if (!/^[A-Za-zÀ-ỹ\s]*$/.test(value)) {
-                    e.target.value = value.replace(/[^A-Za-zÀ-ỹ\s]/g, '');
-                }
+                // Chỉ cho phép chữ cái, khoảng trắng và dấu tiếng Việt
+                value = value.replace(/[^A-Za-zÀ-ỹ\s]/g, '');
 
                 // Giới hạn độ dài
                 if (value.length > 100) {
-                    e.target.value = value.slice(0, 100);
+                    value = value.slice(0, 100);
+                }
+
+                e.target.value = value;
+            });
+
+            // Ngăn nhập ký tự không hợp lệ
+            input.addEventListener("keypress", function(e) {
+                const char = String.fromCharCode(e.which);
+                if (!/[A-Za-zÀ-ỹ\s]/.test(char)) {
+                    e.preventDefault();
                 }
             });
         }

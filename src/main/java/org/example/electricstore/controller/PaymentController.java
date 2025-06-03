@@ -1,9 +1,6 @@
-package org.example.electricstore.controller.admin;
+package org.example.electricstore.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
-import org.example.electricstore.DTO.order.OrderDTO;
 import org.example.electricstore.enums.OrderStatus;
-import org.example.electricstore.enums.PaymentStatus;
 import org.example.electricstore.model.Order;
 import org.example.electricstore.model.Payment;
 import org.example.electricstore.repository.IOrderRepository;
@@ -15,8 +12,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/Admin/payment")
