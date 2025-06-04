@@ -339,6 +339,7 @@
         <div class="form-group mt-4">
           <label for="cancelReason" class="form-label mb-2"><strong>Lý do hủy:</strong></label>
           <textarea class="form-control" id="cancelReason" rows="3" placeholder="Vui lòng nhập lý do hủy phiếu"></textarea>
+          <p class="error text-danger" id="cancelReasonError"></p>
         </div>
       </div>
       <div class="modal-footer">
@@ -380,9 +381,7 @@
     });
     $('#totalProductsPrice').text(formatCurrency(totalPrice));
 
-    /**
-     * Khởi tạo thông tin chi tiết phiếu nhập
-     */
+    //Khởi tạo thông tin chi tiết phiếu nhập
     function initializeInvoiceDetails() {
       const paymentStatus = $(".badge").text().trim();
 
@@ -439,9 +438,7 @@
       }
     }
 
-    /**
-     * Thiết lập các sự kiện
-     */
+    //Thiết lập các sự kiện
     function setupEventListeners() {
       // Sự kiện khi chọn phương thức thanh toán
       $(".payment-method").on("change", function() {
@@ -486,9 +483,7 @@
       });
     }
 
-    /**
-     * Kiểm tra tính hợp lệ của thanh toán và kích hoạt/vô hiệu hóa nút thanh toán
-     */
+    // Kiểm tra tính hợp lệ của thanh toán và kích hoạt/vô hiệu hóa nút thanh toán
     function checkPaymentValidity() {
       const selectedMethod = $("input[name='paymentMethod']:checked").val();
       const amountInput = $("#paymentAmount").val();
@@ -510,17 +505,13 @@
       }
     }
 
-    /**
-     * Lấy dữ liệu thanh toán từ sessionStorage
-     */
+    // Lấy d liệu thanh toàn từ storage
     function getStoredPaymentData(key) {
       const storedData = sessionStorage.getItem(key);
       return storedData ? Number(storedData) : 0;
     }
 
-    /**
-     * Xử lý sự kiện gửi form thanh toán
-     */
+    // Xử lý sự kiện form thanh toán
     function handlePaymentSubmit(e) {
       e.preventDefault();
 
@@ -532,7 +523,6 @@
         alert("Vui lòng nhập số tiền hợp lệ");
         return;
       }
-      // Gửi yêu cầu thanh toán
       $.ajax({
         url: "/api/Admin/invoice/payment-process",
         type: "POST",
@@ -548,11 +538,8 @@
           const newPaid = currentPaid + paymentAmount;
           sessionStorage.setItem(sessionKey, newPaid);
 
-          // Hiển thị thông báo thành công
-          alert("Thanh toán thành công!");
-
-          // Chuyển về trang lịch sử sau khi thanh toán
-          window.location.href = "/Admin/ware-houses/history_warehouse";
+          // Chuyển về trang lịch sử với thông báo thành công
+          window.location.href = "/Admin/ware-houses/history_warehouse?successMessage=Thanh toán thành công phiếu nhập kho";
         },
         error: function(error) {
           console.error("Lỗi khi xử lý thanh toán:", error);
@@ -561,9 +548,7 @@
       });
     }
 
-    /**
-     * Xử lý nút Lưu Phiếu
-     */
+    // Xử lý lưu phiếu
     function handleSaveInvoice() {
       const saveButton = $("[data-bs-target='#saveConfirmModal']");
       saveButton.prop("disabled", true);
@@ -577,7 +562,6 @@
         },
         error: function(error) {
           console.error("Lỗi khi lưu phiếu:", error);
-          alert("Đã xảy ra lỗi khi lưu phiếu. Vui lòng thử lại.");
         },
         complete: function() {
           saveButton.prop("disabled", false);
@@ -586,15 +570,12 @@
       });
     }
 
-    /**
-     * Xử lý nút Xuất Phiếu PDF
-     */
+    // Xử lý xuất phiếu PDF
     function handleExportPdf() {
       const exportButton = $("[data-bs-target='#exportConfirmModal']");
       exportButton.prop("disabled", true);
       exportButton.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Đang xử lý...');
 
-      // Tạo yêu cầu fetch để tải xuống file PDF
       fetch(`/api/Admin/invoice/export-pdf/${invoiceId}`, {
         method: 'GET',
         headers: {
@@ -619,7 +600,6 @@
               })
               .catch(error => {
                 console.error('Lỗi khi xuất PDF:', error);
-                alert('Đã xảy ra lỗi khi tạo file PDF. Vui lòng thử lại.');
               })
               .finally(() => {
                 exportButton.prop("disabled", false);
@@ -627,9 +607,7 @@
               });
     }
 
-    /**
-     * Tải lịch sử thanh toán
-     */
+    // Tải lịch sử thanh toán
     function loadPaymentHistory() {
       $.ajax({
         url: `/api/Admin/invoice/payment-history?invoiceId=${invoiceId}`,
@@ -693,9 +671,7 @@
       $("#maxPaymentAmount").text(formatCurrency(remaining));
     }
 
-    /**
-     * Hiển thị lịch sử thanh toán
-     */
+    // Hiển thị lịch sử thanh toán
     function renderPaymentHistory(historyList) {
       const tbody = $("#paymentHistoryBody");
       tbody.empty();
@@ -722,71 +698,27 @@
       });
     }
 
-    /**
-     * Thêm một thanh toán mới vào lịch sử
-     */
-    function addPaymentToHistory(paymentData) {
-      // Lấy lịch sử thanh toán hiện tại
-      const historyKey = `payment-history-${invoiceId}`;
-      let history = [];
-
-      try {
-        const storedHistory = sessionStorage.getItem(historyKey);
-        if (storedHistory) {
-          history = JSON.parse(storedHistory);
-        }
-      } catch (error) {
-        console.error("Lỗi khi đọc lịch sử thanh toán:", error);
-      }
-
-      // Thêm thanh toán mới vào lịch sử
-      history.push(paymentData);
-
-      // Lưu lịch sử cập nhật vào sessionStorage
-      sessionStorage.setItem(historyKey, JSON.stringify(history));
-    }
-
-    /**
-     * Lấy text hiển thị cho phương thức thanh toán
-     */
-    function getPaymentMethodText(method) {
-      switch (method) {
-        case "cash":
-          return "Tiền mặt";
-        case "bank":
-          return "Chuyển khoản";
-        case "card":
-          return "Quẹt thẻ";
-        default:
-          return "Không xác định";
-      }
-    }
-
-    /**
-     * Định dạng tiền tệ
-     */
+    // Định dạng tiền tệ
     function formatCurrency(amount) {
       return new Intl.NumberFormat('vi-VN').format(amount);
     }
 
-    /**
-     * Chuyển đổi chuỗi tiền tệ thành số
-     */
+    // Chuyển đổi tieenf thành số
     function parseNumberFromString(str) {
       if (!str) return 0;
       return Number(str.replace(/[^\d]/g, '')) || 0;
     }
   });
 
-  /**
-   * Xác nhận hủy phiếu
-   */
+// Huỷ phiếu
   function confirmCancel() {
     const invoiceId = $("#invoiceId").val();
     const reason = $("#cancelReason").val().trim();
+    const reasonError = $("#cancelReasonError");
+    reasonError.text("");
 
     if (reason === "") {
-      alert("Vui lòng nhập lý do hủy phiếu!");
+      reasonError.text("Vui lòng nhập lý do hủy phiếu.");
       return;
     }
 
@@ -798,12 +730,12 @@
         reason: reason
       },
       success: function(response) {
-        alert(response);
-        window.location.href = "/Admin/ware-houses/history_warehouse";
+        // Redirect with success message
+        window.location.href = "/Admin/ware-houses/history_warehouse?successMessage=Hủy phiếu nhập thành công";
       },
       error: function(error) {
         console.error("Lỗi khi hủy phiếu:", error);
-        alert("Đã xảy ra lỗi khi hủy phiếu. Vui lòng thử lại.");
+        alert("Có lỗi xảy ra khi hủy phiếu. Vui lòng thử lại sau.");
       }
     });
   }

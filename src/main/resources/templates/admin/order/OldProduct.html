@@ -51,8 +51,6 @@
                     <th>Tên Sản Phảm</th>
                     <th>Đơn Giá(VNĐ)</th>
                     <th>CPU</th>
-                    <th>Lưu trữ</th>
-                    <th>Màu sắc</th>
                     <th>Tồn kho</th>
                     <th width="80">Thao tác</th>
                 </tr>
@@ -61,11 +59,16 @@
                 <tr th:each="item, stat : ${products}">
                     <td th:text="${(currentPage - 1) * pageSize + stat.count}"></td>
                     <td th:text="${item.productCode}"></td>
-                    <td th:text="${item.productName}"></td>
+                    <td>
+                        <div th:text="${item.productName}"></div>
+                        <small class="text-muted">
+                            <span th:text="${item.productColor != null ? item.productColor : 'N/A'}"></span> |
+                            <span th:text="${item.productRam != null ? item.productRam : 'N/A'}"></span> |
+                            <span th:text="${item.productRom != null ? item.productRom : 'N/A'}"></span>
+                        </small>
+                    </td>
                     <td th:text="${item.productPrice != null ? item.productPrice.replace(',', '.') : ''}"></td>
                     <td th:text="${item.productCPU}"></td>
-                    <td th:text="${item.productRom != null ? item.productRom : 'Không có dữ liệu'}"></td>
-                    <td th:text="${item.productColor != null ? item.productColor : 'Không có dữ liệu'}"></td>
                     <td th:text="${item.stockQuantity != null ? item.stockQuantity : '0'}"></td>
                     <td class="text-center">
                         <button class="btn btn-success select-product"

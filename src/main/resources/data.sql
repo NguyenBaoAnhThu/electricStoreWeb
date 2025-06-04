@@ -164,7 +164,7 @@ VALUES
 (8, 'Xiaomi 14 Ultra', 'https://url.spa/sensr', 'Xiaomi 14 Ultra - Camera đỉnh cao', 25990000, 35, NOW(), NOW(), 6, 1, 4, 'SP0008'),
 (9, 'Google Pixel 8 Pro', 'https://url.spa/1a61m', 'Google Pixel 8 Pro - Camera AI tốt nhất', 26990000, 30, NOW(), NOW(), 11, 1, 1, 'SP0009'),
 (10, 'Nothing Phone 2', 'https://url.spa/qj4e2', 'Nothing Phone 2 - Thiết kế Glyph độc đáo', 15990000, 45, NOW(), NOW(), 15, 1, 4, 'SP0010'),
-(11, 'OnePlus 12', 'https://byvn.net/op12', 'OnePlus 12 - Hiệu năng mạnh mẽ', 24990000, 40, NOW(), NOW(), 15, 1, 5, 'SP0011'),
+(11, 'OnePlus 12', 'url.spa/wf7pr', 'OnePlus 12 - Hiệu năng mạnh mẽ', 24990000, 40, NOW(), NOW(), 15, 1, 5, 'SP0011'),
 (12, 'Samsung Galaxy Z Fold 5', 'https://byvn.net/zfold5', 'Samsung Galaxy Z Fold 5 - Màn hình gập cao cấp', 39990000, 25, NOW(), NOW(), 2, 1, 2, 'SP0012'),
 (13, 'iPhone 15', 'https://byvn.net/ip15', 'iPhone 15 - Thiết kế tinh tế', 22990000, 70, NOW(), NOW(), 1, 1, 1, 'SP0013'),
 (14, 'Xiaomi 14', 'https://byvn.net/xm14', 'Xiaomi 14 - Hiệu năng cao', 19990000, 55, NOW(), NOW(), 6, 1, 15, 'SP0014'),

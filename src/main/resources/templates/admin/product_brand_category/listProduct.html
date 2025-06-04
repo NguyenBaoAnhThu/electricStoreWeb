@@ -81,7 +81,7 @@
                             </form>
                         </div>
                     </div>
-                    <hr class="mt-4 mb-3 border-2 border-secondary opacity-25">
+                    <hr style="border: 1px solid #e9ecef; margin: 20px 0;">
                 </div>
                 <div th:replace="~{admin/fragments/alert :: alerts}"></div>
                 <div class="table-responsive">
@@ -107,17 +107,23 @@
                             <td th:colspan="${#authorization.expression('hasRole(''ROLE_ADMIN'')') ? 10 : 8}" class="text-center">Không có sản phẩm nào để hiển thị</td>
                         </tr>
                         <tr th:each="product,p : ${products}">
-                            <!-- Hide Checkbox column for non-admin roles -->
                             <td class="text-center" sec:authorize="hasRole('ROLE_ADMIN')">
                                 <div class="form-check">
                                     <input type="checkbox" class="form-check-input productCheckbox" th:value="${product.productID}"
                                            th:id="'productCheck-' + ${p.index}" th:data-code="${product.productCode}">
                                 </div>
                             </td>
-                            <td th:text="${(currentPage - 1) * (size ?: 10) + p.index + 1}"></td>                            <td th:text="${product.productCode}"></td>
+                            <td th:text="${(currentPage - 1) * (size ?: 10) + p.index + 1}"></td>
+                            <td th:text="${product.productCode}"></td>
                             <td class="text-center"><img th:src="${product.mainImageUrl}" alt="Product Image" class="product-image" /></td>
-                            <td th:text="${product.name}"></td>
-                            <td th:text="${product.formattedPrice != null ? product.formattedPrice.replace(' VND', '').replace(',', '.') : ''}"></td>
+                            <td>
+                                <div th:text="${product.name}"></div>
+                                <small class="text-muted">
+                                    <span th:text="${product.productDetail?.color ?: 'N/A'}"></span> |
+                                    <span th:text="${product.productDetail?.rom ?: 'N/A'}"></span> |
+                                    <span th:text="${product.productDetail?.ram ?: 'N/A'}"></span>
+                                </small>
+                            </td>                      <td th:text="${product.formattedPrice != null ? product.formattedPrice.replace(' VND', '').replace(',', '.') : ''}"></td>
                             <td th:text="${product.category.categoryName}"></td>
                             <td th:text="${product.brand.brandName}"></td>
                             <td th:text="${product.supplier != null ? product.supplier.supplierName : 'Không có nhà cung cấp'}"></td>
