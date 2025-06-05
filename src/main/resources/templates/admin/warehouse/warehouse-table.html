@@ -105,7 +105,7 @@
         </div>
 
         <div class="table-responsive">
-            <table class="table table-striped table-bordered">
+            <table class="table table-striped table-bordered warehouse-table">
                 <thead class="table-dark">
                 <tr>
                     <th width="60">STT</th>
@@ -123,8 +123,15 @@
                 </tr>
                 <tr th:each="item, c : ${wareHouses}" th:if="${wareHouses != null && !wareHouses.isEmpty()}">
                     <td th:text="${c.index + 1 + (wareHousePage.number * wareHousePage.size)}"></td>
-                    <td th:text="${item.product != null ? item.product.productCode : 'Không có sản phẩm'}"></td>
-                    <td th:text="${item.product != null ? item.product.name : 'Không có sản phẩm'}"></td>
+                    <td th:text="${item.product != null ? item.product.productCode : 'Không có sản phẩm'}" class="product-code"></td>
+                    <td>
+                        <div th:text="${item.product != null ? item.product.name : 'Không có sản phẩm'}"></div>
+                        <small class="text-muted">
+                            <span th:text="${item.product != null && item.product.productDetail != null && item.product.productDetail.color != null ? item.product.productDetail.color : 'N/A'}"></span> |
+                            <span th:text="${item.product != null && item.product.productDetail != null && item.product.productDetail.rom != null ? item.product.productDetail.rom : 'N/A'}"></span> |
+                            <span th:text="${item.product != null && item.product.productDetail != null && item.product.productDetail.ram != null ? item.product.productDetail.ram : 'N/A'}"></span>
+                        </small>
+                    </td>
                     <td th:text="${item.product != null && item.product.brand != null ? item.product.brand.brandName : 'Không có thương hiệu'}"></td>
                     <td th:text="${item.product != null ? item.product.stock : 0}"></td>
                     <td th:text="${#temporals.format(item.importDate, 'dd/MM/yyyy')}"></td>

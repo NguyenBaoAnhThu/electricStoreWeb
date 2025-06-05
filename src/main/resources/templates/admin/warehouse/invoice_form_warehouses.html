@@ -149,7 +149,7 @@
                   <span class="text-secondary">Tổng số lượng nhập:</span>
                 </div>
                 <div class="col-sm-6 text-end">
-                  <strong th:text="${invoice.products.size()}"></strong>
+                  <strong id="totalQuantityDisplay">0</strong>
                 </div>
               </div>
 
@@ -164,7 +164,7 @@
 
               <div class="row mb-2">
                 <div class="col-sm-6">
-                  <span class="text-secondary">Chiết khấu (%):</span>
+                  <span class="text-secondary">Chiết khấu (VNĐ):</span>
                 </div>
                 <div class="col-sm-6 text-end">
                   <strong th:text="${invoice.discount != null ? #numbers.formatDecimal(invoice.discount, 0, 'POINT', 0, 'COMMA') : '0'}"></strong>
@@ -482,7 +482,13 @@
         handleExportPdf();
       });
     }
-
+    // Tính toán tổng số lượng nhập (thêm sau phần tính totalPrice)
+    let totalQuantity = 0;
+    $('.product-table tbody tr').each(function() {
+      const quantity = parseNumberFromString($(this).find('td:nth-child(5)').text()); // Cột số lượng
+      totalQuantity += quantity;
+    });
+    $('#totalQuantityDisplay').text(formatCurrency(totalQuantity));
     // Kiểm tra tính hợp lệ của thanh toán và kích hoạt/vô hiệu hóa nút thanh toán
     function checkPaymentValidity() {
       const selectedMethod = $("input[name='paymentMethod']:checked").val();

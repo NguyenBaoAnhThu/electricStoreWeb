@@ -11,6 +11,7 @@ import org.example.electricstore.service.interfaces.IProductService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,8 +59,8 @@ public class WareHouseController {
         String codeFilter = productCode != null ? productCode.trim() : "";
         String brandFilter = brand != null ? brand.trim() : "";
 
-        // Tạo Pageable với trang bắt đầu từ 0 (page-1)
-        Pageable pageable = PageRequest.of(page - 1, size);
+        // Tạo Pageable với trang bắt đầu từ 0 (page-1) và sắp xếp theo mã sản phẩm
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("product.productCode"));
 
         // Gọi service để tìm kiếm warehouse
         Page<WareHouse> wareHousePage = wareHouseService.searchWareHouses(

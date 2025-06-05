@@ -265,13 +265,8 @@ public class ProductController {
 
         // Lưu sản phẩm vào database với giá nhập
         try {
-            if (importPrice != null && importPrice > 0) {
-                logger.info("Cập nhật sản phẩm với giá nhập: {}", importPrice);
-                productService.updateProductWithImportPrice(product, importPrice, filesToUpdate);
-            } else {
-                logger.info("Cập nhật sản phẩm không có giá nhập");
-                productService.updateProduct(product, filesToUpdate);
-            }
+            // Khi chỉnh sửa sản phẩm, KHÔNG truyền importPrice để tránh tạo warehouse mới
+            productService.updateProduct(product, filesToUpdate);
             logger.info("Cập nhật sản phẩm thành công");
             redirectAttributes.addFlashAttribute("successMessage", "Chỉnh sửa sản phẩm thành công.");
             return "redirect:/Admin/product-manager";
