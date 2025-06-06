@@ -24,10 +24,8 @@
             <div class="search-container">
                 <form class="search-form" action="/Admin/order/showListCustomer" method="get">
                     <select class="input-select" name="filter">
-                        <option value="name" th:selected="${filter == 'name'}">Tên Khách Hàng </option>
-                        <option value="phone" th:selected="${filter == 'phone'}">Số Điện Thoại</option>
-                        <option value="address" th:selected="${filter == 'address'}">Địa Chỉ</option>
-                        <option value="email" th:selected="${filter == 'email'}">Email</option>
+                        <option value="customerName" th:selected="${filter == 'customerName'}">Tên Khách Hàng</option>
+                        <option value="phoneNumber" th:selected="${filter == 'phoneNumber'}">Số Điện Thoại</option>
                     </select>
                     <input class="form-control" type="search" name="keyword" th:value="${keyword}" placeholder="Nhập thông tin cần tìm..." aria-label="Search">
                     <button class="btn" style="background-color: #D10024; color: white;" type="submit">
@@ -148,7 +146,7 @@
             button.addEventListener("click", function () {
                 let customer = {
                     id: this.getAttribute("data-id"),
-                    code: this.getAttribute("data-code"), // Lấy mã khách hàng
+                    code: this.getAttribute("data-code"),
                     name: this.getAttribute("data-name"),
                     phone: this.getAttribute("data-phone"),
                     address: this.getAttribute("data-address"),

@@ -64,12 +64,7 @@ public class ProductAPIController {
 
         return products;
     }
-
-    /**
-     * API để lấy tồn kho hiện tại của một sản phẩm
-     * @param productId ID của sản phẩm
-     * @return Thông tin tồn kho
-     */
+    //Api lấy tồn kho của sp
     @GetMapping("/stock/{productId}")
     public ResponseEntity<Map<String, Object>> getCurrentStock(@PathVariable Integer productId) {
         try {
@@ -95,11 +90,7 @@ public class ProductAPIController {
         }
     }
 
-    /**
-     * API để lấy tồn kho của nhiều sản phẩm cùng lúc
-     * @param productIds Danh sách ID sản phẩm
-     * @return Map chứa tồn kho của từng sản phẩm
-     */
+    //Api để lấy kho của nhiều sp cùng lúc
     @PostMapping("/stock/batch")
     public ResponseEntity<Map<String, Object>> getBatchStock(@RequestBody List<Integer> productIds) {
         try {
@@ -149,11 +140,7 @@ public class ProductAPIController {
         }
     }
 
-    /**
-     * API để kiểm tra tồn kho có đủ cho một đơn hàng không
-     * @param request Danh sách sản phẩm và số lượng cần kiểm tra
-     * @return Kết quả kiểm tra tồn kho
-     */
+    // Api kiểm tra xem tồn kho có đủ cho đơn hàng k
     @PostMapping("/stock/validate")
     public ResponseEntity<Map<String, Object>> validateStock(
             @RequestBody Map<String, Object> request) {

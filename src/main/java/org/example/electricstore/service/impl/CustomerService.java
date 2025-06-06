@@ -53,7 +53,6 @@ public class CustomerService implements ICustomerService<Customer, CustomerDTO> 
                 return Page.empty(pageable);
         }
     }
-
     @Override
     public Customer getCustomerById(int id) {
         return this.customerRepository.findById(id).orElseThrow(
@@ -147,6 +146,7 @@ public class CustomerService implements ICustomerService<Customer, CustomerDTO> 
                 return customerRepository.findAll(pageable);
         }
     }
+
 
     @Override
     public boolean existsByPhoneNumber(String phoneNumber) {
