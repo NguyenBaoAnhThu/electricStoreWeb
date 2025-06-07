@@ -1119,122 +1119,180 @@ INSERT INTO payments (amount, payment_method, create_at, order_id) VALUES
 (16140000, 'CASH', '2025-06-28 16:45:00', 199),
 (138670000, 'ONLINE_BANKING', '2025-06-30 09:30:00', 200);
 
--- Thêm dữ liệu vào bảng invoices (phiếu nhập kho)
-INSERT INTO invoices (invoice_code, import_date, supplier_id, notes, discount, vat, additional_fees, cancel_reason)
+-- Thêm dữ liệu vào bảng invoices (phiếu nhập kho) - ĐÃ SỬA VAT VÀ DISCOUNT
+INSERT INTO invoices (invoice_code, import_date, supplier_id, notes, discount, vat, additional_fees, cancel_reason, total_price)
 VALUES
-    ('NK0001', '2024-01-05', 1, 'Đơn hàng Apple đầu năm 2024', 5.0, 10.0, 50000, NULL),
-    ('NK0002', '2024-01-15', 2, 'Nhập Samsung quý 1/2024', 3.0, 10.0, 30000, NULL),
-    ('NK0003', '2024-01-25', 3, 'Nhập Oppo tháng 1/2024', 2.0, 10.0, 25000, NULL),
-    ('NK0004', '2024-02-05', 4, 'Nhập Xiaomi đợt 1 tháng 2', 4.0, 10.0, 35000, NULL),
-    ('NK0005', '2024-02-15', 5, 'Đơn hàng Sony quý 1', 3.5, 10.0, 40000, NULL),
-    ('NK0006', '2024-02-25', 6, 'Nhập Asus tháng 2/2024', 2.5, 10.0, 30000, NULL),
-    ('NK0007', '2024-03-05', 7, 'Nhập Dell đợt 1 tháng 3', 5.0, 10.0, 45000, NULL),
-    ('NK0008', '2024-03-15', 8, 'Nhập Huawei tháng 3/2024', 3.0, 10.0, 35000, NULL),
-    ('NK0009', '2024-03-25', 9, 'Đơn hàng LG tháng 3', 2.0, 10.0, 25000, NULL),
-    ('NK0010', '2024-04-05', 10, 'Nhập Lenovo đợt 1 tháng 4', 4.0, 10.0, 40000, NULL),
-    ('NK0011', '2024-04-10', 1, 'Nhập Apple bổ sung tháng 4', 5.0, 10.0, 50000, NULL),
-    ('NK0012', '2024-04-15', 2, 'Nhập Samsung bổ sung quý 2', 3.0, 10.0, 35000, NULL),
-    ('NK0013', '2024-04-20', 3, 'Nhập Oppo tháng 4/2024', 2.5, 10.0, 30000, NULL),
-    ('NK0014', '2024-04-25', 4, 'Nhập Xiaomi đợt 2 tháng 4', 4.0, 10.0, 40000, NULL),
-    ('NK0015', '2024-04-30', 5, 'Đơn hàng Sony cuối tháng 4', 3.5, 10.0, 45000, NULL);
+    -- NK0001: productTotal = 1,164,650,000, discount = 58,232,500 VNĐ (5%), vat = 10%, additionalFees = 50,000
+    -- vat_amount = 1,164,650,000 * 10% = 116,465,000
+    -- total_price = 1,164,650,000 - 58,232,500 + 116,465,000 + 50,000 = 1,222,932,500
+    ('NK0001', '2024-01-05', 1, 'Đơn hàng Apple đầu năm 2024', 58232500, 10, 50000, NULL, 1222932500),
 
--- Thêm dữ liệu vào bảng invoice_item (chi tiết phiếu nhập)
+    -- NK0002: productTotal = 579,750,000, discount = 17,392,500 VNĐ (3%), vat = 10%, additionalFees = 30,000
+    -- vat_amount = 579,750,000 * 10% = 57,975,000
+    -- total_price = 579,750,000 - 17,392,500 + 57,975,000 + 30,000 = 620,362,500
+    ('NK0002', '2024-01-15', 2, 'Nhập Samsung quý 1/2024', 17392500, 10, 30000, NULL, 620362500),
+
+    -- NK0003: productTotal = 239,850,000, discount = 4,797,000 VNĐ (2%), vat = 10%, additionalFees = 25,000
+    -- vat_amount = 239,850,000 * 10% = 23,985,000
+    -- total_price = 239,850,000 - 4,797,000 + 23,985,000 + 25,000 = 259,063,000
+    ('NK0003', '2024-01-25', 3, 'Nhập Oppo tháng 1/2024', 4797000, 10, 25000, NULL, 259063000),
+
+    -- NK0004: productTotal = 563,550,000, discount = 22,542,000 VNĐ (4%), vat = 10%, additionalFees = 35,000
+    -- vat_amount = 563,550,000 * 10% = 56,355,000
+    -- total_price = 563,550,000 - 22,542,000 + 56,355,000 + 35,000 = 597,398,000
+    ('NK0004', '2024-02-05', 4, 'Nhập Xiaomi đợt 1 tháng 2', 22542000, 10, 35000, NULL, 597398000),
+
+    -- NK0005: productTotal = 359,800,000, discount = 12,593,000 VNĐ (3.5%), vat = 10%, additionalFees = 40,000
+    -- vat_amount = 359,800,000 * 10% = 35,980,000
+    -- total_price = 359,800,000 - 12,593,000 + 35,980,000 + 40,000 = 383,227,000
+    ('NK0005', '2024-02-15', 5, 'Đơn hàng Sony quý 1', 12593000, 10, 40000, NULL, 383227000),
+
+    -- NK0006: productTotal = 419,900,000, discount = 10,497,500 VNĐ (2.5%), vat = 10%, additionalFees = 30,000
+    -- vat_amount = 419,900,000 * 10% = 41,990,000
+    -- total_price = 419,900,000 - 10,497,500 + 41,990,000 + 30,000 = 451,422,500
+    ('NK0006', '2024-02-25', 6, 'Nhập Asus tháng 2/2024', 10497500, 10, 30000, NULL, 451422500),
+
+    -- NK0007: productTotal = 563,880,000, discount = 28,194,000 VNĐ (5%), vat = 10%, additionalFees = 45,000
+    -- vat_amount = 563,880,000 * 10% = 56,388,000
+    -- total_price = 563,880,000 - 28,194,000 + 56,388,000 + 45,000 = 592,119,000
+    ('NK0007', '2024-03-05', 7, 'Nhập Dell đợt 1 tháng 3', 28194000, 10, 45000, NULL, 592119000),
+
+    -- NK0008: productTotal = 202,350,000, discount = 6,070,500 VNĐ (3%), vat = 10%, additionalFees = 35,000
+    -- vat_amount = 202,350,000 * 10% = 20,235,000
+    -- total_price = 202,350,000 - 6,070,500 + 20,235,000 + 35,000 = 216,549,500
+    ('NK0008', '2024-03-15', 8, 'Nhập Huawei tháng 3/2024', 6070500, 10, 35000, NULL, 216549500),
+
+    -- NK0009: productTotal = 254,850,000, discount = 5,097,000 VNĐ (2%), vat = 10%, additionalFees = 25,000
+    -- vat_amount = 254,850,000 * 10% = 25,485,000
+    -- total_price = 254,850,000 - 5,097,000 + 25,485,000 + 25,000 = 275,263,000
+    ('NK0009', '2024-03-25', 9, 'Đơn hàng LG tháng 3', 5097000, 10, 25000, NULL, 275263000),
+
+    -- NK0010: productTotal = 606,250,000, discount = 24,250,000 VNĐ (4%), vat = 10%, additionalFees = 40,000
+    -- vat_amount = 606,250,000 * 10% = 60,625,000
+    -- total_price = 606,250,000 - 24,250,000 + 60,625,000 + 40,000 = 642,665,000
+    ('NK0010', '2024-04-05', 10, 'Nhập Lenovo đợt 1 tháng 4', 24250000, 10, 40000, NULL, 642665000),
+
+    -- NK0011: productTotal = 419,850,000, discount = 20,992,500 VNĐ (5%), vat = 10%, additionalFees = 50,000
+    -- vat_amount = 419,850,000 * 10% = 41,985,000
+    -- total_price = 419,850,000 - 20,992,500 + 41,985,000 + 50,000 = 440,892,500
+    ('NK0011', '2024-04-10', 1, 'Nhập Apple bổ sung tháng 4', 20992500, 10, 50000, NULL, 440892500),
+
+    -- NK0012: productTotal = 239,900,000, discount = 7,197,000 VNĐ (3%), vat = 10%, additionalFees = 35,000
+    -- vat_amount = 239,900,000 * 10% = 23,990,000
+    -- total_price = 239,900,000 - 7,197,000 + 23,990,000 + 35,000 = 256,728,000
+    ('NK0012', '2024-04-15', 2, 'Nhập Samsung bổ sung quý 2', 7197000, 10, 35000, NULL, 256728000),
+
+    -- NK0013: productTotal = 299,650,000, discount = 7,491,250 VNĐ (2.5%), vat = 10%, additionalFees = 30,000
+    -- vat_amount = 299,650,000 * 10% = 29,965,000
+    -- total_price = 299,650,000 - 7,491,250 + 29,965,000 + 30,000 = 322,153,750
+    ('NK0013', '2024-04-20', 3, 'Nhập Oppo tháng 4/2024', 7491250, 10, 30000, NULL, 322153750),
+
+    -- NK0014: productTotal = 174,750,000, discount = 6,990,000 VNĐ (4%), vat = 10%, additionalFees = 40,000
+    -- vat_amount = 174,750,000 * 10% = 17,475,000
+    -- total_price = 174,750,000 - 6,990,000 + 17,475,000 + 40,000 = 185,275,000
+    ('NK0014', '2024-04-25', 4, 'Nhập Xiaomi đợt 2 tháng 4', 6990000, 10, 40000, NULL, 185275000),
+
+    -- NK0015: productTotal = 503,840,000, discount = 17,634,400 VNĐ (3.5%), vat = 10%, additionalFees = 45,000
+    -- vat_amount = 503,840,000 * 10% = 50,384,000
+    -- total_price = 503,840,000 - 17,634,400 + 50,384,000 + 45,000 = 536,634,600
+    ('NK0015', '2024-04-30', 5, 'Đơn hàng Sony cuối tháng 4', 17634400, 10, 45000, NULL, 536634600);
+
+-- Thêm dữ liệu vào bảng invoice_item (chi tiết phiếu nhập) - KHÔNG THAY ĐỔI
 INSERT INTO invoice_item (product_id, product_code, product_name, brand, quantity, price, payment_status, invoice_id)
 VALUES
-    -- Phiếu NK0001
+    -- Phiếu NK0001 - Tổng sản phẩm: 1,164,650,000 VND
     (7, 'SP0007', 'iPhone 15 Pro Max', 'Apple', 20, 27990000, 'ĐÃ THANH TOÁN', 1),
     (19, 'SP0019', 'MacBook Pro 16 M3 Max', 'Apple', 10, 75990000, 'ĐÃ THANH TOÁN', 1),
     (12, 'SP0012', 'iPad Pro M2 12.9', 'Apple', 15, 26990000, 'ĐÃ THANH TOÁN', 1),
 
-    -- Phiếu NK0002
+    -- Phiếu NK0002 - Tổng sản phẩm: 579,750,000 VND
     (6, 'SP0006', 'Samsung Galaxy S23 Ultra', 'Samsung', 15, 23990000, 'ĐÃ THANH TOÁN', 2),
     (13, 'SP0013', 'Samsung Galaxy Tab S9 Ultra', 'Samsung', 10, 21990000, 'ĐÃ THANH TOÁN', 2),
 
-    -- Phiếu NK0003
+    -- Phiếu NK0003 - Tổng sản phẩm: 239,850,000 VND
     (3, 'SP0003', 'Oppo Find X5 Pro', 'Oppo', 15, 15990000, 'ĐÃ THANH TOÁN', 3),
 
-    -- Phiếu NK0004
+    -- Phiếu NK0004 - Tổng sản phẩm: 563,550,000 VND
     (1, 'SP0001', 'Xiaomi Redmi Note 12 Pro', 'Xiaomi', 30, 6990000, 'ĐÃ THANH TOÁN', 4),
     (8, 'SP0008', 'Xiaomi 14 Ultra', 'Xiaomi', 15, 20990000, 'ĐÃ THANH TOÁN', 4),
     (10, 'SP0010', 'Xiaomi Pad 6 Pro', 'Xiaomi', 20, 11990000, 'ĐÃ THANH TOÁN', 4),
 
-    -- Phiếu NK0005
+    -- Phiếu NK0005 - Tổng sản phẩm: 359,800,000 VND
     (4, 'SP0004', 'Vivo X90 Pro', 'Vivo', 20, 17990000, 'ĐÃ THANH TOÁN', 5),
 
-    -- Phiếu NK0006
+    -- Phiếu NK0006 - Tổng sản phẩm: 419,900,000 VND
     (21, 'SP0021', 'Asus ROG Zephyrus G16', 'Asus', 10, 41990000, 'ĐÃ THANH TOÁN', 6),
 
-    -- Phiếu NK0007
+    -- Phiếu NK0007 - Tổng sản phẩm: 563,880,000 VND
     (20, 'SP0020', 'Dell XPS 15', 'Dell', 12, 46990000, 'ĐÃ THANH TOÁN', 7),
 
-    -- Phiếu NK0008
+    -- Phiếu NK0008 - Tổng sản phẩm: 202,350,000 VND
     (9, 'SP0009', 'Huawei MatePad Pro 11', 'Huawei', 15, 13490000, 'ĐÃ THANH TOÁN', 8),
 
-    -- Phiếu NK0009
+    -- Phiếu NK0009 - Tổng sản phẩm: 254,850,000 VND
     (5, 'SP0005', 'Honor Magic5 Pro', 'Honor', 15, 16990000, 'CHỜ THANH TOÁN', 9),
 
-    -- Phiếu NK0010
+    -- Phiếu NK0010 - Tổng sản phẩm: 606,250,000 VND
     (14, 'SP0014', 'Lenovo Tab P12 Pro', 'Lenovo', 15, 14490000, 'ĐÃ THANH TOÁN', 10),
     (17, 'SP0017', 'Lenovo ThinkPad X1 Carbon', 'Lenovo', 10, 38990000, 'ĐÃ THANH TOÁN', 10),
 
-    -- Phiếu NK0011
+    -- Phiếu NK0011 - Tổng sản phẩm: 419,850,000 VND
     (7, 'SP0007', 'iPhone 15 Pro Max', 'Apple', 15, 27990000, 'ĐÃ THANH TOÁN', 11),
 
-    -- Phiếu NK0012
+    -- Phiếu NK0012 - Tổng sản phẩm: 239,900,000 VND
     (6, 'SP0006', 'Samsung Galaxy S23 Ultra', 'Samsung', 10, 23990000, 'ĐÃ THANH TOÁN', 12),
 
-    -- Phiếu NK0013
+    -- Phiếu NK0013 - Tổng sản phẩm: 299,650,000 VND
     (3, 'SP0003', 'Oppo Find X5 Pro', 'Oppo', 10, 15990000, 'CHỜ THANH TOÁN', 13),
     (11, 'SP0011', 'Realme Pad 2', 'Realme', 20, 6990000, 'CHỜ THANH TOÁN', 13),
 
-    -- Phiếu NK0014
+    -- Phiếu NK0014 - Tổng sản phẩm: 174,750,000 VND
     (1, 'SP0001', 'Xiaomi Redmi Note 12 Pro', 'Xiaomi', 25, 6990000, 'CHỜ THANH TOÁN', 14),
 
-    -- Phiếu NK0015
+    -- Phiếu NK0015 - Tổng sản phẩm: 503,840,000 VND
     (15, 'SP0015', 'HP Spectre x360', 'HP', 8, 32990000, 'CHỜ THANH TOÁN', 15),
     (16, 'SP0016', 'Acer Predator Helios 300', 'Acer', 8, 29990000, 'CHỜ THANH TOÁN', 15);
 
--- Thêm dữ liệu vào bảng invoice_history (lịch sử thanh toán)
+-- Thêm dữ liệu vào bảng invoice_history (lịch sử thanh toán) - KHÔNG THAY ĐỔI
 INSERT INTO invoice_history (invoice_id, method, amount, paid_at)
 VALUES
-    -- Thanh toán cho phiếu NK0001
-    (1, 'Chuyển khoản', 559800000 * 0.5, '2024-01-05 14:30:00'),
-    (1, 'Chuyển khoản', 559800000 * 0.5, '2024-01-20 10:15:00'),
+    -- Thanh toán cho phiếu NK0001 (Total: 1,222,932,500)
+    (1, 'Chuyển khoản', 611466250, '2024-01-05 14:30:00'),  -- 50%
+    (1, 'Chuyển khoản', 611466250, '2024-01-20 10:15:00'),  -- 50%
 
-    -- Thanh toán cho phiếu NK0002
-    (2, 'Chuyển khoản', 359850000 * 0.7, '2024-01-15 11:45:00'),
-    (2, 'Tiền mặt', 359850000 * 0.3, '2024-01-30 16:20:00'),
+    -- Thanh toán cho phiếu NK0002 (Total: 620,362,500)
+    (2, 'Chuyển khoản', 434253750, '2024-01-15 11:45:00'),  -- 70%
+    (2, 'Tiền mặt', 186108750, '2024-01-30 16:20:00'),      -- 30%
 
-    -- Thanh toán cho phiếu NK0003
-    (3, 'Chuyển khoản', 239850000, '2024-01-25 09:30:00'),
+    -- Thanh toán cho phiếu NK0003 (Total: 259,063,000)
+    (3, 'Chuyển khoản', 259063000, '2024-01-25 09:30:00'),  -- 100%
 
-    -- Thanh toán cho phiếu NK0004
-    (4, 'Chuyển khoản', 209700000 * 0.3, '2024-02-05 13:15:00'),
-    (4, 'Chuyển khoản', 209700000 * 0.7, '2024-02-15 14:40:00'),
+    -- Thanh toán cho phiếu NK0004 (Total: 597,398,000)
+    (4, 'Chuyển khoản', 179219400, '2024-02-05 13:15:00'),  -- 30%
+    (4, 'Chuyển khoản', 418178600, '2024-02-15 14:40:00'),  -- 70%
 
-    -- Thanh toán cho phiếu NK0005
-    (5, 'Tiền mặt', 359800000, '2024-02-15 10:10:00'),
+    -- Thanh toán cho phiếu NK0005 (Total: 383,227,000)
+    (5, 'Tiền mặt', 383227000, '2024-02-15 10:10:00'),      -- 100%
 
-    -- Thanh toán cho phiếu NK0006
-    (6, 'Chuyển khoản', 419900000, '2024-02-28 15:30:00'),
+    -- Thanh toán cho phiếu NK0006 (Total: 451,422,500)
+    (6, 'Chuyển khoản', 451422500, '2024-02-28 15:30:00'),  -- 100%
 
-    -- Thanh toán cho phiếu NK0007
-    (7, 'Chuyển khoản', 563880000 * 0.6, '2024-03-07 09:45:00'),
-    (7, 'Tiền mặt', 563880000 * 0.4, '2024-03-20 14:15:00'),
+    -- Thanh toán cho phiếu NK0007 (Total: 592,119,000)
+    (7, 'Chuyển khoản', 355271400, '2024-03-07 09:45:00'),  -- 60%
+    (7, 'Tiền mặt', 236847600, '2024-03-20 14:15:00'),      -- 40%
 
-    -- Thanh toán cho phiếu NK0008
-    (8, 'Chuyển khoản', 202350000, '2024-03-18 11:20:00'),
+    -- Thanh toán cho phiếu NK0008 (Total: 216,549,500)
+    (8, 'Chuyển khoản', 216549500, '2024-03-18 11:20:00'),  -- 100%
 
-    -- Thanh toán cho phiếu NK0010
-    (10, 'Chuyển khoản', 217350000 * 0.4, '2024-04-06 10:30:00'),
-    (10, 'Chuyển khoản', 217350000 * 0.6, '2024-04-15 16:45:00'),
+    -- Thanh toán cho phiếu NK0010 (Total: 642,665,000)
+    (10, 'Chuyển khoản', 257066000, '2024-04-06 10:30:00'), -- 40%
+    (10, 'Chuyển khoản', 385599000, '2024-04-15 16:45:00'), -- 60%
 
-    -- Thanh toán cho phiếu NK0011
-    (11, 'Tiền mặt', 419850000, '2024-04-12 13:10:00'),
+    -- Thanh toán cho phiếu NK0011 (Total: 440,892,500)
+    (11, 'Tiền mặt', 440892500, '2024-04-12 13:10:00'),     -- 100%
 
-    -- Thanh toán cho phiếu NK0012
-    (12, 'Chuyển khoản', 239900000, '2024-04-18 14:25:00');
-
+    -- Thanh toán cho phiếu NK0012 (Total: 256,728,000)
+    (12, 'Chuyển khoản', 256728000, '2024-04-18 14:25:00'); -- 100%
 -- Thêm 200 đơn hàng mới (HD00201 - HD00400)
 INSERT INTO order_products (order_code, total_price, discount, discount_percent, status, create_at, update_at, customer_id)
 VALUES

@@ -47,8 +47,7 @@
                     </div>
                     <div class="col-md-4">
                         <label for="supplier" class="form-label">Nhà Cung Cấp</label>
-                        <select class="form-select" id="supplier" name="supplier"
-                                onchange="handleSupplierChange(this.value)">
+                        <select class="form-select" id="supplier" name="supplier">
                             <option value="">-- Chọn nhà cung cấp --</option>
                             <option th:each="s : ${suppliers}"
                                     th:value="${s.supplierID}"
@@ -188,59 +187,66 @@
 </div>
 
 <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl"> <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="productModalLabel">Thêm Sản Phẩm Vào Phiếu Nhập</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            <div class="input-group mb-3">
-                <span class="input-group-text"><i class="fas fa-search"></i></span>
-                <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm theo Mã hoặc Tên sản phẩm..." oninput="filterProducts()">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="productModalLabel">Thêm Sản Phẩm Vào Phiếu Nhập</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="table-responsive" style="max-height: 400px; overflow-y: auto;"> <table class="table table-striped table-hover table-sm"> <thead class="table-dark sticky-top"> <tr>
-                <th width="50">
-                    <input type="checkbox" id="selectAll" class="form-check-input" title="Chọn/Bỏ chọn tất cả hiển thị">
-                </th>
-                <th>Mã SP</th>
-                <th>Tên Sản Phẩm</th>
-                <th>Thương Hiệu</th> <th>Đơn Giá Gốc</th>
-                <th>Lượng Tồn</th>
-            </tr>
-            </thead>
-                <tbody id="productList">
-                <tr th:each="p : ${products}" th:id="'modal-product-' + ${p.productID}">
-                    <td class="text-center">
-                        <input type="checkbox"
-                               class="form-check-input product-checkbox"
-                               th:value="${p.productID}"
-                               th:data-code="${p.productCode}"
-                               th:data-name="${p.name}"
-                               th:data-brand="${p.brand?.brandName ?: ''}"
-                               th:data-price="${p.price ?: 0}" /> </td>
-                    <td th:text="${p.productCode}"></td>
-                    <td th:text="${p.name}"></td>
-                    <td th:text="${p.brand?.brandName ?: 'N/A'}"></td> <td class="text-end" th:text="${#numbers.formatDecimal(p.price, 0, 'POINT', 0, 'COMMA')} ?: '0'"></td>
-                    <td class="text-end" th:text="${p.stock ?: 0}"></td>
-                </tr>
-                </tbody>
-            </table>
-                <div id="no-modal-products" class="text-center text-muted mt-3 d-none">
-                    Không tìm thấy sản phẩm nào.
+            <div class="modal-body">
+                <div class="input-group mb-3">
+                    <span class="input-group-text"><i class="fas fa-search"></i></span>
+                    <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm theo Mã hoặc Tên sản phẩm..." oninput="filterProducts()">
+                </div>
+                <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                    <table class="table table-striped table-hover table-sm">
+                        <thead class="table-dark sticky-top">
+                        <tr>
+                            <th width="50">
+                                <input type="checkbox" id="selectAll" class="form-check-input" title="Chọn/Bỏ chọn tất cả hiển thị">
+                            </th>
+                            <th>Mã SP</th>
+                            <th>Tên Sản Phẩm</th>
+                            <th>Thương Hiệu</th>
+                            <th>Đơn Giá Gốc</th>
+                            <th>Lượng Tồn</th>
+                        </tr>
+                        </thead>
+                        <tbody id="productList">
+                        <tr th:each="p : ${products}" th:id="'modal-product-' + ${p.productID}">
+                            <td class="text-center">
+                                <input type="checkbox"
+                                       class="form-check-input product-checkbox"
+                                       th:value="${p.productID}"
+                                       th:data-code="${p.productCode}"
+                                       th:data-name="${p.name}"
+                                       th:data-brand="${p.brand?.brandName ?: ''}"
+                                       th:data-price="${p.price ?: 0}" />
+                            </td>
+                            <td th:text="${p.productCode}"></td>
+                            <td th:text="${p.name}"></td>
+                            <td th:text="${p.brand?.brandName ?: 'N/A'}"></td>
+                            <td class="text-end" th:text="${#numbers.formatDecimal(p.price, 0, 'POINT', 0, 'COMMA')} ?: '0'"></td>
+                            <td class="text-end" th:text="${p.stock ?: 0}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div id="no-modal-products" class="text-center text-muted mt-3 d-none">
+                        Không tìm thấy sản phẩm nào.
+                    </div>
                 </div>
             </div>
+            <div class="modal-footer">
+                <span id="selectedCount" class="me-auto text-muted">0 sản phẩm được chọn</span>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" onclick="addSelectedProducts()">
+                    <i class="fas fa-plus me-1"></i> Thêm vào phiếu
+                </button>
+            </div>
         </div>
-        <div class="modal-footer">
-            <span id="selectedCount" class="me-auto text-muted">0 sản phẩm được chọn</span>
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-            <button type="button" class="btn btn-primary" onclick="addSelectedProducts()">
-                <i class="fas fa-plus me-1"></i> Thêm vào phiếu
-            </button>
-        </div>
-    </div>
     </div>
 </div>
-<!--Modal xác nhận huỷ phiếu -->
+<!-- Modal xác nhận huỷ phiếu -->
 <div class="modal fade" id="cancelConfirmModal" tabindex="-1" aria-labelledby="cancelConfirmModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -284,16 +290,12 @@
         }
 
         window.addEventListener('popstate', function(e) {
-            // Kiểm tra nếu có dữ liệu trong form
             const hasData = sessionStorage.getItem(STORAGE_KEY);
             if (hasData) {
-                // Hiện modal xác nhận
                 const cancelModal = new bootstrap.Modal(document.getElementById('cancelConfirmModal'));
                 cancelModal.show();
-                // Đẩy lại state để ngăn back tiếp
                 window.history.pushState({form: true}, '');
             } else {
-                // Nếu không có dữ liệu, cho phép quay lại trang danh sách
                 window.location.href = '/Admin/ware-houses';
             }
         });
@@ -317,31 +319,22 @@
             fetchNextInvoiceCode();
         }
 
-        /**
-         * Khởi tạo form và các trường dữ liệu
-         */
+        // Khởi tạo form và các trường dữ liệu
         function initializeForm() {
-            // Lấy dữ liệu từ session storage nếu có
             const savedData = sessionStorage.getItem(STORAGE_KEY);
             if (savedData) {
                 const importData = JSON.parse(savedData);
-
-                // Điền thông tin header
                 if (importData.header) {
                     $('#receiptCode').val(importData.header.receiptCode || '');
                     $('#importDate').val(importData.header.importDate || '');
                     $('#supplier').val(importData.header.supplier || '');
                     $('#notes').val(importData.header.notes || '');
                 }
-
-                // Điền thông tin footer
                 if (importData.footer) {
-                    $('#discount').val(importData.footer.discount || '0');
+                    $('#discount').val(formatCurrency(importData.footer.discount) || '0');
                     $('#vat').val(importData.footer.vat || '0');
-                    $('#additionalFees').val(importData.footer.additionalFees || '0');
+                    $('#additionalFees').val(formatCurrency(importData.footer.additionalFees) || '0');
                 }
-
-                // Thêm các sản phẩm
                 if (importData.products && Array.isArray(importData.products)) {
                     productContainer.empty();
                     $.each(importData.products, function(index, productData) {
@@ -351,139 +344,59 @@
             }
         }
 
-        /**
-         * Thiết lập các sự kiện lắng nghe
-         */
+        // Thiết lập các sự kiện lắng nghe
         function setupEventListeners() {
-            // Sự kiện cho các trường thông tin cơ bản
             $('#receiptCode, #notes').on('blur', saveDataToSession);
-
-            // Sự kiện cho ngày nhập - thêm validation
             $('#importDate').on('change', function() {
                 saveDataToSession();
-
-                // Kiểm tra ngày nhập không thể ở tương lai
                 const selectedDate = new Date($(this).val());
                 const today = new Date();
-                // Đặt thời gian về 0 để so sánh chỉ ngày
                 selectedDate.setHours(0, 0, 0, 0);
                 today.setHours(0, 0, 0, 0);
-
                 if (selectedDate > today) {
-                    // Hiển thị lỗi
                     $(this).addClass('is-invalid');
                     if ($('#importDateError').length === 0) {
                         $(this).after('<div id="importDateError" class="error">Ngày nhập không thể ở tương lai</div>');
                     }
                 } else {
-                    // Xóa lỗi
                     $(this).removeClass('is-invalid');
                     $('#importDateError').remove();
                 }
             });
 
-            $('#supplier').on('change', handleSupplierChange);
+            $('#supplier').on('change', function() {
+                handleSupplierChange($(this).val());
+            });
 
-            // Sự kiện cho nút thêm sản phẩm
             $('.add-product-btn').on('click', function(e) {
                 e.preventDefault();
-                // Kiểm tra xem đã chọn nhà cung cấp chưa
                 const supplierId = $('#supplier').val();
                 if (!supplierId) {
-                    // Hiển thị modal thông báo cần chọn nhà cung cấp
-                    if ($('#supplierRequiredModal').length === 0) {
-                        // Nếu chưa có modal, tạo mới
-                        const modalHTML = `
-                    <div class="modal fade" id="supplierRequiredModal" tabindex="-1" aria-labelledby="supplierRequiredModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
-                                <div class="modal-header bg-dark text-white">
-                                    <h5 class="modal-title" id="supplierRequiredModalLabel">Thông báo</h5>
-                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body d-flex align-items-center">
-                                    <div class="me-3 text-dark">
-                                        <i class="material-icons" style="font-size:48px; color:black;">error_outline</i>
-                                    </div>
-                                    <div>
-                                        <p class="mb-0">Vui lòng chọn nhà cung cấp trước khi thêm sản phẩm.</p>
-                                    </div>
-                                </div>
-                                <div class="modal-footer border-0 justify-content-center">
-                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Đã hiểu</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>`;
-
-                        $('body').append(modalHTML);
-                    }
-
                     const supplierRequiredModal = new bootstrap.Modal(document.getElementById('supplierRequiredModal'));
                     supplierRequiredModal.show();
                 } else {
-                    // Mở modal thêm sản phẩm
                     const productModal = new bootstrap.Modal(document.getElementById('productModal'));
                     productModal.show();
                 }
             });
 
-            // Sự kiện cho các trường footer
             $('#discount, #additionalFees').on('blur', function() {
                 formatInputCurrency(this);
                 calculateTotals();
                 saveDataToSession();
             });
 
-            $('#vat').on('input', function() {
-                let value = parseInt($(this).val());
-
-                // Nếu giá trị không phải số hoặc rỗng, đặt về 0
+            $('#vat').on('input blur', function() {
+                let value = parseFloat($(this).val());
                 if (isNaN(value) || $(this).val() === '') {
                     value = 0;
                 }
-
-                // Đảm bảo giá trị là số nguyên
-                value = Math.floor(value);
-
-                // Giới hạn giá trị từ 0 đến 100
-                if (value > 100) {
-                    value = 100;
-                }
-
-                // Cập nhật giá trị vào input
+                value = Math.max(0, Math.min(100, value)); // Giới hạn 0-100
                 $(this).val(value);
-
-                // Tính toán lại tổng
                 calculateTotals();
                 saveDataToSession();
             });
 
-            $('#vat').on('blur', function() {
-                let value = parseInt($(this).val());
-
-                // Nếu giá trị không phải số hoặc rỗng, đặt về 0
-                if (isNaN(value) || $(this).val() === '') {
-                    value = 0;
-                }
-
-                // Đảm bảo giá trị là số nguyên
-                value = Math.floor(value);
-
-                // Giới hạn giá trị từ 0 đến 100
-                if (value > 100) {
-                    value = 100;
-                }
-
-                // Cập nhật giá trị vào input
-                $(this).val(value);
-
-                // Tính toán lại tổng
-                calculateTotals();
-                saveDataToSession();
-            });
-
-            // Sự kiện cho các nút thao tác
             $('#generatePdfOnlyBtn').on('click', function() {
                 if (validateInvoice()) {
                     const modal = new bootstrap.Modal(document.getElementById('saveConfirmModal'));
@@ -498,7 +411,6 @@
                 cancelModal.show();
             });
 
-            // Sự kiện cho modal thêm sản phẩm
             $('#selectAll').on('change', function() {
                 const isChecked = $(this).prop('checked');
                 $('#productList .product-checkbox:visible').prop('checked', isChecked);
@@ -507,14 +419,13 @@
 
             $('#productList').on('change', '.product-checkbox', updateSelectedCount);
         }
+
+        // Kiểm tra hợp lệ phiếu nhập
         function validateInvoice() {
             let isValid = true;
-
-            // Xóa thông báo lỗi cũ
             $('.is-invalid').removeClass('is-invalid');
             $('#importDateError, #supplierError, #productsError').remove();
 
-            // Kiểm tra ngày nhập
             const importDate = $('#importDate').val();
             if (!importDate) {
                 $('#importDate').after('<div id="importDateError" class="error">Ngày nhập không được để trống</div>');
@@ -524,21 +435,18 @@
                 const today = new Date();
                 selectedDate.setHours(0, 0, 0, 0);
                 today.setHours(0, 0, 0, 0);
-
                 if (selectedDate > today) {
                     $('#importDate').after('<div id="importDateError" class="error">Ngày nhập không thể ở tương lai</div>');
                     isValid = false;
                 }
             }
 
-            // Kiểm tra nhà cung cấp
             const supplierId = $('#supplier').val();
             if (!supplierId) {
                 $('#supplier').after('<div id="supplierError" class="error">Nhà cung cấp không được để trống</div>');
                 isValid = false;
             }
 
-            // Kiểm tra có sản phẩm hay không
             if (productContainer.children().length === 0) {
                 $('#no-products-message').removeClass('d-none')
                     .html('<span class="text-danger">Vui lòng thêm ít nhất một sản phẩm</span>');
@@ -550,14 +458,15 @@
             return isValid;
         }
 
-        /**
-         * Thêm sản phẩm vào bảng
-         */
+        // Thêm sản phẩm vào bảng
         function addProductToTable(productData, index) {
             const quantityValue = productData.quantity || 1;
+            // Sử dụng parseFloat để giữ nguyên giá trị số thực
             const priceValue = typeof productData.price === 'string'
-                ? parseInt(productData.price.replace(/[^\d]/g, '')) || 0
-                : productData.price || 0;
+                ? parseFloat(productData.price.replace(/[^\d.]/g, '')) || 0
+                : Number(productData.price) || 0;
+
+            console.log('Adding product:', productData.productId, 'Price:', priceValue);
 
             const row = $('<tr></tr>')
                 .attr('id', 'product-row-' + productData.productId);
@@ -567,49 +476,46 @@
             const formattedRowTotal = formatCurrency(rowTotal);
 
             row.html(`
-        <td class="stt-column">${index + 1}</td>
-        <td>
-            <input type="hidden" name="products[${index}].productId" value="${productData.productId}">
-            <input type="text" class="form-control bg-light form-control-sm" value="${productData.productCode || ''}" readonly title="${productData.productCode || ''}">
-        </td>
-        <td>
-            <input type="text" class="form-control bg-light form-control-sm" value="${productData.productName || ''}" readonly title="${productData.productName || ''}">
-        </td>
-        <td>
-            <input type="text" class="form-control bg-light form-control-sm" value="${productData.brand || ''}" readonly title="${productData.brand || ''}">
-        </td>
-        <td>
-            <input type="number" name="products[${index}].productQuantity" class="form-control quantity-input form-control-sm text-end"
-                   value="${quantityValue}" required min="1" step="1">
-            <span class="text-danger validation-message d-none"></span>
-        </td>
-        <td>
-            <input type="text" name="products[${index}].productPrice" class="form-control price-input form-control-sm text-end"
-                   value="${formattedPrice}">
-            <span class="text-danger validation-message d-none">Giá trị không hợp lệ</span>
-        </td>
-        <td>
-            <input type="text" class="form-control bg-light row-total form-control-sm text-end"
-                   value="${formattedRowTotal}" readonly>
-        </td>
-        <td class="text-center action-column">
-            <button type="button" class="delete-btn" onclick="removeProduct('${productData.productId}')" title="Xóa sản phẩm này">
-                <i class="fas fa-times"></i>
-            </button>
-        </td>
-    `);
+                <td class="stt-column">${index + 1}</td>
+                <td>
+                    <input type="hidden" name="products[${index}].productId" value="${productData.productId}">
+                    <input type="text" class="form-control bg-light form-control-sm" value="${productData.productCode || ''}" readonly title="${productData.productCode || ''}">
+                </td>
+                <td>
+                    <input type="text" class="form-control bg-light form-control-sm" value="${productData.productName || ''}" readonly title="${productData.productName || ''}">
+                </td>
+                <td>
+                    <input type="text" class="form-control bg-light form-control-sm" value="${productData.brand || ''}" readonly title="${productData.brand || ''}">
+                </td>
+                <td>
+                    <input type="number" name="products[${index}].productQuantity" class="form-control quantity-input form-control-sm text-end"
+                           value="${quantityValue}" required min="1" step="1">
+                    <span class="text-danger validation-message d-none"></span>
+                </td>
+                <td>
+                    <input type="text" name="products[${index}].productPrice" class="form-control price-input form-control-sm text-end"
+                           value="${formattedPrice}">
+                    <span class="text-danger validation-message d-none">Giá trị không hợp lệ</span>
+                </td>
+                <td>
+                    <input type="text" class="form-control bg-light row-total form-control-sm text-end"
+                           value="${formattedRowTotal}" readonly>
+                </td>
+                <td class="text-center action-column">
+                    <button type="button" class="delete-btn" onclick="removeProduct('${productData.productId}')" title="Xóa sản phẩm này">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </td>
+            `);
 
             productContainer.append(row);
 
-            // Bắt sự kiện thay đổi giá trị
             row.find('.quantity-input, .price-input').on('input', function() {
                 updateRowTotal($(this));
             });
         }
 
-        /**
-         * Cập nhật tổng tiền của một dòng
-         */
+        // Cập nhật tổng tiền của một dòng
         function updateRowTotal(input) {
             const row = input.closest('tr');
             if (!row) return;
@@ -624,11 +530,12 @@
             let rowHasError = false;
 
             try {
-                const quantityString = quantityInput.val().replace(/[^\d]/g, '');
-                const priceString = priceInput.val().replace(/[^\d-]/g, '');
+                const quantity = parseInt(quantityInput.val()) || 0;
+                // Parse price correctly
+                const priceStr = priceInput.val().replace(/[^\d]/g, '');
+                const price = parseFloat(priceStr) || 0;
 
-                const quantity = parseInt(quantityString);
-                const price = parseInt(priceString);
+                console.log('Updating row total - Quantity:', quantity, 'Price:', price);
 
                 if (isNaN(quantity) || quantity <= 0) {
                     quantityInput.addClass('is-invalid');
@@ -649,7 +556,7 @@
                 }
 
                 if (rowHasError) {
-                    totalField.val(0);
+                    totalField.val(formatCurrency(0));
                 } else {
                     const rowTotal = quantity * price;
                     totalField.val(formatCurrency(rowTotal));
@@ -672,9 +579,7 @@
             }
         }
 
-        /**
-         * Tính toán tổng cộng
-         */
+        // Tính toán tổng cộng
         function calculateTotals() {
             let totalQuantity = 0;
             let totalAmount = 0;
@@ -692,13 +597,8 @@
                 }
 
                 try {
-                    const quantity = parseInt(quantityInput.val().replace(/[^\d]/g, '')) || 0;
-                    const rowTotal = parseInt(totalField.val().replace(/[^\d-,]/g, '').replace(/,/g, '')) || 0;
-
-                    if (quantity < 0 || rowTotal < 0) {
-                        hasRowError = true;
-                        return;
-                    }
+                    const quantity = parseInt(quantityInput.val()) || 0;
+                    const rowTotal = parseFloat(totalField.val().replace(/[^\d]/g, '')) || 0;
 
                     totalQuantity += quantity;
                     totalAmount += rowTotal;
@@ -713,23 +613,21 @@
 
             if (hasRowError) {
                 $('#totalQuantity').text('Lỗi');
-                $('#totalAmount').text('Lỗi');
                 $('#grandTotal').text('Lỗi');
                 return;
             }
 
-            // Tính toán giá trị footer
             try {
                 const discountInput = $('#discount');
                 const vatInput = $('#vat');
                 const additionalFeesInput = $('#additionalFees');
 
-                const discountStr = discountInput.val().replace(/[^\d-,]/g, '').replace(/,/g, '');
-                const additionalFeesStr = additionalFeesInput.val().replace(/[^\d-,]/g, '').replace(/,/g, '');
+                const discountStr = discountInput.val().replace(/[^\d]/g, '');
+                const additionalFeesStr = additionalFeesInput.val().replace(/[^\d]/g, '');
 
-                const discount = parseInt(discountStr) || 0;
+                const discount = parseFloat(discountStr) || 0;
                 const vatPercent = parseFloat(vatInput.val()) || 0;
-                const additionalFees = parseInt(additionalFeesStr) || 0;
+                const additionalFees = parseFloat(additionalFeesStr) || 0;
 
                 let footerHasError = false;
 
@@ -740,7 +638,7 @@
                     discountInput.removeClass('is-invalid');
                 }
 
-                if (vatPercent < 0) {
+                if (vatPercent < 0 || vatPercent > 100) {
                     vatInput.addClass('is-invalid');
                     footerHasError = true;
                 } else {
@@ -759,12 +657,12 @@
                     return;
                 }
 
-                const amountAfterDiscount = totalAmount - discount;
-                const vatAmount = Math.round(amountAfterDiscount * vatPercent / 100);
-                const grandTotal = amountAfterDiscount + vatAmount + additionalFees;
+                // Calculate VAT based on subtotal (totalAmount before discount)
+                const vatAmount = Math.round((totalAmount * vatPercent) / 100);
+                // Grand Total = (Subtotal - Discount + VAT + Additional Fees)
+                const grandTotal = totalAmount - discount + vatAmount + additionalFees;
 
                 $('#totalQuantity').text(totalQuantity.toString());
-                $('#totalAmount').text(formatCurrency(totalAmount));
                 $('#grandTotal').text(formatCurrency(grandTotal < 0 ? 0 : grandTotal));
 
             } catch (error) {
@@ -787,9 +685,9 @@
                     },
                     products: [],
                     footer: {
-                        discount: $('#discount').val().replace(/[^\d-,]/g, '').replace(/,/g, '') || '0',
+                        discount: $('#discount').val().replace(/[^\d]/g, '') || '0',
                         vat: $('#vat').val() || '0',
-                        additionalFees: $('#additionalFees').val().replace(/[^\d-,]/g, '').replace(/,/g, '') || '0',
+                        additionalFees: $('#additionalFees').val().replace(/[^\d]/g, '') || '0',
                     }
                 };
 
@@ -802,17 +700,19 @@
                     const priceInput = $(this).find('.price-input');
 
                     if (productIdInput.length && quantityInput.length && priceInput.length) {
+                        const price = parseFloat(priceInput.val().replace(/[^\d]/g, '')) || 0;
                         importData.products.push({
                             productId: productIdInput.val(),
                             productCode: codeInput.val() || '',
                             productName: nameInput.val() || '',
                             brand: brandInput.val() || '',
-                            quantity: quantityInput.val().replace(/[^\d]/g, '') || '1',
-                            price: priceInput.val().replace(/[^\d-,]/g, '').replace(/,/g, '') || '0'
+                            quantity: quantityInput.val() || '1',
+                            price: price.toString()
                         });
                     }
                 });
 
+                console.log('Saving to session:', importData);
                 sessionStorage.setItem(STORAGE_KEY, JSON.stringify(importData));
             } catch (error) {
                 console.error("Error saving data to session:", error);
@@ -822,10 +722,13 @@
         /**
          * Xử lý khi thay đổi nhà cung cấp
          */
-        function handleSupplierChange() {
+        function handleSupplierChange(supplierId) {
             saveDataToSession();
-            const supplierId = $(this).val();
-            window.location.href = '?supplierId=' + supplierId;
+            if (supplierId) {
+                window.location.href = '/Admin/ware-houses/import?supplierId=' + encodeURIComponent(supplierId);
+            } else {
+                window.location.href = '/Admin/ware-houses/import';
+            }
         }
 
         /**
@@ -844,19 +747,15 @@
          */
         function fetchNextInvoiceCode() {
             const receiptCodeInput = $('#receiptCode');
-
-            // Kiểm tra nếu đã có mã và không phải mặc định thì không cần lấy mã mới
             if (receiptCodeInput.val() && receiptCodeInput.val() !== '') {
                 return;
             }
-
-            // Gọi API để lấy mã tiếp theo
             $.ajax({
                 url: '/api/Admin/invoice/next-code',
                 type: 'GET',
                 success: function(nextCode) {
                     receiptCodeInput.val(nextCode);
-                    saveDataToSession(); // Lưu lại vào session nếu có
+                    saveDataToSession();
                 },
                 error: function(xhr, status, error) {
                     console.error("Không thể lấy mã phiếu tự động: " + error);
@@ -868,26 +767,15 @@
          * Định dạng tiền tệ
          */
         function formatCurrency(input) {
-            // Nếu input là null hoặc undefined, trả về 0
             if (input == null) return '0';
 
-            // Nếu input là chuỗi có dấu phân cách
+            let numValue;
             if (typeof input === 'string') {
-                // Loại bỏ tất cả ký tự không phải số
-                input = input.replace(/[^\d]/g, '');
+                numValue = parseFloat(input.replace(/[^\d]/g, '')) || 0;
+            } else {
+                numValue = Number(input) || 0;
             }
 
-            // Chuyển đổi sang số nguyên
-            const numValue = Number(input);
-
-            // Kiểm tra nếu giá trị quá nhỏ (đã mất số 0)
-            // Sản phẩm điện thoại thường có giá > 1 triệu
-            if (numValue > 0 && numValue < 100000) {
-                // Nhân thêm 1000 để bù lại số 0 bị mất
-                return new Intl.NumberFormat('vi-VN').format(numValue * 1000);
-            }
-
-            // Định dạng với Intl.NumberFormat
             return new Intl.NumberFormat('vi-VN').format(numValue);
         }
 
@@ -895,8 +783,9 @@
          * Định dạng giá trị nhập vào trường tiền tệ
          */
         function formatInputCurrency(input) {
-            const value = $(input).val();
-            const formattedValue = formatCurrency(value);
+            let value = $(input).val().replace(/[^\d]/g, '');
+            const numValue = parseFloat(value) || 0;
+            const formattedValue = formatCurrency(numValue);
             $(input).val(formattedValue);
         }
 
@@ -949,7 +838,7 @@
                     const code = checkbox.data('code') || '';
                     const name = checkbox.data('name') || 'N/A';
                     const brand = checkbox.data('brand') || 'N/A';
-                    const price = checkbox.data('price') || '0';
+                    const price = parseFloat(checkbox.data('price')) || 0;
 
                     const productData = {
                         productId: id,
@@ -959,6 +848,8 @@
                         price: price,
                         quantity: 1
                     };
+
+                    console.log('Selected product:', productData);
 
                     addProductToTable(productData, productContainer.children().length);
                     added = true;
@@ -987,7 +878,6 @@
          */
         window.removeProduct = function(id) {
             const productRow = $('#product-row-' + id);
-
             if (productRow.length) {
                 productRow.remove();
                 reindexProductRows();
@@ -1004,15 +894,9 @@
             productContainer.find('tr').each(function(index) {
                 const row = $(this);
                 row.find('.stt-column').text(index + 1);
-
                 row.find('input[name^="products["]').each(function() {
                     const input = $(this);
                     input.attr('name', input.attr('name').replace(/products\[\d+\]/, `products[${index}]`));
-                });
-
-                row.find('select[name^="products["]').each(function() {
-                    const select = $(this);
-                    select.attr('name', select.attr('name').replace(/products\[\d+\]/, `products[${index}]`));
                 });
             });
         }
@@ -1021,7 +905,6 @@
          * Lưu phiếu nhập
          */
         function saveInvoice() {
-            // Validate phiếu trước khi lưu
             if (!validateInvoice()) {
                 return;
             }
@@ -1033,11 +916,9 @@
             }
 
             try {
-                // Hàm để chuyển đổi giá trị tiền tệ từ chuỗi sang số
                 function parseCurrency(currencyStr) {
                     if (!currencyStr) return 0;
-                    // Loại bỏ tất cả các ký tự không phải số
-                    return parseInt(currencyStr.toString().replace(/[^\d]/g, '')) || 0;
+                    return parseFloat(currencyStr.toString().replace(/[^\d]/g, '')) || 0;
                 }
 
                 const payload = {
@@ -1054,11 +935,11 @@
                         productName: p.productName,
                         brand: p.brand,
                         quantity: parseInt(p.quantity),
-                        price: parseCurrency(p.price)
+                        price: parseFloat(p.price)
                     }))
                 };
 
-                console.log("Sending payload:", JSON.stringify(payload));
+                console.log('Saving invoice payload:', payload);
 
                 $.ajax({
                     url: '/api/Admin/invoice',
@@ -1067,34 +948,22 @@
                     data: JSON.stringify(payload),
                     success: function(response) {
                         sessionStorage.removeItem(STORAGE_KEY);
-
-                        // Chuyển hướng đến trang chi tiết phiếu thay vì trang lịch sử
                         if (response.invoiceId) {
                             window.location.href = "/Admin/ware-houses/invoice_form_warehouses/" + response.invoiceId;
                         } else {
-                            // Phòng trường hợp response không có invoiceId (khả năng nhỏ)
                             window.location.href = "/Admin/ware-houses/history_warehouse";
                         }
                     },
                     error: function(xhr, status, error) {
                         console.error("Error response:", xhr.responseText);
-
                         try {
-                            // Cố gắng parse response để hiển thị lỗi cụ thể từ server
                             const responseObj = JSON.parse(xhr.responseText);
-
-                            // Hiển thị lỗi từ server
-                            if (typeof responseObj === 'object') {
-                                let errorMessage = "Lỗi khi lưu phiếu:\n";
-                                for (const key in responseObj) {
-                                    errorMessage += `- ${responseObj[key]}\n`;
-                                }
-                                alert(errorMessage);
-                            } else {
-                                alert("Lỗi khi lưu phiếu: " + xhr.responseText);
+                            let errorMessage = "Lỗi khi lưu phiếu:\n";
+                            for (const key in responseObj) {
+                                errorMessage += `- ${responseObj[key]}\n`;
                             }
+                            alert(errorMessage);
                         } catch (e) {
-                            // Nếu không parse được, hiển thị thông báo lỗi chung
                             alert("Lỗi khi lưu phiếu: " + xhr.responseText);
                         }
                     }
@@ -1105,80 +974,6 @@
             }
         }
     });
-
-    // Các hàm toàn cục
-    function removeProduct(id) {
-        window.removeProduct(id);
-    }
-
-    function filterProducts() {
-        window.filterProducts();
-    }
-
-    function addSelectedProducts() {
-        window.addSelectedProducts();
-    }
-
-    function formatInputCurrency(input) {
-        const value = $(input).val();
-
-        // Hàm định dạng tiền tệ
-        function formatCurrency(input) {
-            try {
-                if (typeof input === 'number') input = input.toString();
-                input = input.toString().trim();
-
-                // Xử lý số dạng scientific notation (ví dụ: 1e7)
-                if (/e[\+\-]?\d+/i.test(input)) {
-                    const numeric = Number(input);
-                    if (isNaN(numeric)) return 'Không hợp lệ';
-
-                    const extended = Math.floor(numeric);
-                    return extended.toLocaleString('vi-VN');
-                }
-
-                // Xử lý trường hợp chuỗi đã định dạng có dấu phẩy
-                if (input.includes('.') || input.includes(',')) {
-                    // Xóa hết ký tự không phải số và dấu phẩy/chấm
-                    const clean = input.replace(/[^\d.,]/g, '');
-
-                    // Chuyển về định dạng số không có dấu phân cách
-                    const normalized = clean.replace(/[.,]/g, '');
-
-                    if (normalized === '') return '0';
-
-                    const value = parseInt(normalized);
-                    return value.toLocaleString('vi-VN');
-                }
-
-                // Trường hợp số nguyên không có dấu phân cách
-                const clean = input.replace(/[^\d]/g, '');
-                if (clean === '') return '0';
-
-                const value = parseInt(clean);
-                return value.toLocaleString('vi-VN');
-            } catch (err) {
-                console.warn('Lỗi formatCurrency:', err, input);
-                return 'Không hợp lệ';
-            }
-        }
-
-        const formattedValue = formatCurrency(value);
-        $(input).val(formattedValue);
-
-        // Kích hoạt tính toán tổng giá trị
-        try {
-            calculateTotals();
-        } catch (e) {
-            console.error("Error calling calculateTotals:", e);
-        }
-    }
-
-    // Hàm trợ giúp làm sạch dữ liệu draft trước khi submit
-    function clearDraftBeforeSubmit(event) {
-        // Xóa dữ liệu trong sessionStorage
-        sessionStorage.removeItem('warehouseImportData');
-    }
 </script>
 
 </body>

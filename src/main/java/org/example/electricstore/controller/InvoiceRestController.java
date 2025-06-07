@@ -55,7 +55,6 @@ public class InvoiceRestController {
         try {
             // Kiểm tra và thiết lập nhà cung cấp
             if (invoice.getSupplier() == null && invoice.getSupplierId() != null) {
-                // Create a reference Supplier with just the ID
                 Supplier supplier = new Supplier();
                 supplier.setSupplierID(invoice.getSupplierId());
                 invoice.setSupplier(supplier);
@@ -64,29 +63,38 @@ public class InvoiceRestController {
             // Validate phiếu nhập kho trước khi lưu
             invoiceService.validateInvoice(invoice);
 
-            invoiceRepo.save(invoice); // Save invoice to get ID
-
+            // Thiết lập mối quan hệ hai chiều giữa Invoice và InvoiceItem
             List<InvoiceItem> items = invoice.getProducts();
             if (items != null) {
                 for (InvoiceItem item : items) {
-                    item.setInvoice(invoice); // Set back invoice after getting ID
-
-                    // Tăng số lượng tồn kho cho mỗi sản phẩm
-                    updateProductStock(item.getProductId().intValue(), (int)item.getQuantity());
+                    item.setInvoice(invoice); // Đảm bảo mỗi InvoiceItem liên kết với Invoice
                 }
-                invoiceItemRepo.saveAll(items);
             }
 
-            // Trả về thông tin phiếu đã tạo bao gồm ID
+            // Tính totalPrice trước khi lưu
+            invoice.calculateTotalPrice();
+            System.out.println("Before saving: totalPrice = " + invoice.getTotalPrice()); // Debug
+
+            // Lưu Invoice (bao gồm các InvoiceItem nhờ cascade)
+            Invoice savedInvoice = invoiceRepo.save(invoice);
+            System.out.println("After saving: totalPrice = " + savedInvoice.getTotalPrice()); // Debug
+
+            // Cập nhật tồn kho
+            if (items != null) {
+                for (InvoiceItem item : items) {
+                    updateProductStock(item.getProductId().intValue(), (int)item.getQuantity());
+                }
+            }
+
+            // Trả về thông tin phiếu đã tạo
             Map<String, Object> response = new HashMap<>();
             response.put("message", "Lưu hóa đơn thành công!");
-            response.put("invoiceId", invoice.getId());
+            response.put("invoiceId", savedInvoice.getId());
+            response.put("totalPrice", savedInvoice.getTotalPrice()); // Debug
 
             return ResponseEntity.ok(response);
         } catch (InvoiceException ex) {
-            // Phần xử lý lỗi không thay đổi
             Map<String, String> error = new HashMap<>();
-
             switch (ex.getErrorCode()) {
                 case FUTURE_IMPORT_DATE:
                     error.put("importDate", ex.getMessage());
@@ -97,7 +105,6 @@ public class InvoiceRestController {
                 default:
                     error.put("globalError", ex.getMessage());
             }
-
             return ResponseEntity.badRequest().body(error);
         } catch (Exception e) {
             e.printStackTrace();
@@ -107,7 +114,6 @@ public class InvoiceRestController {
     }
 
     @PostMapping("/cancel")
-    @ResponseBody
     public ResponseEntity<String> cancelInvoice(
             @RequestParam Integer invoiceId,
             @RequestParam String reason) {
@@ -115,24 +121,15 @@ public class InvoiceRestController {
             Invoice invoice = invoiceRepo.findByIdWithProducts(invoiceId)
                     .orElseThrow(() -> new RuntimeException("Không tìm thấy phiếu nhập"));
 
-            // Lưu lý do hủy phiếu
             invoice.setCancelReason(reason);
 
-            // Trước tiên, giảm số lượng tồn kho cho tất cả sản phẩm
             for (InvoiceItem item : invoice.getProducts()) {
-                // Kiểm tra nếu trạng thái hiện tại không phải "ĐÃ HỦY"
                 if (!"ĐÃ HỦY".equals(item.getPaymentStatus())) {
-                    // Giảm số lượng tồn kho
                     updateProductStock(item.getProductId().intValue(), -(int)item.getQuantity());
+                    item.setPaymentStatus("ĐÃ HỦY");
                 }
             }
 
-            // Sau đó, mới cập nhật trạng thái
-            for (InvoiceItem item : invoice.getProducts()) {
-                item.setPaymentStatus("ĐÃ HỦY");
-            }
-
-            // Lưu những thay đổi vào cơ sở dữ liệu
             invoiceRepo.save(invoice);
 
             return ResponseEntity.ok("Đã hủy phiếu nhập thành công.");
@@ -142,23 +139,12 @@ public class InvoiceRestController {
                     .body("Lỗi khi hủy phiếu nhập: " + e.getMessage());
         }
     }
+
     private void updateProductStock(int productId, int quantity) {
         Product product = productService.findById(productId);
         if (product != null) {
-            // Lấy số lượng tồn kho hiện tại
-            Integer currentStock = product.getStock();
-            if (currentStock == null) {
-                currentStock = 0;
-            }
-
-            // Tính toán số lượng mới
-            int newStock = currentStock + quantity;
-            // Đảm bảo tồn kho không âm
-            if (newStock < 0) {
-                newStock = 0;
-            }
-
-            // Cập nhật tồn kho
+            Integer currentStock = product.getStock() != null ? product.getStock() : 0;
+            int newStock = Math.max(0, currentStock + quantity);
             product.setStock(newStock);
             productService.saveProduct(product);
         }
@@ -181,17 +167,13 @@ public class InvoiceRestController {
         }
     }
 
-    // API endpoint để xử lý thanh toán
     @PostMapping("/payment-process")
     public ResponseEntity<?> processPayment(
             @RequestParam Integer invoiceId,
             @RequestParam String method,
             @RequestParam Double amount) {
-
         try {
-            // Tìm invoice theo ID
             Optional<Invoice> invoiceOpt = invoiceRepo.findByIdWithProducts(invoiceId);
-
             if (invoiceOpt.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body("Không tìm thấy phiếu nhập với ID: " + invoiceId);
@@ -199,61 +181,44 @@ public class InvoiceRestController {
 
             Invoice invoice = invoiceOpt.get();
 
-            // Tính tổng tiền cần thanh toán
-            double totalAmount = 0;
-            for (InvoiceItem item : invoice.getProducts()) {
-                totalAmount += item.getQuantity() * item.getPrice();
-            }
+            // Ensure totalPrice is calculated
+            invoice.calculateTotalPrice();
+            invoiceRepo.save(invoice); // Save to update totalPrice
 
-            // Trừ giảm giá và cộng phí khác
-            totalAmount -= invoice.getDiscount();
-            totalAmount += invoice.getAdditionalFees();
-
-            // Tính tổng tiền đã thanh toán từ lịch sử
+            double totalAmount = invoice.getTotalPrice();
             double previouslyPaid = paymentHistoryRepository.sumAmountByInvoiceId(invoiceId);
-
-            // Tính toán số tiền còn nợ
             double amountDue = totalAmount - previouslyPaid;
-
-            // Số tiền đang thanh toán
             double currentPaymentAmount = amount;
 
-            // Lưu lịch sử thanh toán
+            // Validate payment amount
+            if (currentPaymentAmount <= 0 || currentPaymentAmount > amountDue) {
+                return ResponseEntity.badRequest()
+                        .body("Số tiền thanh toán không hợp lệ: " + currentPaymentAmount);
+            }
+
+            // Save payment history
             PaymentHistory paymentHistory = PaymentHistory.builder()
                     .invoiceId(invoiceId)
                     .amount(currentPaymentAmount)
                     .method(getPaymentMethodText(method))
                     .paidAt(LocalDateTime.now())
                     .build();
-
             paymentHistoryRepository.save(paymentHistory);
 
-            // Tổng tiền đã thanh toán sau đợt này
+            // Update payment status
             double totalPaid = previouslyPaid + currentPaymentAmount;
-
-            // Cập nhật trạng thái thanh toán
-            System.out.println("Total Amount: " + totalAmount);
-            System.out.println("Total Paid: " + totalPaid);
-
+            String newStatus;
             if (totalPaid >= totalAmount) {
-                System.out.println("Setting status to ĐÃ THANH TOÁN");
-                for (InvoiceItem item : invoice.getProducts()) {
-                    item.setPaymentStatus("ĐÃ THANH TOÁN");
-                }
+                newStatus = "ĐÃ THANH TOÁN";
             } else if (totalPaid > 0) {
-                System.out.println("Setting status to ĐANG TIẾN HÀNH");
-                // Nếu đã thanh toán một phần
-                for (InvoiceItem item : invoice.getProducts()) {
-                    item.setPaymentStatus("ĐANG TIẾN HÀNH");
-                }
+                newStatus = "ĐANG TIẾN HÀNH";
             } else {
-                System.out.println("Setting status to CHỜ THANH TOÁN");
-                for (InvoiceItem item : invoice.getProducts()) {
-                    item.setPaymentStatus("CHỜ THANH TOÁN");
-                }
+                newStatus = "CHỜ THANH TOÁN";
             }
 
-            // Lưu invoice sau khi cập nhật
+            for (InvoiceItem item : invoice.getProducts()) {
+                item.setPaymentStatus(newStatus);
+            }
             invoiceRepo.save(invoice);
 
             Map<String, Object> response = new HashMap<>();
@@ -262,10 +227,9 @@ public class InvoiceRestController {
             response.put("totalAmount", totalAmount);
             response.put("totalPaid", totalPaid);
             response.put("amountDue", Math.max(0, amountDue - currentPaymentAmount));
-            response.put("status", invoice.getProducts().get(0).getPaymentStatus());
+            response.put("status", newStatus);
 
             return ResponseEntity.ok(response);
-
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -273,7 +237,6 @@ public class InvoiceRestController {
         }
     }
 
-    // API endpoint để lấy lịch sử thanh toán
     @GetMapping("/payment-history")
     public ResponseEntity<?> getPaymentHistory(@RequestParam Integer invoiceId) {
         try {
@@ -288,46 +251,31 @@ public class InvoiceRestController {
                     .body("Lỗi khi lấy dữ liệu lịch sử thanh toán");
         }
     }
+
     private String getPaymentMethodText(String method) {
         switch (method) {
-            case "cash":
-                return "Tiền mặt";
-            case "bank":
-                return "Chuyển khoản";
-            case "card":
-                return "Quẹt thẻ";
-            default:
-                return "Không xác định";
+            case "cash": return "Tiền mặt";
+            case "bank": return "Chuyển khoản";
+            case "card": return "Quẹt thẻ";
+            default: return "Không xác định";
         }
     }
 
-
     @GetMapping("/next-code")
-    @ResponseBody
     public String getNextInvoiceCode() {
         return invoiceService.getNextInvoiceCode();
     }
 
     @GetMapping("/create-import")
     public String showCreateImportForm(Model model, @RequestParam(required = false) Integer supplierId) {
-        // Lấy mã phiếu nhập tự động tăng
         String nextReceiptCode = invoiceService.getNextInvoiceCode();
-
-        // Thêm vào model
         model.addAttribute("receiptCode", nextReceiptCode);
-
-        // Thêm ngày hiện tại làm mặc định
         model.addAttribute("importDate", LocalDate.now());
-
-        // Lấy danh sách nhà cung cấp và sản phẩm (code hiện có)
         model.addAttribute("suppliers", supplierService.getAllSuppliers());
         model.addAttribute("products", productService.getAllProducts());
-
-        // Lưu supplier đã chọn (nếu có)
         if (supplierId != null) {
             model.addAttribute("selectedSupplier", supplierId);
         }
-
         return "admin/warehouse/createImport";
     }
 }

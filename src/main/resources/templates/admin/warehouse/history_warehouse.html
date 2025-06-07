@@ -96,7 +96,7 @@
                         <td th:text="${item.invoice.receiptCode}"></td>
                         <td th:text="${#temporals.format(item.invoice.importDate, 'dd/MM/yyyy')}"></td>
                         <td th:text="${item.invoice.supplier != null ? item.invoice.supplier.supplierName : (item.supplierName != null ? item.supplierName : 'Không xác định')}"></td>
-                        <td th:text="${#numbers.formatDecimal(item.total, 1, 'POINT', 0, 'POINT')}"></td>
+                        <td th:text="${#numbers.formatDecimal(item.getTotalPrice(), 1, 'COMMA', 0, 'POINT')}"></td>
                         <td>
                             <span class="badge px-2 py-2" style="min-width: 130px"
                                   th:classappend="

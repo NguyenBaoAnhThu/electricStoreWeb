@@ -194,7 +194,8 @@ public class PDFImportService {
                 addTableCell(productTable, product.getProductCode(), vietnameseFont, TextAlignment.LEFT);
                 addTableCell(productTable, product.getProductName(), vietnameseFont, TextAlignment.LEFT);
                 addTableCell(productTable, product.getBrand(), vietnameseFont, TextAlignment.LEFT);
-                addTableCell(productTable, String.valueOf(product.getQuantity()), vietnameseFont, TextAlignment.CENTER);
+                // Sửa ở đây: chuyển số lượng thành integer để loại bỏ .0
+                addTableCell(productTable, String.valueOf((int)product.getQuantity()), vietnameseFont, TextAlignment.CENTER);
                 addTableCell(productTable, formatCurrency(product.getPrice()), vietnameseFont, TextAlignment.RIGHT);
                 addTableCell(productTable, formatCurrency(product.getTotal()), vietnameseFont, TextAlignment.RIGHT);
             }
@@ -206,7 +207,7 @@ public class PDFImportService {
             summaryTable.setWidth(UnitValue.createPercentValue(100));
             summaryTable.setMarginTop(10);
 
-            // Tổng số lượng
+            // Tổng số lượng - Sửa ở đây: chuyển thành int để loại bỏ .0
             Cell quantityLabelCell = new Cell();
             quantityLabelCell.setBorder(Border.NO_BORDER);
             quantityLabelCell.add(new Paragraph("Tổng số lượng nhập:"))
@@ -217,7 +218,7 @@ public class PDFImportService {
 
             Cell quantityValueCell = new Cell();
             quantityValueCell.setBorder(Border.NO_BORDER);
-            quantityValueCell.add(new Paragraph(String.valueOf(importDTO.getTotalQuantity())))
+            quantityValueCell.add(new Paragraph(String.valueOf((int)importDTO.getTotalQuantity())))
                     .setFont(vietnameseFont)
                     .setFontSize(12)
                     .setTextAlignment(TextAlignment.RIGHT);
@@ -226,7 +227,7 @@ public class PDFImportService {
             // Tổng tiền hàng
             Cell subtotalLabelCell = new Cell();
             subtotalLabelCell.setBorder(Border.NO_BORDER);
-            subtotalLabelCell.add(new Paragraph("Tổng tiền hàng:"))
+            subtotalLabelCell.add(new Paragraph("Tổng tiền hàng (VNĐ):"))
                     .setFont(vietnameseFont)
                     .setFontSize(12)
                     .setTextAlignment(TextAlignment.RIGHT);
@@ -244,7 +245,7 @@ public class PDFImportService {
             if (importDTO.getDiscount() > 0) {
                 Cell discountLabelCell = new Cell();
                 discountLabelCell.setBorder(Border.NO_BORDER);
-                discountLabelCell.add(new Paragraph("Chiết khấu:"))
+                discountLabelCell.add(new Paragraph("Chiết khấu (VNĐ):"))
                         .setFont(vietnameseFont)
                         .setFontSize(12)
                         .setTextAlignment(TextAlignment.RIGHT);
@@ -269,10 +270,8 @@ public class PDFImportService {
                         .setTextAlignment(TextAlignment.RIGHT);
                 summaryTable.addCell(vatLabelCell);
 
-                // Tính VAT trên số tiền sau khi giảm giá
-                double amountAfterDiscount = importDTO.getTotalAmount() - importDTO.getDiscount();
                 // Làm tròn để chỉ lấy số nguyên
-                long vatAmount = Math.round(amountAfterDiscount * importDTO.getVat() / 100);
+                long vatAmount = Math.round(importDTO.getTotalAmount() * importDTO.getVat() / 100);
 
                 Cell vatValueCell = new Cell();
                 vatValueCell.setBorder(Border.NO_BORDER);
@@ -287,7 +286,7 @@ public class PDFImportService {
             if (importDTO.getAdditionalFees() > 0) {
                 Cell feesLabelCell = new Cell();
                 feesLabelCell.setBorder(Border.NO_BORDER);
-                feesLabelCell.add(new Paragraph("Chi phí khác:"))
+                feesLabelCell.add(new Paragraph("Chi phí khác (VNĐ) :"))
                         .setFont(vietnameseFont)
                         .setFontSize(12)
                         .setTextAlignment(TextAlignment.RIGHT);
@@ -314,7 +313,7 @@ public class PDFImportService {
             // Tổng giá trị nhập
             Cell totalLabelCell = new Cell();
             totalLabelCell.setBorder(Border.NO_BORDER);
-            totalLabelCell.add(new Paragraph("TỔNG GIÁ TRỊ NHẬP:"))
+            totalLabelCell.add(new Paragraph("TỔNG GIÁ TRỊ NHẬP (VNĐ) :"))
                     .setFont(vietnameseBoldFont)
                     .setFontSize(14)
                     .setTextAlignment(TextAlignment.RIGHT);

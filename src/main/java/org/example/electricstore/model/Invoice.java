@@ -39,10 +39,13 @@ public class Invoice {
     private double discount;
 
     @Column
-    private double vat;
+    private double vat; // Stored as a percentage (e.g., 10.0 for 10%)
 
     @Column(name = "additional_fees")
-    private long additionalFees;
+    private double additionalFees; // Changed to double for consistency with other monetary fields
+
+    @Column(name = "total_price")
+    private double totalPrice;
 
     @Column(name = "cancel_reason", length = 255)
     private String cancelReason;
@@ -58,7 +61,27 @@ public class Invoice {
         return supplierId != null ? supplierId : (supplier != null ? supplier.getSupplierID() : null);
     }
 
-    public void setSupplierId(Integer supplierId) {
-        this.supplierId = supplierId;
+    // Phương thức tính totalPrice theo công thức: (tổng quantity * price) - discount + VAT (trước discount) + additionalFees
+    public void calculateTotalPrice() {
+        if (products == null || products.isEmpty()) {
+            this.totalPrice = 0.0;
+            return;
+        }
+
+        // Tính tổng giá trị sản phẩm (quantity * price)
+        double productTotal = products.stream()
+                .mapToDouble(item -> item.getQuantity() * item.getPrice())
+                .sum();
+
+        // Tính VAT dựa trên tổng giá trị sản phẩm trước khi trừ discount
+        double vatAmount = (productTotal * vat) / 100; // Convert percentage to decimal
+
+        // Tính totalPrice: (tổng giá trị sản phẩm) - discount + VAT + additionalFees
+        this.totalPrice = productTotal - discount + vatAmount + additionalFees;
+
+        // Ensure totalPrice is not negative
+        if (this.totalPrice < 0) {
+            this.totalPrice = 0.0;
+        }
     }
 }

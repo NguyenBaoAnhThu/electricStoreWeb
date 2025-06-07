@@ -10,10 +10,9 @@ import org.example.electricstore.model.Invoice;
 @NoArgsConstructor
 public class InvoiceDTO {
     private Invoice invoice;
-    private double total;
     private String paymentStatus;
 
-    // Thêm phương thức trợ giúp để lấy tên nhà cung cấp
+    // Phương thức trợ giúp để lấy tên nhà cung cấp
     public String getSupplierName() {
         if (invoice != null && invoice.getSupplier() != null) {
             return invoice.getSupplier().getSupplierName();
@@ -21,11 +20,8 @@ public class InvoiceDTO {
         return "N/A";
     }
 
-    // Thêm phương thức trợ giúp để lấy mã nhà cung cấp
-    public String getSupplierCode() {
-        if (invoice != null && invoice.getSupplier() != null) {
-            return invoice.getSupplier().getSupplierCode();
-        }
-        return "N/A";
+    // Phương thức trợ giúp để lấy totalPrice từ Invoice
+    public double getTotalPrice() {
+        return invoice != null ? invoice.getTotalPrice() : 0.0;
     }
 }

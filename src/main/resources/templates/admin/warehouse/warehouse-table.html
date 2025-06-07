@@ -137,14 +137,14 @@
                     <td th:text="${#temporals.format(item.importDate, 'dd/MM/yyyy')}"></td>
                     <td class="text-center">
                         <!-- CÒN HÀNG - màu xanh lá -->
-                        <span th:if="${item.product != null && item.product.stock > 30}"
+                        <span th:if="${item.product != null && item.product.stock > 5}"
                               class="badge status-badge px-2 py-2 text-uppercase bg-success"
                               style="min-width: 120px; display: inline-block; text-align: center;">
                             CÒN HÀNG
                         </span>
 
                         <!-- SẮP HẾT - màu cam -->
-                        <span th:if="${item.product != null && item.product.stock > 0 && item.product.stock <= 30}"
+                        <span th:if="${item.product != null && item.product.stock > 0 && item.product.stock <= 5}"
                               class="badge status-badge px-2 py-2 text-uppercase bg-warning text-dark"
                               style="min-width: 120px; display: inline-block; text-align: center;">
                             SẮP HẾT

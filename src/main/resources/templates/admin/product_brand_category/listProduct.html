@@ -123,7 +123,8 @@
                                     <span th:text="${product.productDetail?.rom ?: 'N/A'}"></span> |
                                     <span th:text="${product.productDetail?.ram ?: 'N/A'}"></span>
                                 </small>
-                            </td>                      <td th:text="${product.formattedPrice != null ? product.formattedPrice.replace(' VND', '').replace(',', '.') : ''}"></td>
+                            </td>
+                            <td th:text="${product.formattedPrice != null ? product.formattedPrice.replace(' VND', '').replace(',', '.') : ''}"></td>
                             <td th:text="${product.category.categoryName}"></td>
                             <td th:text="${product.brand.brandName}"></td>
                             <td th:text="${product.supplier != null ? product.supplier.supplierName : 'Không có nhà cung cấp'}"></td>

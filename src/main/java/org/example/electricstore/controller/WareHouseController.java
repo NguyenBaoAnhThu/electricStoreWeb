@@ -54,48 +54,41 @@ public class WareHouseController {
             @RequestParam(name = "page", required = false, defaultValue = "1") int page,
             @RequestParam(name = "size", required = false, defaultValue = "10") int size) {
 
-        // Xử lý các tham số tìm kiếm
         String nameFilter = productName != null ? productName.trim() : "";
         String codeFilter = productCode != null ? productCode.trim() : "";
         String brandFilter = brand != null ? brand.trim() : "";
 
-        // Tạo Pageable với trang bắt đầu từ 0 (page-1) và sắp xếp theo mã sản phẩm
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by("product.productCode"));
-
-        // Gọi service để tìm kiếm warehouse
         Page<WareHouse> wareHousePage = wareHouseService.searchWareHouses(
                 importDate, brandFilter, statusStock, codeFilter, nameFilter, pageable
         );
 
-        // Lấy danh sách suppliers để hiển thị trong dropdown (nếu cần)
         List<Supplier> suppliers = supplierRepository.findAll();
 
-        // Chuẩn bị ModelAndView
         ModelAndView modelAndView = new ModelAndView("admin/warehouse/warehouse-table");
-
-        // Thêm dữ liệu vào model
         modelAndView.addObject("wareHousePage", wareHousePage);
         modelAndView.addObject("wareHouses", wareHousePage.getContent());
-
-        // Trả lại các tham số tìm kiếm để giữ form state
         modelAndView.addObject("importDate", importDate);
         modelAndView.addObject("brand", brandFilter);
         modelAndView.addObject("statusStock", statusStock);
         modelAndView.addObject("productCode", codeFilter);
         modelAndView.addObject("productName", nameFilter);
-
-        // Thông tin phân trang
         modelAndView.addObject("page", page);
         modelAndView.addObject("size", size);
         modelAndView.addObject("totalPages", wareHousePage.getTotalPages());
         modelAndView.addObject("currentPage", page);
-
-        // Thêm danh sách suppliers
         modelAndView.addObject("suppliers", suppliers);
 
         return modelAndView;
     }
-
+    @GetMapping("/Admin/ware-houses/invoice_form_warehouses/{id}")
+    public String showInvoiceDetails(@PathVariable("id") Integer invoiceId, Model model) {
+        Invoice invoice = invoiceRepository.findById(invoiceId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid invoice ID: " + invoiceId));
+        invoice.calculateTotalPrice(); // Ensure totalPrice is calculated
+        model.addAttribute("invoice", invoice);
+        return "admin/warehouse/invoice_form_warehouses";
+    }
     @GetMapping("/history_warehouse")
     @Transactional(readOnly = true)
     public String showHistoryWarehouse(
@@ -108,13 +101,8 @@ public class WareHouseController {
             @RequestParam(required = false) String filterToDate,
             Model model) {
 
-        // Tạo đối tượng Pageable với thông tin trang và kích thước
         Pageable pageable = PageRequest.of(page, size);
-
-        // Lấy danh sách invoice (không phải invoice item)
         Page<Invoice> invoicePage;
-
-        // Nếu có tiêu chí lọc thì thực hiện tìm kiếm
         boolean hasFilters = StringUtils.hasText(filterCode) || StringUtils.hasText(filterBrand) ||
                 StringUtils.hasText(filterUser) || StringUtils.hasText(filterFromDate) ||
                 StringUtils.hasText(filterToDate);
@@ -124,36 +112,23 @@ public class WareHouseController {
                     filterCode, filterBrand, filterUser,
                     filterFromDate, filterToDate, pageable);
         } else {
-            // Nếu không có tiêu chí lọc, lấy tất cả
             invoicePage = invoiceRepository.findAll(pageable);
         }
 
-        // Kiểm tra nếu không có kết quả và có áp dụng bộ lọc
         if (invoicePage.isEmpty() && hasFilters) {
             model.addAttribute("noResultMessage", "Không tìm thấy kết quả phù hợp với dữ liệu tìm kiếm.");
         }
 
-        // Thêm thông tin tính toán tổng tiền cho mỗi hóa đơn
+        // Chuyển dữ liệu sang InvoiceDTO, sử dụng totalPrice từ Invoice
         List<InvoiceDTO> invoiceDTOs = invoicePage.getContent().stream()
                 .map(invoice -> {
                     InvoiceDTO dto = new InvoiceDTO();
                     dto.setInvoice(invoice);
-
-                    // Tính tổng tiền từ tất cả các mục trong invoice
-                    double total = invoice.getProducts().stream()
-                            .mapToDouble(item -> item.getQuantity() * item.getPrice())
-                            .sum();
-
-                    // Điều chỉnh thêm/bớt theo chiết khấu và phí khác
-                    total = total - invoice.getDiscount() + invoice.getAdditionalFees();
-
-                    dto.setTotal(total);
-
-                    // Lấy trạng thái từ invoice item đầu tiên (giả sử tất cả các item trong cùng invoice có cùng trạng thái)
+                    // Gọi calculateTotalPrice để đảm bảo totalPrice được cập nhật
+                    invoice.calculateTotalPrice();
                     if (!invoice.getProducts().isEmpty()) {
                         dto.setPaymentStatus(invoice.getProducts().get(0).getPaymentStatus());
                     }
-
                     return dto;
                 })
                 .collect(Collectors.toList());
@@ -165,6 +140,7 @@ public class WareHouseController {
 
         return "admin/warehouse/history_warehouse";
     }
+
     @GetMapping("/import")
     public String showImport(@RequestParam(value = "supplierId", required = false) Integer supplierId, Model model) {
         List<Supplier> suppliers = supplierRepository.findAll();
@@ -176,15 +152,11 @@ public class WareHouseController {
             products = productRepository.findAll();
         }
 
-        // Gán giá từ WareHouse (mới nhất hoặc logic phù hợp)
         for (Product product : products) {
-            // Tìm danh sách kho theo productId
             List<WareHouse> relatedWarehouses = wareHouseRepository.findByProductIdOrderByImportDateDesc(product.getProductID());
-
-            // Gán giá nếu có warehouse
             if (!relatedWarehouses.isEmpty()) {
-                WareHouse latest = relatedWarehouses.get(0); // Lấy phiếu nhập gần nhất
-                product.setPrice(latest.getPrice());          // Gán vào Product để hiển thị ở view
+                WareHouse latest = relatedWarehouses.get(0);
+                product.setPrice(latest.getPrice());
             }
         }
         model.addAttribute("suppliers", suppliers);
