@@ -1,9 +1,7 @@
-// Toggle sidebar
 document.getElementById('sidebar-toggle').addEventListener('click', () => {
     document.body.classList.toggle('sidebar-collapsed');
 });
 
-// Toggle submenu
 document.querySelectorAll('.treeview > a').forEach(item => {
     item.addEventListener('click', event => {
         event.preventDefault();
@@ -11,9 +9,6 @@ document.querySelectorAll('.treeview > a').forEach(item => {
         parent.classList.toggle('open');
     });
 });
-function confirmDelete() {
-    return confirm('Bạn có chắc chắn muốn xóa không?');
-}
 
 document.addEventListener("DOMContentLoaded", function() {
     const userProfile = document.querySelector('.user-profile');
@@ -33,7 +28,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    // Sidebar Toggle
     const sidebarToggle = document.getElementById("sidebar-toggle");
     if (sidebarToggle) {
         sidebarToggle.addEventListener("click", function() {

@@ -79,11 +79,9 @@
             </table>
         </div>
 
-        <!-- Pagination Section -->
         <div class="d-flex justify-content-end align-items-center mt-4">
             <nav aria-label="Page navigation">
                 <ul class="pagination m-0">
-                    <!-- Nút trang đầu tiên -->
                     <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
                         <a class="page-link"
                            th:href="@{/Admin/order/showListCustomer(page=1)}"
@@ -92,7 +90,6 @@
                         </a>
                     </li>
 
-                    <!-- Nút lùi về trang trước -->
                     <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
                         <a class="page-link"
                            th:href="@{/Admin/order/showListCustomer(page=${currentPage - 1})}"
@@ -107,7 +104,6 @@
                         </span>
                     </li>
 
-                    <!-- Nút chuyển sang trang sau -->
                     <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
                         <a class="page-link"
                            th:href="@{/Admin/order/showListCustomer(page=${currentPage + 1})}"
@@ -116,7 +112,6 @@
                         </a>
                     </li>
 
-                    <!-- Nút trang cuối cùng -->
                     <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
                         <a class="page-link"
                            th:href="@{/Admin/order/showListCustomer(page=${totalPages})}"
@@ -153,14 +148,8 @@
                     email: this.getAttribute("data-email"),
                     birthdate: this.getAttribute("data-birthdate"),
                 };
-
-                // Log để kiểm tra
                 console.log("Selected customer:", customer);
-
-                // Lưu vào localStorage
                 localStorage.setItem("selectedCustomer", JSON.stringify(customer));
-
-                // Chuyển hướng về trang tạo đơn hàng
                 window.location.href = "/Admin/order/add";
             });
         });

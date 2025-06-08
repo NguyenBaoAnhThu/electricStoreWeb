@@ -1,5 +1,4 @@
 $(document).ready(function() {
-    // Khi mở modal thêm thương hiệu
     $('#addBrandModal').on('show.bs.modal', function() {
         $.ajax({
             url: '/Admin/brand-manager/generate-code',
@@ -8,8 +7,6 @@ $(document).ready(function() {
                 $('#brandCode').val(response);
             }
         });
-
-        // Reset form và xóa thông báo lỗi
         $('#addBrandForm')[0].reset();
         $('.error').text('');
     });
@@ -18,10 +15,8 @@ $(document).ready(function() {
     $('#addBrandForm').submit(function(event) {
         event.preventDefault();
 
-        // Validate trước khi gửi form
         let hasError = false;
 
-        // Kiểm tra trường tên thương hiệu
         const brandName = $('#brandName').val().trim();
         if (!brandName) {
             $('#brandNameError').text('Vui lòng không để trống tên thương hiệu');
@@ -34,7 +29,6 @@ $(document).ready(function() {
             hasError = true;
         }
 
-        // Kiểm tra trường xuất xứ
         const country = $('#country').val().trim();
         if (!country) {
             $('#countryError').text('Vui lòng không để trống xuất xứ');
@@ -46,24 +40,19 @@ $(document).ready(function() {
             $('#countryError').text('Tên quốc gia không được chứa ký tự đặc biệt');
             hasError = true;
         }
-
-        // Nếu có lỗi, dừng xử lý
         if (hasError) {
             return;
         }
 
-        // Lấy dữ liệu từ form
         let brandData = {
             brandCode: $('#brandCode').val(),
             brandName: brandName,
             country: country
         };
 
-        // Lấy CSRF token nếu có
         const token = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
         const header = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
 
-        // Cấu hình header
         const headers = {
             'Content-Type': 'application/json'
         };
@@ -72,7 +61,6 @@ $(document).ready(function() {
             headers[header] = token;
         }
 
-        // Gửi request Ajax
         $.ajax({
             url: '/Admin/brand-manager/add',
             type: 'POST',
@@ -81,8 +69,6 @@ $(document).ready(function() {
             headers: headers,
             success: function(response) {
                 $('#addBrandModal').modal('hide');
-
-                // Chuyển hướng với tham số thông báo thành công
                 window.location.href = '/Admin/brand-manager?successMessage=' + encodeURIComponent('Thêm thương hiệu thành công!');
             },
             error: function(xhr) {
@@ -96,14 +82,9 @@ $(document).ready(function() {
         });
     });
 
-    // Tương tự cho form sửa
     $('#editBrandForm').submit(function(event) {
         event.preventDefault();
-
-        // Validate trước khi gửi form
         let hasError = false;
-
-        // Kiểm tra trường tên thương hiệu
         const brandName = $('#editBrandName').val().trim();
         if (!brandName) {
             $('#editBrandNameError').text('Vui lòng không để trống tên thương hiệu');
@@ -116,7 +97,6 @@ $(document).ready(function() {
             hasError = true;
         }
 
-        // Kiểm tra trường xuất xứ
         const country = $('#editCountry').val().trim();
         if (!country) {
             $('#editCountryError').text('Vui lòng không để trống xuất xứ');
@@ -129,23 +109,18 @@ $(document).ready(function() {
             hasError = true;
         }
 
-        // Nếu có lỗi, dừng xử lý
         if (hasError) {
             return;
         }
 
-        // Lấy dữ liệu từ form
         let brandData = {
             brandID: $('#editBrandId').val(),
             brandName: brandName,
             country: country
         };
-
-        // Lấy CSRF token nếu có
         const token = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
         const header = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
 
-        // Cấu hình header
         const headers = {
             'Content-Type': 'application/json'
         };
@@ -154,7 +129,6 @@ $(document).ready(function() {
             headers[header] = token;
         }
 
-        // Gửi request Ajax
         $.ajax({
             url: '/Admin/brand-manager/edit',
             type: 'POST',
@@ -163,8 +137,6 @@ $(document).ready(function() {
             headers: headers,
             success: function(response) {
                 $('#editBrandModal').modal('hide');
-
-                // Chuyển hướng với tham số thông báo thành công
                 window.location.href = '/Admin/brand-manager?successMessage=' + encodeURIComponent('Chỉnh sửa thương hiệu thành công.');
             },
             error: function(xhr) {
@@ -178,15 +150,10 @@ $(document).ready(function() {
         });
     });
 
-    // Validate khi nhập liệu
     $('#brandName, #editBrandName').on('input', function() {
         const field = $(this).attr('id');
         const errorField = field === 'brandName' ? '#brandNameError' : '#editBrandNameError';
-
-        // Loại bỏ ký tự đặc biệt khi nhập
         this.value = this.value.replace(/[^\p{L}0-9\s]/gu, '');
-
-        // Kiểm tra và hiển thị thông báo lỗi
         if (this.value.trim() === '') {
             $(errorField).text('Vui lòng không để trống tên thương hiệu');
         } else if (this.value.length < 2) {
@@ -199,11 +166,7 @@ $(document).ready(function() {
     $('#country, #editCountry').on('input', function() {
         const field = $(this).attr('id');
         const errorField = field === 'country' ? '#countryError' : '#editCountryError';
-
-        // Loại bỏ ký tự đặc biệt khi nhập
         this.value = this.value.replace(/[^\p{L}0-9\s]/gu, '');
-
-        // Kiểm tra và hiển thị thông báo lỗi
         if (this.value.trim() === '') {
             $(errorField).text('Vui lòng không để trống xuất xứ');
         } else if (this.value.length > 100) {
