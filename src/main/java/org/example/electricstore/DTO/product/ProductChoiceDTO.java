@@ -12,7 +12,6 @@ import java.time.LocalDate;
 @Builder
 @ToString
 public class ProductChoiceDTO {
-
     private Integer productId;
     private String productName;
     private String supplierName;

@@ -22,8 +22,6 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Integer> {
     @Query("SELECT MAX(i.receiptCode) FROM Invoice i WHERE i.receiptCode LIKE 'NK%'")
     String findLatestReceiptCode();
 
-    boolean existsByReceiptCode(String receiptCode);
-
     @Query("SELECT i FROM Invoice i LEFT JOIN i.supplier s WHERE " +
             "(:code IS NULL OR i.receiptCode LIKE %:code%) AND " +
             "(:brand IS NULL OR (s.supplierName LIKE %:brand% OR s.supplierCode LIKE %:brand%)) AND " +
@@ -38,5 +36,4 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Integer> {
             @Param("toDate") String toDate,
             Pageable pageable);
 
-    Optional<Invoice> findTopByOrderByIdDesc();
 }

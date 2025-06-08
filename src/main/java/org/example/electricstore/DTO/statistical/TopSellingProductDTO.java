@@ -9,7 +9,6 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class TopSellingProductDTO {
-
     private Integer id;
     private String name;
     private Long quantitySold;

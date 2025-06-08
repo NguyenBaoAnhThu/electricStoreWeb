@@ -93,12 +93,10 @@
                 </tbody>
             </table>
         </div>
-
-        <!-- Pagination Section -->
+<!--        Phân trang-->
         <div class="d-flex justify-content-end align-items-center mt-4">
             <nav aria-label="Page navigation">
                 <ul class="pagination m-0">
-                    <!-- First Page Button -->
                     <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
                         <a class="page-link text-dark bg-light border"
                            th:href="@{/Admin/customers(page=1)}"
@@ -107,7 +105,6 @@
                         </a>
                     </li>
 
-                    <!-- Previous Page Button -->
                     <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
                         <a class="page-link text-dark bg-light border"
                            th:href="@{/Admin/customers(page=${currentPage - 1})}"
@@ -121,8 +118,6 @@
                     <span th:text="${customers.number + 1}"></span> / <span th:text="${customers.totalPages}"></span>
                 </span>
                     </li>
-
-                    <!-- Next Page Button -->
                     <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
                         <a class="page-link text-dark bg-light border"
                            th:href="@{/Admin/customers(page=${currentPage + 1})}"
@@ -130,8 +125,6 @@
                             <span aria-hidden="true">&raquo;</span>
                         </a>
                     </li>
-
-                    <!-- Last Page Button -->
                     <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
                         <a class="page-link text-dark bg-light border"
                            th:href="@{/Admin/customers(page=${totalPages})}"

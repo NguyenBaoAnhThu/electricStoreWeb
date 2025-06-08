@@ -63,12 +63,10 @@ public class OrderController {
             return "redirect:/Admin/order?successMessage=Thêm đơn hàng mới thành công.";
         }
 
-        // Xác định các biến tìm kiếm
         String orderCode = null;
         String customerName = null;
         String phoneNumber = null;
 
-        // Phân loại trường tìm kiếm
         if (searchField != null && searchInput != null && !searchInput.isEmpty()) {
             switch (searchField) {
                 case "orderCode":
@@ -83,10 +81,8 @@ public class OrderController {
             }
         }
 
-        // Lấy danh sách đơn hàng với các điều kiện lọc
         Page<Order> orders = orderService.getAllOrders(orderCode, customerName, phoneNumber, null, null, page, size);
 
-        // Kiểm tra nếu không có đơn hàng và có tìm kiếm
         if (orders.isEmpty() && (searchInput != null && !searchInput.isEmpty())) {
             model.addAttribute("noResultMessage", "Không tìm thấy kết quả phù hợp với dữ liệu tìm kiếm." +
                     "\n");
@@ -94,7 +90,7 @@ public class OrderController {
 
         if (msg != null) {
             if ("cancel_ok".equals(msg)) {
-                model.addAttribute("successMessage", "Hủy đơn hàng thành công!");
+                model.addAttribute("successMessage", "Hủy đơn hàng thành công.");
             } else if ("cancel_fail".equals(msg)) {
                 model.addAttribute("errorMessage", "Không thể hủy đơn hàng này");
             } else if ("cancel_error".equals(msg)) {
@@ -102,10 +98,7 @@ public class OrderController {
             }
         }
 
-        // Thêm danh sách trạng thái đơn hàng vào model
         model.addAttribute("orderStatuses", OrderStatus.values());
-
-        // Thêm dữ liệu vào model
         model.addAttribute("orders", orders.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", orders.getTotalPages());
@@ -114,7 +107,6 @@ public class OrderController {
         return "admin/order/listOrder";
     }
 
-    // Endpoint để thêm đơn hàng mới
     @GetMapping("/add")
     public ModelAndView addOrder() {
         ModelAndView modelAndView = new ModelAndView();
@@ -122,15 +114,12 @@ public class OrderController {
         modelAndView.addObject("orderDTO", orderDTO);
         CustomerDTO customerDTO = new CustomerDTO();
         modelAndView.addObject("customerDTO", customerDTO);
-
-        // Thêm danh sách trạng thái đơn hàng vào model
         modelAndView.addObject("orderStatuses", OrderStatus.values());
 
         modelAndView.setViewName("admin/order/addOrder");
         return modelAndView;
     }
 
-    // Endpoint để tạo đơn hàng
     @PostMapping("/create")
     public Object createOrder(@Valid @ModelAttribute("orderDTO") OrderDTO orderDTO,
                               BindingResult bindingResult,
@@ -146,20 +135,17 @@ public class OrderController {
         }
 
         try {
-            // Kiểm tra danh sách sản phẩm
             if (orderDTO.getProductOrderDTOList() == null || orderDTO.getProductOrderDTOList().isEmpty()) {
                 Map<String, String> errors = new HashMap<>();
                 errors.put("productOrderDTOList", "Danh sách sản phẩm không được trống");
                 return ResponseEntity.badRequest().body(errors);
             }
 
-            // Lấy giá trị giảm giá từ form
             String discountAmountStr = request.getParameter("discountAmount");
             String discountPercentStr = request.getParameter("discountPercent");
 
             // Xử lý giảm giá theo VNĐ
             if (discountAmountStr != null && !discountAmountStr.isEmpty()) {
-                // Loại bỏ dấu phân cách và chuyển đổi sang số
                 discountAmountStr = discountAmountStr.replaceAll("[^\\d]", "");
                 try {
                     Double discountAmount = Double.parseDouble(discountAmountStr);
@@ -185,23 +171,19 @@ public class OrderController {
 
             orderDTO.setCustomerId(customerId);
 
-            // Lưu đơn hàng và tạo thanh toán
             Integer orderId = orderService.saveOrder(orderDTO);
             System.out.println("Order ID: " + orderId);
 
             try {
-                // Tạo thanh toán
                 Integer paymentId = paymentService.addPayment(orderId, orderDTO.getPaymentMethod());
                 System.out.println("Payment ID: " + paymentId);
 
-                // Trả về kết quả với các thông tin cần thiết và thêm success là true để sử dụng cho thông báo
                 return ResponseEntity.ok().body("{\"orderId\": " + orderId +
                         ", \"isPrintInvoice\": " + orderDTO.getIsPrintInvoice() +
                         ", \"paymentId\": " + paymentId +
                         ", \"paymentMethod\": " + orderDTO.getPaymentMethod() +
                         ", \"success\": true}");
             } catch (Exception e) {
-                // Nếu có lỗi khi tạo thanh toán, ghi lại lỗi nhưng vẫn trả về thông tin đơn hàng
                 System.err.println("Lỗi khi tạo thanh toán: " + e.getMessage());
                 e.printStackTrace();
 
@@ -212,7 +194,6 @@ public class OrderController {
                         ", \"success\": true}");
             }
         } catch (Exception e) {
-            // Xử lý ngoại lệ tổng quát
             System.err.println("Lỗi khi tạo đơn hàng: " + e.getMessage());
             e.printStackTrace();
 
@@ -222,7 +203,6 @@ public class OrderController {
         }
     }
 
-    // Endpoint để tải xuống hóa đơn PDF
     @GetMapping("/downloadInvoicePdf")
     public void downloadInvoicePdf(@RequestParam Integer orderId, HttpServletResponse response) throws IOException {
         OrderDTO orderDTO = orderService.getOrderDTOById(orderId);
@@ -266,8 +246,6 @@ public class OrderController {
         return "admin/order/OldCustomer";
     }
 
-
-
     @GetMapping("/showListProduct")
     public String listProducts(
             @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword,
@@ -305,7 +283,6 @@ public class OrderController {
         return map;
     }
 
-    // Endpoint để xem chi tiết đơn hàng
     @GetMapping("/view/{id}")
     public String viewOrderDetail(@PathVariable("id") Integer orderId, Model model) {
         try {
@@ -315,14 +292,10 @@ public class OrderController {
                 return "redirect:/Admin/order?errorMessage=Không tìm thấy đơn hàng";
             }
 
-            // Lấy thông tin thanh toán (nếu có)
             var payment = paymentService.getPaymentByOrderId(orderId);
 
-            // Thêm dữ liệu vào model
             model.addAttribute("order", order);
             model.addAttribute("payment", payment);
-
-            // Đảm bảo statusMap được thêm vào
             model.addAttribute("statusMap", statusMap());
 
             return "admin/order/orderDetail";
@@ -332,15 +305,12 @@ public class OrderController {
         }
     }
 
-    // Endpoint để hủy đơn hàng với redirect
     @PostMapping("/cancel/{id}")
     public String cancelOrderWithRedirect(@PathVariable("id") Integer orderId) {
         try {
-            // Gọi service để hủy đơn hàng
             boolean result = orderService.cancelOrder(orderId);
 
             if (result) {
-                // Sử dụng mã thông báo đơn giản
                 return "redirect:/Admin/order?msg=cancel_ok";
             } else {
                 return "redirect:/Admin/order?msg=cancel_fail";
@@ -351,27 +321,21 @@ public class OrderController {
         }
     }
 
-    // Endpoint để xác nhận thanh toán
     @PostMapping("/confirm-payment")
     public ResponseEntity<String> confirmPayment(HttpServletRequest request) {
         try {
-            // Lấy đơn hàng từ session
             OrderDTO orderDTO = (OrderDTO) request.getSession().getAttribute("pendingOrder");
 
             if (orderDTO == null) {
                 return ResponseEntity.badRequest().body("Không tìm thấy thông tin đơn hàng");
             }
 
-            // Lưu đơn hàng vào DB
             Integer orderId = orderService.saveOrder(orderDTO);
 
-            // Tạo thanh toán
             Integer paymentId = paymentService.addPayment(orderId, orderDTO.getPaymentMethod());
 
-            // Xóa đơn hàng khỏi session
             request.getSession().removeAttribute("pendingOrder");
 
-            // Trả về kết quả thành công
             return ResponseEntity.ok("{\"success\": true, \"orderId\": " + orderId + "}");
         } catch (Exception e) {
             e.printStackTrace();
@@ -380,14 +344,10 @@ public class OrderController {
         }
     }
 
-    // Endpoint để hủy thanh toán
     @PostMapping("/cancel-payment")
     public ResponseEntity<String> cancelPayment(HttpServletRequest request) {
         try {
-            // Xóa đơn hàng khỏi session
             request.getSession().removeAttribute("pendingOrder");
-
-            // Trả về kết quả thành công
             return ResponseEntity.ok("{\"success\": true}");
         } catch (Exception e) {
             e.printStackTrace();

@@ -18,11 +18,8 @@ import java.util.List;
 @Repository
 public interface IOrderRepository extends JpaRepository<Order, Integer>, JpaSpecificationExecutor<Order> {
     List<Order> findByStatusAndCreateAtBetween(OrderStatus status, LocalDateTime startDate, LocalDateTime endDate);
-    List<Order> findByStatus(OrderStatus status);
     List<Order> findByCustomer(Customer customer);
-    List<Order> findByCustomerAndCreateAtBetween(Customer customer, LocalDateTime start, LocalDateTime end);
     Order findByOrderID(Integer orderId);
-    List<Order> findByCreateAtBetween(LocalDateTime startDate, LocalDateTime endDate);
 
     @Modifying
     @Transactional

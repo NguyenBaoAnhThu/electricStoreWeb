@@ -64,7 +64,6 @@ public class UserService implements IUserService {
     public Page<User> searchByFieldAndKeyword(String field, String keyword, int page, int size) {
         Pageable pageable = PageRequest.of(page - 1, size);
         if ("work".equals(field)) {
-            // Tìm kiếm theo employeeWork
             return this.userRepository.searchByKeywordAndType(keyword, "employeeWork", pageable);
         }
         return this.userRepository.searchUsers(field, keyword, pageable);
@@ -90,10 +89,8 @@ public class UserService implements IUserService {
 
         User user = this.userMapper.convertToUser(userDTO);
 
-        // Mã hóa mật khẩu
         user.setEncrytedPassword(passwordEncoder.encode(userDTO.getPassword()));
 
-        // Thiết lập vai trò - Nếu không chỉ định, mặc định là ROLE_EMPLOYEE
         List<Role> roleList = new ArrayList<>();
         RoleEnums roleEnum = (userDTO.getRole() != null && userDTO.getRole().equals("ROLE_ADMIN"))
                 ? RoleEnums.ROLE_ADMIN
@@ -112,7 +109,6 @@ public class UserService implements IUserService {
         User user = this.userRepository.findById(userDTO.getUserId())
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        // Check email
         if (!user.getEmail().equals(userDTO.getEmail())) {
             boolean emailExists = userRepository.existsByEmail(userDTO.getEmail());
             if (emailExists) {
@@ -126,12 +122,10 @@ public class UserService implements IUserService {
             user.setEmail(userDTO.getEmail());
         }
 
-        // Check mật khẩu
         if(userDTO.getPassword() != null && !userDTO.getPassword().isEmpty()){
             user.setEncrytedPassword(passwordEncoder.encode(userDTO.getPassword()));
         }
 
-        // Check số điện thoại
         if (!user.getEmployeePhone().equals(userDTO.getEmployeePhone())) {
             boolean phoneExists = this.userRepository.existsByEmployeePhoneAndUserIdNot(
                     userDTO.getEmployeePhone(), userDTO.getUserId());
@@ -145,7 +139,6 @@ public class UserService implements IUserService {
             }
         }
 
-        // Check tuổi
         if (!user.getEmployeeBirthday().equals(userDTO.getEmployeeBirthday()) &&
                 userDTO.getEmployeeBirthday().getYear() >= 2010) {
             if (bindingResult != null) {
@@ -156,16 +149,13 @@ public class UserService implements IUserService {
             }
         }
 
-        // Cập nhật các trường của User
         user.setEmployeeName(userDTO.getEmployeeName());
         user.setEmployeeBirthday(userDTO.getEmployeeBirthday());
         user.setEmployeePhone(userDTO.getEmployeePhone());
         user.setEmployeeAddress(userDTO.getEmployeeAddress());
 
-        // Lưu vào database
         this.userRepository.save(user);
 
-        // Cập nhật vai trò nếu có thay đổi
         if (userDTO.getRole() != null) {
             RoleEnums roleEnum = userDTO.getRole().equals("ROLE_ADMIN")
                     ? RoleEnums.ROLE_ADMIN
@@ -202,34 +192,27 @@ public class UserService implements IUserService {
 
     @Transactional
     public void updateSimple(UserDTO userDTO) {
-        // Tìm user theo ID
         User user = this.userRepository.findById(userDTO.getUserId())
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        // Cập nhật thông tin email
         user.setEmail(userDTO.getEmail());
 
-        // Cập nhật mật khẩu nếu có
         if(userDTO.getPassword() != null && !userDTO.getPassword().isEmpty()) {
             user.setEncrytedPassword(passwordEncoder.encode(userDTO.getPassword()));
         }
 
-        // Cập nhật thông tin nhân viên
         user.setEmployeeName(userDTO.getEmployeeName());
         user.setEmployeeBirthday(userDTO.getEmployeeBirthday());
         user.setEmployeePhone(userDTO.getEmployeePhone());
         user.setEmployeeAddress(userDTO.getEmployeeAddress());
 
-        // Lưu thông tin user
         this.userRepository.save(user);
     }
     @Override
     public String generateNextEmployeeCode() {
-        // Tìm mã nhân viên có số lớn nhất
         List<User> users = userRepository.findAll();
         int maxNumber = 0;
 
-        // Duyệt qua tất cả người dùng để tìm số lớn nhất
         for (User user : users) {
             String code = user.getEmployeeCode();
             if (code != null && code.startsWith("NV")) {

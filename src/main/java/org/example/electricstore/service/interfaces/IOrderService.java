@@ -13,23 +13,14 @@ import java.util.List;
 
 public interface IOrderService {
     Integer saveOrder(OrderDTO orderDTO);
-
     Order getOrderById(Integer id);
-
     List<OrderHistoryRq> getAllOrderHistoryRqByCustomer(Customer customer);
-
     List<OrderDetailDTO> getAllOrderDetailDTOByCustomer(int orderId);
-
     Page<CustomerDTO> getAllCustomersDTO(Integer page, Integer size);
-
     List<Order> getCompletedOrders(LocalDateTime startDate, LocalDateTime endDate);
-
     long getTotalCompletedOrders(LocalDateTime startDate, LocalDateTime endDate);
-
     double getTotalRevenue(LocalDateTime startDate, LocalDateTime endDate);
-
     OrderDTO getOrderDTOById(Integer orderId);
-
     Page<Order> getAllOrders(String orderCode, String customerName, String status,
                              String fromDate, String toDate, int page, int size);
 }

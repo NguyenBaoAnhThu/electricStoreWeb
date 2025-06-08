@@ -91,14 +91,12 @@ public class CategoryController {
         return modelAndView;
     }
 
-    // Lấy mã danh mục tiếp theo để gợi ý khi thêm mới
     @GetMapping("/next-code")
     @ResponseBody
     public String getNextCategoryCode() {
         return categoryService.generateNextCategoryCode();
     }
 
-    // Thêm danh mục mới
     @PostMapping("/add")
     @ResponseBody
     public ResponseEntity<?> addCategory(@Valid @RequestBody CategoryDTO categoryDTO,
@@ -137,12 +135,10 @@ public class CategoryController {
         }
     }
 
-    // Cập nhật danh mục hiện có
     @PostMapping("/edit")
     @ResponseBody
     public ResponseEntity<?> updateCategory(@Valid @RequestBody CategoryDTO categoryDTO,
                                             BindingResult bindingResult) {
-        // Kiểm tra lỗi xác thực dữ liệu đầu vào
         if (bindingResult.hasErrors()) {
             Map<String, String> errors = new HashMap<>();
             for (FieldError error : bindingResult.getFieldErrors()) {
@@ -151,7 +147,6 @@ public class CategoryController {
             return ResponseEntity.badRequest().body(errors);
         }
 
-        // Kiểm tra trùng lặp tên danh mục, ngoại trừ danh mục đang chỉnh sửa
         if (categoryService.existsByCategoryNameAndNotId(categoryDTO.getCategoryName(), categoryDTO.getCategoryID())) {
             Map<String, String> errors = new HashMap<>();
             errors.put("categoryName", "Tên danh mục đã tồn tại");
@@ -159,29 +154,23 @@ public class CategoryController {
         }
 
         try {
-            // Tìm danh mục hiện có theo ID
             Optional<Category> existingCategoryOpt = categoryService.getCategoryById(categoryDTO.getCategoryID());
 
             if (existingCategoryOpt.isPresent()) {
-                // Cập nhật thông tin danh mục và lưu vào cơ sở dữ liệu
                 Category existingCategory = existingCategoryOpt.get();
                 categoryMapper.updateEntityFromDto(categoryDTO, existingCategory);
                 existingCategory.setUpdateAt(LocalDateTime.now());
                 categoryService.saveCategory(existingCategory);
-
-                // Trả về phản hồi thành công
                 Map<String, String> response = new HashMap<>();
                 response.put("success", "true");
                 response.put("message", "Chỉnh sửa danh mục thành công.");
                 return ResponseEntity.ok(response);
             } else {
-                // Trả về lỗi nếu không tìm thấy danh mục
                 Map<String, String> errorResponse = new HashMap<>();
                 errorResponse.put("error", "Không tìm thấy danh mục!");
                 return ResponseEntity.badRequest().body(errorResponse);
             }
         } catch (Exception e) {
-            // Trả về lỗi nếu có ngoại lệ xảy ra
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("error", "Lỗi khi chỉnh sửa danh mục: " + e.getMessage());
             return ResponseEntity.badRequest().body(errorResponse);

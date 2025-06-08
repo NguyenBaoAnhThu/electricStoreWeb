@@ -17,10 +17,8 @@ public interface IProductService {
     void deleteProduct(List<Integer> productIds);
     Product findById(Integer id);
      void updateProduct(Product product, List<MultipartFile> files);
-    //Choose product in order
     Page<ProductOrderChoiceDTO> getProducts(String keyword, Integer page, Integer size);
     ProductChosen getProductByIdUseInOrder(Integer id);
-
     Product saveProduct(Product product);
     ProductDetail saveProductDetail(ProductDetail productDetail);
     void saveProductWithImages(Product product, List<ProductImage> productImages);

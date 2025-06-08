@@ -103,7 +103,7 @@ public class CustomerController {
 
         try {
             this.customerService.updateCustomer(customerDTO, customerDTO.getCustomerId());
-            return ResponseEntity.ok("Chỉnh sửa khách hàng thành công!");
+            return ResponseEntity.ok("Chỉnh sửa khách hàng thành công.");
         } catch (Exception e) {
             Map<String, String> errors = new HashMap<>();
             if (e.getMessage().contains("INVALID_PHONE_NUMBER")) {

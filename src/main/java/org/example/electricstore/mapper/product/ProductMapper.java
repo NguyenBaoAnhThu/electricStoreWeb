@@ -36,7 +36,6 @@ public class ProductMapper {
         supplier.setSupplierID(dto.getId());
         product.setSupplier(supplier);
 
-        // Create product detail
         ProductDetail detail = new ProductDetail();
         detail.setScreenSize(dto.getScreenSize());
         detail.setCamera(dto.getCamera());
@@ -85,7 +84,6 @@ public class ProductMapper {
 
         // Lấy giá nhập từ warehouse gần nhất
         if (product.getWareHouses() != null && !product.getWareHouses().isEmpty()) {
-            // Sắp xếp warehouse theo ngày nhập giảm dần để lấy giá nhập mới nhất
             product.getWareHouses().stream()
                     .max(Comparator.comparing(WareHouse::getImportDate))
                     .ifPresent(warehouse -> dto.setImportPrice(warehouse.getPrice()));
@@ -113,30 +111,7 @@ public class ProductMapper {
         return dto;
     }
 
-    public ProductChoiceDTO convertToProductChoiceDTO(Product product) {
-        return ProductChoiceDTO.builder()
-                .productId(product.getProductID())
-                .productName(product.getName())
-                .productCode(product.getProductCode())
-                .supplierName(product.getSupplier().getSupplierName())
-                .productPrice(product.getPrice())
-                .build();
-    }
-
-    public ProductChoiceDTO convertToProductChoiceDTOByWareHouse(WareHouse wareHouse) {
-        return ProductChoiceDTO.builder()
-                .productId(wareHouse.getProduct().getProductID())
-                .productName(wareHouse.getProduct().getName())
-                .productCode(wareHouse.getProduct().getProductCode()) // Thêm mã sản phẩm
-                .supplierName(wareHouse.getProduct().getSupplier().getSupplierName())
-                .productQuantity(wareHouse.getProduct().getStock())
-                .productPrice(wareHouse.getPrice()) // Giá từ warehouse
-                .importDate(wareHouse.getImportDate()) // Thêm ngày nhập
-                .build();
-    }
-
     public ProductOrderChoiceDTO convertToProductChoiceDTOInOrder(Product product) {
-        // Tìm giá nhập từ warehouse mới nhất
         Double importPrice = null;
         if (product.getWareHouses() != null && !product.getWareHouses().isEmpty()) {
             importPrice = product.getWareHouses().stream()

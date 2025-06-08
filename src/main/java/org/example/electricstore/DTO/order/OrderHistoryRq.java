@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class OrderHistoryRq {
-
     private Integer id;
     private LocalDateTime orderDate;
     private String orderStatus;

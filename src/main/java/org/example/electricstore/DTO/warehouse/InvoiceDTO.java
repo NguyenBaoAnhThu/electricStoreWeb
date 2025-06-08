@@ -12,7 +12,6 @@ public class InvoiceDTO {
     private Invoice invoice;
     private String paymentStatus;
 
-    // Phương thức trợ giúp để lấy tên nhà cung cấp
     public String getSupplierName() {
         if (invoice != null && invoice.getSupplier() != null) {
             return invoice.getSupplier().getSupplierName();

@@ -19,8 +19,6 @@ public interface ICustomerRepository extends JpaRepository<Customer, Integer> {
     Page<Customer> findByCustomerCodeContainingIgnoreCase(String code, Pageable pageable);
     Page<Customer> findByPhoneNumberContaining(String phone, Pageable pageable);
 
-    Customer findByPhoneNumber(String phoneNumber);
-
     @Query("SELECT c FROM Customer c WHERE " +
             "(:field = 'customerName' AND c.customerName LIKE %:keyword%) OR " +
             "(:field = 'customerCode' AND c.customerCode LIKE %:keyword%) OR " +

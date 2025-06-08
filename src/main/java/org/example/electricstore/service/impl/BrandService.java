@@ -34,7 +34,6 @@ public class BrandService implements IBrandService {
 
     @Override
     public Brand saveBrand(Brand brand) {
-        // Nếu là brand có id (đang cập nhật)
         if (brand.getBrandID() != null && brandRepository.existsById(brand.getBrandID())) {
             Brand existingBrand = brandRepository.findById(brand.getBrandID()).orElse(null);
             if (existingBrand != null) {
@@ -46,7 +45,6 @@ public class BrandService implements IBrandService {
                 return brandRepository.save(existingBrand);
             }
         } else {
-            // Nếu là brand mới (chưa có id), tạo brandCode
             brand.setBrandCode(generateNewBrandCode());
             brand.setCreateAt(LocalDateTime.now());
             brand.setUpdateAt(LocalDateTime.now());
@@ -55,16 +53,14 @@ public class BrandService implements IBrandService {
         return brand;
     }
 
-    // Thêm phương thức để lấy mã thương hiệu mới
+    // Lấy mã thương hiệu mới
     public String generateNewBrandCode() {
         String maxBrandCode = brandRepository.findMaxBrandCode();
 
         if (maxBrandCode == null) {
             return "TH0001";
         } else {
-            // Trích xuất số từ mã hiện tại
             int currentNumber = Integer.parseInt(maxBrandCode.substring(2));
-            // Tạo mã mới với số tăng lên 1
             return String.format("TH%04d", currentNumber + 1);
         }
     }

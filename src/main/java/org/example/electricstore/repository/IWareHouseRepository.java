@@ -33,7 +33,6 @@ public interface IWareHouseRepository extends JpaRepository<WareHouse, Integer> 
                                        @Param("productName") String productName,
                                        Pageable pageable);
 
-    WareHouse findByProduct(Product product);
 
     @Query("SELECT w FROM WareHouse w WHERE w.product.productID = :productId ORDER BY w.importDate DESC")
     List<WareHouse> findByProductIdOrderByImportDateDesc(@Param("productId") Integer productId);

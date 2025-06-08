@@ -159,7 +159,6 @@ public class StatisticalService implements IStatisticalService {
                 existing.setTotalSellingPrice(existing.getTotalSellingPrice() + newDto.getTotalSellingPrice());
                 existing.setProfit(existing.getProfit() + newDto.getProfit());
 
-                // Cập nhật lại tỷ lệ lợi nhuận
                 if (existing.getTotalImportCost() > 0) {
                     double profitRate = (existing.getProfit() / existing.getTotalImportCost()) * 100;
                     existing.setProfitRate(profitRate);
@@ -179,8 +178,6 @@ public class StatisticalService implements IStatisticalService {
         double totalSellingPrice = revenueDetailDTOS.stream().mapToDouble(RevenueDetailDTO::getTotalSellingPrice).sum();
         double totalImportCost = revenueDetailDTOS.stream().mapToDouble(RevenueDetailDTO::getTotalImportCost).sum();
         double profit = revenueDetailDTOS.stream().mapToDouble(RevenueDetailDTO::getProfit).sum();
-
-        // Tính tỷ lệ lợi nhuận đúng cách
         double profitRate = totalImportCost > 0 ? (profit / totalImportCost) * 100 : 0;
 
         map.put("totalSellingPrice", totalSellingPrice);

@@ -93,7 +93,6 @@ public class SecurityConfig {
                 .exceptionHandling((exceptionHandling) ->
                         exceptionHandling
                                 .accessDeniedPage("/403"));
-
         return http.build();
     }
 }

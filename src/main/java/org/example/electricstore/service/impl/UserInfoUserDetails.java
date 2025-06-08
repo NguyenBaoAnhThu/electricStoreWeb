@@ -20,10 +20,8 @@ public class UserInfoUserDetails implements UserDetails {
         this.password = user.getEncrytedPassword();
         this.authorities = new ArrayList<>();
 
-        // Lấy danh sách role trực tiếp từ user
         if (user.getRoles() != null) {
             for (Role role : user.getRoles()) {
-                // ROLE_ADMIN, ROLE_EMPLOYEE
                 GrantedAuthority authority = new SimpleGrantedAuthority(role.getRoleName().name());
                 authorities.add(authority);
             }

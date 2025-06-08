@@ -107,12 +107,11 @@ public class StatisticalMapper {
     }
 
     public List<RevenueDetailDTO> convertToRevenueDetailDTO(List<Order> orderList) {
-        // Sửa phần này để xử lý các productID trùng lặp trong warehouse
         Map<Integer, Double> importPriceMap = this.wareHouseRepository.findAll().stream()
                 .collect(Collectors.toMap(
                         wareHouse -> wareHouse.getProduct().getProductID(),
                         WareHouse::getPrice,
-                        (existingPrice, newPrice) -> existingPrice  // Giữ giá trị đầu tiên khi có trùng lặp
+                        (existingPrice, newPrice) -> existingPrice
                 ));
 
         return orderList.stream()
@@ -122,7 +121,7 @@ public class StatisticalMapper {
                     Integer productId = product.getProductID();
                     Integer quantitySold = orderDetail.getQuantity();
                     Double sellingPrice = product.getPrice();
-                    Double importPrice = importPriceMap.getOrDefault(productId, 0.0); // Phòng trường hợp không tìm thấy ID
+                    Double importPrice = importPriceMap.getOrDefault(productId, 0.0);
 
                     return RevenueDetailDTO.builder()
                             .id(productId)

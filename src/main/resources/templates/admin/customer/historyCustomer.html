@@ -171,14 +171,12 @@
       </table>
     </div>
 
-    <!-- Empty state if no orders -->
     <div th:if="${orderHistoryRqs.isEmpty()}" class="text-center py-5">
       <i class="fas fa-shopping-cart mb-3" style="font-size: 48px; color: #e9ecef;"></i>
       <p class="text-muted">Khách hàng chưa có đơn hàng nào</p>
     </div>
   </div>
 
-  <!-- Order Detail Modal -->
   <div class="modal fade" id="orderDetailModal" tabindex="-1" aria-labelledby="orderDetailModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
@@ -212,7 +210,6 @@
               </tr>
               </thead>
               <tbody id="orderDetailTable">
-              <!-- Sản phẩm sẽ được thêm bằng JavaScript -->
               </tbody>
               <tfoot>
               <tr>
@@ -241,16 +238,11 @@
     // Lấy thông tin đơn hàng từ model để hiển thị mã đơn hàng
     const orderRows = document.querySelectorAll("table.table-history tbody tr");
 
-    // Thêm mã đơn hàng theo format HD00xxx
     orderRows.forEach((row, index) => {
-      // Lấy ID đơn hàng từ nút "Chi tiết"
       const orderIdBtn = row.querySelector("[data-order-id]");
       if (orderIdBtn) {
         const orderId = orderIdBtn.getAttribute("data-order-id");
-        // Format mã đơn hàng theo quy tắc HD + orderId với 5 chữ số
         const formattedOrderCode = "HD" + orderId.padStart(5, "0");
-
-        // Cập nhật ô mã đơn hàng
         const orderCodeCell = row.querySelector(".order-code-cell");
         if (orderCodeCell) {
           orderCodeCell.textContent = formattedOrderCode;

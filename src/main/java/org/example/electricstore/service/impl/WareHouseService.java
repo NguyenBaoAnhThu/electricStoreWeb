@@ -24,7 +24,6 @@ public class WareHouseService implements IWareHouseService <WareHouse> {
         return wareHouseRepository.findAllWithFilters(importDate, brand, statusStock, productCode, productName, pageable);
     }
 
-
     @Override
     public List<WareHouse> getWareHouses() {
         return this.wareHouseRepository.findAll();

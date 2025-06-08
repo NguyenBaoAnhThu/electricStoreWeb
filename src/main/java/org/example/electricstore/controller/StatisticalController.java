@@ -125,7 +125,6 @@ public class StatisticalController {
                 .filter(order -> order.getStatus().name().equalsIgnoreCase(status))
                 .toList();
 
-        // Calculate total revenue from filtered orders
         double totalRevenue = 0;
         for (Order order : filteredOrders) {
             if (order.getTotalPrice() != null) {
@@ -248,7 +247,6 @@ public class StatisticalController {
             model.addAttribute("month", month);
             model.addAttribute("year", year);
         } catch (Exception e) {
-            // Ghi log và xử lý lỗi
             e.printStackTrace();
             model.addAttribute("errorMessage", "Đã xảy ra lỗi khi xử lý dữ liệu: " + e.getMessage());
         }

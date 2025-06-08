@@ -9,7 +9,6 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
     public class RevenueDetailDTO {
-
         private Integer id;
         private String productName;
         private Integer quantitySold;

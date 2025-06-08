@@ -23,7 +23,6 @@ public class SupplierService implements ISupplierService {
     @Autowired
     private ISupplierRepository supplierRepository;
 
-    // Biểu thức chính quy để validate
     private static final Pattern NAME_PATTERN = Pattern.compile("^[A-Za-zÀ-ỹ\\s]+$");
     private static final Pattern PHONE_PATTERN = Pattern.compile("^0[0-9]{9}$");
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
@@ -49,10 +48,8 @@ public class SupplierService implements ISupplierService {
 
     @Override
     public Supplier addSupplier(Supplier supplier) {
-        // Validate các trường thông tin
         validateSupplier(supplier);
 
-        // Kiểm tra trùng lặp
         if (supplierRepository.existsByPhone(supplier.getPhone())) {
             throw new SupplierException(SupplierError.DUPLICATE_PHONE);
         }
@@ -65,7 +62,6 @@ public class SupplierService implements ISupplierService {
             throw new SupplierException(SupplierError.DUPLICATE_SUPPLIER_CODE);
         }
 
-        // Nếu không có supplierCode, tạo mã tự động
         if (supplier.getSupplierCode() == null || supplier.getSupplierCode().isEmpty()) {
             supplier.setSupplierCode(generateNewSupplierCode());
         }
@@ -77,12 +73,10 @@ public class SupplierService implements ISupplierService {
 
     @Override
     public Supplier updateSupplier(Integer id, Supplier supplierDetails) {
-        // Validate các trường thông tin
         validateSupplier(supplierDetails);
 
         return supplierRepository.findById(id)
                 .map(supplier -> {
-                    // Kiểm tra trùng lặp với các supplier khác
                     if (!supplier.getPhone().equals(supplierDetails.getPhone()) &&
                             supplierRepository.existsByPhoneAndSupplierIDNot(supplierDetails.getPhone(), id)) {
                         throw new SupplierException(SupplierError.DUPLICATE_PHONE);
@@ -104,7 +98,6 @@ public class SupplierService implements ISupplierService {
     }
 
     private void validateSupplier(Supplier supplier) {
-        // Validate tên nhà cung cấp
         if (supplier.getSupplierName() == null || supplier.getSupplierName().trim().isEmpty()) {
             throw new SupplierException(SupplierError.INVALID_NAME_FORMAT, "Tên nhà cung cấp không được để trống");
         }
@@ -117,7 +110,6 @@ public class SupplierService implements ISupplierService {
             throw new SupplierException(SupplierError.INVALID_NAME_FORMAT, "Tên nhà cung cấp phải có độ dài từ 2 đến 100 ký tự");
         }
 
-        // Validate địa chỉ
         if (supplier.getAddress() == null || supplier.getAddress().trim().isEmpty()) {
             throw new SupplierException(SupplierError.INVALID_ADDRESS_FORMAT, "Địa chỉ không được để trống");
         }
@@ -126,7 +118,6 @@ public class SupplierService implements ISupplierService {
             throw new SupplierException(SupplierError.INVALID_ADDRESS_FORMAT, "Địa chỉ phải có độ dài từ 5 đến 200 ký tự");
         }
 
-        // Validate số điện thoại
         if (supplier.getPhone() == null || supplier.getPhone().trim().isEmpty()) {
             throw new SupplierException(SupplierError.INVALID_PHONE_FORMAT, "Số điện thoại không được để trống");
         }
@@ -135,7 +126,6 @@ public class SupplierService implements ISupplierService {
             throw new SupplierException(SupplierError.INVALID_PHONE_FORMAT);
         }
 
-        // Validate email
         if (supplier.getEmail() == null || supplier.getEmail().trim().isEmpty()) {
             throw new SupplierException(SupplierError.INVALID_EMAIL_FORMAT, "Email không được để trống");
         }
@@ -155,9 +145,7 @@ public class SupplierService implements ISupplierService {
         if (maxSupplierCode == null) {
             return "NCC0001";
         } else {
-            // Trích xuất số từ mã hiện tại (lấy phần sau "NCC")
             int currentNumber = Integer.parseInt(maxSupplierCode.substring(3));
-            // Tạo mã mới với số tăng lên 1
             return String.format("NCC%04d", currentNumber + 1);
         }
     }

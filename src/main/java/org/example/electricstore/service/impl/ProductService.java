@@ -157,25 +157,21 @@ public class ProductService implements IProductService {
                 existingProduct.setMainImageUrl(product.getMainImageUrl());
             }
 
-            // Cập nhật nhà cung cấp
             if (product.getSupplier() != null && product.getSupplier().getSupplierID() != null) {
                 Optional<Supplier> supplierOpt = supplierRepository.findById(product.getSupplier().getSupplierID());
                 supplierOpt.ifPresent(existingProduct::setSupplier);
             }
 
-            // Cập nhật danh mục
             if (product.getCategory() != null && product.getCategory().getCategoryID() != null) {
                 Optional<Category> categoryOpt = categoryRepository.findById(product.getCategory().getCategoryID());
                 categoryOpt.ifPresent(existingProduct::setCategory);
             }
 
-            // Cập nhật thương hiệu
             if (product.getBrand() != null && product.getBrand().getBrandID() != null) {
                 Optional<Brand> brandOpt = brandRepository.findById(product.getBrand().getBrandID());
                 brandOpt.ifPresent(existingProduct::setBrand);
             }
 
-            // Cập nhật thông tin chi tiết sản phẩm
             if (existingProduct.getProductDetail() != null && product.getProductDetail() != null) {
                 ProductDetail existingDetail = existingProduct.getProductDetail();
                 ProductDetail newDetail = product.getProductDetail();
@@ -188,8 +184,6 @@ public class ProductService implements IProductService {
                 existingDetail.setRom(newDetail.getRom());
                 existingDetail.setBattery(newDetail.getBattery());
                 existingDetail.setDescription(newDetail.getDescription());
-
-                // Đảm bảo mối quan hệ hai chiều
                 existingDetail.setProduct(existingProduct);
             }
 
@@ -202,7 +196,6 @@ public class ProductService implements IProductService {
                     if (!file.isEmpty()) {
                         String imageUrl = cloudinaryService.uploadFileToCloudinary(file);
 
-                        // Nếu là ảnh đầu tiên, đặt làm ảnh chính
                         if (i == 0) {
                             mainImageUrl = imageUrl;
                         }
@@ -214,20 +207,13 @@ public class ProductService implements IProductService {
                         newImages.add(productImage);
                     }
                 }
-
-                // Xóa ảnh cũ trước khi thêm ảnh mới
-                // productImageRepository.deleteByProduct(existingProduct);
-
-                // Lưu ảnh mới
                 if (!newImages.isEmpty()) {
                     productImageRepository.saveAll(newImages);
                 }
 
-                // Cập nhật ảnh chính
                 existingProduct.setMainImageUrl(mainImageUrl);
             }
 
-            // Lưu sản phẩm sau khi cập nhật
             Product savedProduct = productRepository.save(existingProduct);
 
             // Nếu có giá nhập, tạo một mục mới trong WareHouse
@@ -262,19 +248,12 @@ public class ProductService implements IProductService {
     @Override
     @Transactional
     public void saveProductWithImages(Product product, List<ProductImage> productImages) {
-        // Lưu sản phẩm trước
         Product savedProduct = productRepository.save(product);
-
-        // Gán sản phẩm đã lưu cho từng ảnh
         if (productImages != null && !productImages.isEmpty()) {
             for (ProductImage image : productImages) {
                 image.setProduct(savedProduct);
             }
-
-            // Lưu danh sách ảnh
             productImageRepository.saveAll(productImages);
-
-            // Nếu có ảnh, đặt ảnh đầu tiên làm ảnh chính
             if (!productImages.isEmpty()) {
                 savedProduct.setMainImageUrl(productImages.get(0).getImageURL());
                 productRepository.save(savedProduct);
@@ -288,17 +267,14 @@ public class ProductService implements IProductService {
         return saveProductWithImportPrice(product, productDetail, null, files);
     }
 
-    // Thêm phương thức mới để lưu sản phẩm kèm theo giá nhập
     @Transactional
     public Product saveProductWithImportPrice(Product product, ProductDetail productDetail, Double importPrice, List<MultipartFile> files) {
         validateProduct(product, importPrice, files);
         try {
-            // ✅ 1. Cập nhật thời gian trước khi lưu
             LocalDateTime now = LocalDateTime.now();
             product.setCreateAt(now);
             product.setUpdateAt(now);
 
-            // ✅ 2. Gán ProductDetail vào Product trước khi lưu
             if (productDetail != null) {
                 productDetail.setProduct(product);
                 product.setProductDetail(productDetail);
@@ -306,15 +282,12 @@ public class ProductService implements IProductService {
                 productDetail.setUpdateAt(now);
             }
 
-            // ✅ 3. Lưu sản phẩm trước để có ID
             product = productRepository.save(product);
 
-            // ✅ 4. Lưu ProductDetail sau khi Product có ID
             if (productDetail != null) {
                 productDetailRepository.save(productDetail);
             }
 
-            // ✅ 5. Xử lý lưu ảnh sản phẩm nếu có ảnh
             String mainImageUrl = null;
             List<ProductImage> productImages = new ArrayList<>();
 
@@ -324,7 +297,7 @@ public class ProductService implements IProductService {
                     if (!file.isEmpty()) {
                         String imageUrl = cloudinaryService.uploadFileToCloudinary(file);
                         if (i == 0) {
-                            mainImageUrl = imageUrl; // ✅ Ảnh đầu tiên là ảnh chính
+                            mainImageUrl = imageUrl;
                         }
                         ProductImage productImage = new ProductImage();
                         productImage.setImageURL(imageUrl);
@@ -334,16 +307,13 @@ public class ProductService implements IProductService {
                 }
             }
 
-            // ✅ 6. Lưu danh sách ảnh nếu có
             if (!productImages.isEmpty()) {
                 productImageRepository.saveAll(productImages);
             }
 
-            // ✅ 7. Cập nhật ảnh chính cho sản phẩm
             product.setMainImageUrl(mainImageUrl);
             product = productRepository.save(product);
 
-            // ✅ 8. Tạo bản ghi WareHouse nếu có giá nhập
             if (importPrice != null && importPrice > 0) {
                 WareHouse wareHouse = new WareHouse();
                 wareHouse.setProduct(product);
@@ -400,26 +370,20 @@ public class ProductService implements IProductService {
         return prefix + String.format("%04d", nextNumber);
     }
     private void validateProduct(Product product, Double importPrice, List<MultipartFile> files) {
-        // Validate ảnh sản phẩm (chỉ khi thêm mới và id chưa có)
         if (product.getProductID() == null && (files == null || files.isEmpty() || files.stream().allMatch(file -> file.isEmpty()))) {
             throw new ProductException(ProductError.PRODUCT_IMAGE_REQUIRED);
         }
 
-        // Validate các trường đặc biệt trong productDetail nếu có
         if (product.getProductDetail() != null) {
-            // Kiểm tra format RAM
             String ram = product.getProductDetail().getRam();
             if (ram != null && !ram.isEmpty() && !ram.matches("^([1-9][0-9]*GB)$")) {
                 throw new ProductException(ProductError.INVALID_RAM_FORMAT);
             }
 
-            // Kiểm tra format ROM
             String rom = product.getProductDetail().getRom();
             if (rom != null && !rom.isEmpty() && !rom.matches("^([1-9][0-9]*GB)$")) {
                 throw new ProductException(ProductError.INVALID_ROM_FORMAT);
             }
-
-            // Kiểm tra format Pin
             String battery = product.getProductDetail().getBattery();
             if (battery != null && !battery.isEmpty() && !battery.matches("^([1-9][0-9]*mAh)$")) {
                 throw new ProductException(ProductError.INVALID_BATTERY_FORMAT);

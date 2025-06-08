@@ -51,27 +51,6 @@
 
         @Autowired
         PDFService pdfService;
-        // Phương thức để tạo mã đơn hàng mới
-        private String generateOrderCode() {
-            // Lấy đơn hàng mới nhất để tạo mã tiếp theo
-            Order latestOrder = orderRepository.findTopByOrderByOrderIDDesc();
-            int nextNumber = 1;
-
-            if (latestOrder != null && latestOrder.getCodeOrder() != null) {
-                try {
-                    // Cắt phần "HD" đi và parse số
-                    String numberPart = latestOrder.getCodeOrder().substring(2);
-                    nextNumber = Integer.parseInt(numberPart) + 1;
-                } catch (Exception e) {
-                    // Nếu có lỗi, bắt đầu lại từ 1
-                    nextNumber = 1;
-                }
-            }
-
-            // Format mã đơn hàng với định dạng HD00001
-            return String.format("HD%05d", nextNumber);
-        }
-
 
         @Override
         @Transactional
@@ -80,26 +59,21 @@
             Order order = new Order();
             Double subtotal = 0.0;
 
-            // Tạo mã đơn hàng tự động
-            order.setCodeOrder(generateOrderCode());
+            order.setCodeOrder(getNextOrderCode());
 
-            // Customer
             Integer customerID = orderDTO.getCustomerId();
             Customer customer = customerService.getCustomerById(customerID);
             order.setCustomer(customer);
 
             order.setTotalPrice(0.00);
 
-            // Cập nhật: Đặt trạng thái đơn hàng phù hợp với phương thức thanh toán
+            // Đặt trạng thái đơn hàng phù hợp với phương thức thanh toán
             if(orderDTO.getPaymentMethod() == 2) {
-                // Thanh toán tiền mặt - hoàn thành ngay
                 order.setStatus(OrderStatus.COMPLETE);
             } else if(orderDTO.getPaymentMethod() == 1) {
-                // Thanh toán chuyển khoản - đã thanh toán khi xác nhận
                 order.setStatus(OrderStatus.COMPLETE);
             } else {
-                // Phương thức thanh toán khác hoặc không xác định
-                order.setStatus(OrderStatus.COMPLETE); // Mặc định là COMPLETE để tránh lỗi
+                order.setStatus(OrderStatus.COMPLETE);
             }
 
             order.setCreateAt(LocalDateTime.now());
@@ -113,13 +87,11 @@
 
             Integer orderID = saveOrder.getOrderID();
 
-            // OrderDetails
             if (orderDTO.getProductOrderDTOList() != null && !orderDTO.getProductOrderDTOList().isEmpty()) {
                 for (ProductOrderDTO productOrderDTO : orderDTO.getProductOrderDTOList()) {
                     OrderDetail orderDetail = new OrderDetail();
                     orderDetail.setOrder(saveOrder);
 
-                    // Lấy sản phẩm
                     org.example.electricstore.model.Product product = productService.findById(productOrderDTO.getProductId());
 
                     // Kiểm tra xem tồn kho có đủ không
@@ -141,11 +113,10 @@
                     // Tính tổng tiền trước khi áp dụng giảm giá
                     subtotal += productOrderDTO.getQuantity() * productOrderDTO.getPriceIndex();
 
-                    // CẬP NHẬT TỒN KHO
                     // Số lượng sau khi trừ đi số lượng đã đặt
                     Integer newStock = currentStock - productOrderDTO.getQuantity();
                     if (newStock < 0) {
-                        newStock = 0; // Đảm bảo tồn kho không âm
+                        newStock = 0;
                     }
 
                     // Cập nhật tồn kho
@@ -157,17 +128,14 @@
             // Tính giảm giá và tổng tiền cuối cùng
             Double discountValue = 0.0;
 
-            // Giảm giá theo VNĐ
             if (orderDTO.getDiscountAmount() != null) {
                 discountValue += orderDTO.getDiscountAmount();
             }
 
-            // Giảm giá theo %
             if (orderDTO.getDiscountPercent() != null && orderDTO.getDiscountPercent() > 0) {
                 discountValue += subtotal * (orderDTO.getDiscountPercent() / 100);
             }
 
-            // Tổng tiền sau khi đã giảm giá
             Double totalPrice = subtotal - discountValue;
             if (totalPrice < 0) {
                 totalPrice = 0.0;
@@ -265,15 +233,9 @@
 
             orderDTO.setId(order.getOrderID());
             orderDTO.setCustomerDTO(customerDTO);
-
-            // Thêm mã đơn hàng vào OrderDTO
             orderDTO.setInvoiceNumber(order.getCodeOrder());
-
-            // Thêm thông tin giảm giá
             orderDTO.setDiscountAmount(order.getDiscount());
             orderDTO.setDiscountPercent(order.getDiscountPercent());
-
-            // Remove default productOrderDTO in productOrderDTOList
             orderDTO.getProductOrderDTOList().removeFirst();
 
             List<ProductOrderDTO> productOrderDTOList = order.getOrderDetails().stream().map(orderDetail -> {
@@ -296,8 +258,6 @@
         public Page<Order> getAllOrders(String orderCode, String customerName, String phoneNumber,
                                         String fromDate, String toDate, int page, int size) {
             Pageable pageable = PageRequest.of(page - 1, size);
-
-            // Create a specification that combines all filter criteria
             Specification<Order> spec = Specification.where(null);
 
             // Tìm kiếm theo mã đơn hàng (codeOrder)
@@ -317,8 +277,6 @@
                         cb.like(cb.lower(root.get("customer").get("phoneNumber")),
                                 "%" + phoneNumber.toLowerCase() + "%"));
             }
-
-            // Handle date range
             if (fromDate != null && !fromDate.isEmpty()) {
                 try {
                     LocalDateTime startDate = LocalDateTime.parse(fromDate + "T00:00:00");
@@ -337,7 +295,6 @@
         }
 
         public String getNextOrderCode() {
-            // Sử dụng lại logic từ phương thức generateOrderCode()
             Order latestOrder = orderRepository.findTopByOrderByOrderIDDesc();
             int nextNumber = 1;
 
@@ -351,21 +308,17 @@
                     nextNumber = 1;
                 }
             }
-
-            // Format mã đơn hàng với định dạng HD00001
             return String.format("HD%05d", nextNumber);
         }
-        // Thêm phương thức này vào OrderService của bạn (Nếu chưa có)
+
         public boolean cancelOrder(Integer orderId) {
             try {
-                // Lấy đơn hàng theo ID
                 Order order = getOrderById(orderId);
 
                 if (order == null) {
                     return false;
                 }
 
-                // Kiểm tra nếu đơn hàng đã hủy thì không cần xử lý
                 if (order.getStatus() == OrderStatus.CANCELLED) {
                     return true;
                 }
@@ -381,11 +334,7 @@
                         }
                     }
                 }
-
-                // Cập nhật trạng thái đơn hàng thành CANCELLED
                 order.setStatus(OrderStatus.CANCELLED);
-
-                // Lưu đơn hàng đã cập nhật
                 orderRepository.save(order);
 
                 return true;

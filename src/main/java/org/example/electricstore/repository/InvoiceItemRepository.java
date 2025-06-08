@@ -12,7 +12,4 @@ import java.util.List;
 @Repository
 public interface InvoiceItemRepository extends JpaRepository<InvoiceItem, Long> {
 
-    @Query("SELECT i FROM InvoiceItem i JOIN FETCH i.invoice")
-    Page<InvoiceItem> findAllWithInvoice(Pageable pageable);
-
 }

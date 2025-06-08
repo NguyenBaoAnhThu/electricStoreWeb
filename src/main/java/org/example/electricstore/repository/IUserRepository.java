@@ -36,6 +36,5 @@ public interface IUserRepository extends JpaRepository<User, Integer> {
             "(:field = 'name' AND LOWER(u.employeeName) LIKE LOWER(CONCAT('%', :keyword, '%'))) OR " +
             "(:field = 'phone' AND u.employeePhone LIKE CONCAT('%', :keyword, '%'))")
     Page<User> searchUsers(@Param("field") String field, @Param("keyword") String keyword, Pageable pageable);
-    @Query(value = "SELECT employee_code FROM users WHERE employee_code LIKE 'NV%' ORDER BY CAST(SUBSTRING(employee_code, 3) AS UNSIGNED) DESC LIMIT 1", nativeQuery = true)
-    String findMaxEmployeeCode();
+
 }

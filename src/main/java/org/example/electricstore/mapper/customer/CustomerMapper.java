@@ -21,12 +21,9 @@ public class CustomerMapper {
                 .email(customerDTO.getEmail())
                 .build();
 
-        // ĐÃ SỬA: Chỉ tạo mã mới nếu DTO không có mã
         if (customerDTO.getCustomerCode() != null && !customerDTO.getCustomerCode().isEmpty()) {
-            // Sử dụng mã khách hàng từ DTO nếu có
             customer.setCustomerCode(customerDTO.getCustomerCode());
         } else {
-            // Tự động tạo mã khách hàng mới nếu chưa có
             customer.setCustomerCode(generateCustomerCode());
         }
 
@@ -47,7 +44,6 @@ public class CustomerMapper {
 
     // Phương thức sinh mã khách hàng tự động
     public String generateCustomerCode() {
-        // Tìm mã khách hàng lớn nhất hiện tại
         String maxCode = customerRepository.findMaxCustomerCode();
 
         int nextSequence = 1;
@@ -56,7 +52,6 @@ public class CustomerMapper {
                 String numberPart = maxCode.substring(2);
                 nextSequence = Integer.parseInt(numberPart) + 1;
             } catch (NumberFormatException e) {
-                // Nếu có lỗi, bắt đầu lại từ 1
                 nextSequence = 1;
             }
         }

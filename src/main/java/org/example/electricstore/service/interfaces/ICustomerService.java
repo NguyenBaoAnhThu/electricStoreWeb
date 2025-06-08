@@ -16,7 +16,6 @@ public interface ICustomerService<E,D>{
     D findCustomerDTOById(int id);
     List<CustomerDTO> getCustomersByKeyword(String keyword);
     Optional<Customer> getCustomerByCustomerId(Integer customerId);
-
     Page<Customer> searchCustomers(String keyword, String filter, Integer page, Integer size);
     boolean existsByPhoneNumber(String phoneNumber);
     boolean existsByEmail(String email);

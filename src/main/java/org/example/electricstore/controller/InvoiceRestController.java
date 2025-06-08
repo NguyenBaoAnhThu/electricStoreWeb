@@ -53,44 +53,37 @@ public class InvoiceRestController {
     @PostMapping
     public ResponseEntity<?> saveInvoice(@RequestBody Invoice invoice) {
         try {
-            // Kiểm tra và thiết lập nhà cung cấp
             if (invoice.getSupplier() == null && invoice.getSupplierId() != null) {
                 Supplier supplier = new Supplier();
                 supplier.setSupplierID(invoice.getSupplierId());
                 invoice.setSupplier(supplier);
             }
 
-            // Validate phiếu nhập kho trước khi lưu
             invoiceService.validateInvoice(invoice);
 
-            // Thiết lập mối quan hệ hai chiều giữa Invoice và InvoiceItem
             List<InvoiceItem> items = invoice.getProducts();
             if (items != null) {
                 for (InvoiceItem item : items) {
-                    item.setInvoice(invoice); // Đảm bảo mỗi InvoiceItem liên kết với Invoice
+                    item.setInvoice(invoice);
                 }
             }
 
-            // Tính totalPrice trước khi lưu
             invoice.calculateTotalPrice();
-            System.out.println("Before saving: totalPrice = " + invoice.getTotalPrice()); // Debug
+            System.out.println("Before saving: totalPrice = " + invoice.getTotalPrice());
 
-            // Lưu Invoice (bao gồm các InvoiceItem nhờ cascade)
             Invoice savedInvoice = invoiceRepo.save(invoice);
-            System.out.println("After saving: totalPrice = " + savedInvoice.getTotalPrice()); // Debug
+            System.out.println("After saving: totalPrice = " + savedInvoice.getTotalPrice());
 
-            // Cập nhật tồn kho
             if (items != null) {
                 for (InvoiceItem item : items) {
                     updateProductStock(item.getProductId().intValue(), (int)item.getQuantity());
                 }
             }
 
-            // Trả về thông tin phiếu đã tạo
             Map<String, Object> response = new HashMap<>();
             response.put("message", "Lưu hóa đơn thành công!");
             response.put("invoiceId", savedInvoice.getId());
-            response.put("totalPrice", savedInvoice.getTotalPrice()); // Debug
+            response.put("totalPrice", savedInvoice.getTotalPrice());
 
             return ResponseEntity.ok(response);
         } catch (InvoiceException ex) {
@@ -181,22 +174,19 @@ public class InvoiceRestController {
 
             Invoice invoice = invoiceOpt.get();
 
-            // Ensure totalPrice is calculated
             invoice.calculateTotalPrice();
-            invoiceRepo.save(invoice); // Save to update totalPrice
+            invoiceRepo.save(invoice);
 
             double totalAmount = invoice.getTotalPrice();
             double previouslyPaid = paymentHistoryRepository.sumAmountByInvoiceId(invoiceId);
             double amountDue = totalAmount - previouslyPaid;
             double currentPaymentAmount = amount;
 
-            // Validate payment amount
             if (currentPaymentAmount <= 0 || currentPaymentAmount > amountDue) {
                 return ResponseEntity.badRequest()
                         .body("Số tiền thanh toán không hợp lệ: " + currentPaymentAmount);
             }
 
-            // Save payment history
             PaymentHistory paymentHistory = PaymentHistory.builder()
                     .invoiceId(invoiceId)
                     .amount(currentPaymentAmount)

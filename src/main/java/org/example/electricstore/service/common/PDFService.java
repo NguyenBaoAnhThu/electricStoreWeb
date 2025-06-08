@@ -34,20 +34,19 @@ import java.time.format.DateTimeFormatter;
 public class PDFService {
 
     // Định nghĩa màu sắc chủ đạo
-    private static final DeviceRgb PRIMARY_COLOR = new DeviceRgb(209, 0, 36); // #D10024 - Màu đỏ của shop
-    private static final DeviceRgb SECONDARY_COLOR = new DeviceRgb(51, 51, 51); // #333333 - Màu đen chữ
-    private static final DeviceRgb TABLE_HEADER_COLOR = new DeviceRgb(33, 37, 41); // #212529 - Màu đen nhạt
+    private static final DeviceRgb PRIMARY_COLOR = new DeviceRgb(209, 0, 36);
+    private static final DeviceRgb SECONDARY_COLOR = new DeviceRgb(51, 51, 51);
+    private static final DeviceRgb TABLE_HEADER_COLOR = new DeviceRgb(33, 37, 41);
     private static final float BORDER_WIDTH = 0.5f;
 
     public byte[] createInvoicePDF(OrderDTO orderDTO) {
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-            // Tạo PDF writer và document
+
             PdfWriter writer = new PdfWriter(outputStream);
             PdfDocument pdf = new PdfDocument(writer);
             Document document = new Document(pdf, PageSize.A4);
             document.setMargins(36, 36, 36, 36); // 36pt = 0.5 inch
 
-            // Tải font tiếng Việt
             InputStream fontStream = new ClassPathResource("fonts/vuArial.ttf").getInputStream();
             PdfFont vietnameseFont = PdfFontFactory.createFont(fontStream.readAllBytes(), PdfEncodings.IDENTITY_H);
 
@@ -58,7 +57,6 @@ public class PDFService {
                 boldFontStream = new ClassPathResource("fonts/vuArialBold.ttf").getInputStream();
                 vietnameseBoldFont = PdfFontFactory.createFont(boldFontStream.readAllBytes(), PdfEncodings.IDENTITY_H);
             } catch (Exception e) {
-                // Nếu không có font in đậm, sử dụng font thường
                 vietnameseBoldFont = vietnameseFont;
             }
 
@@ -70,7 +68,6 @@ public class PDFService {
                 logo.setHorizontalAlignment(HorizontalAlignment.CENTER);
                 document.add(logo);
             } catch (Exception e) {
-                // Nếu không có logo, thêm tên cửa hàng
                 document.add(new Paragraph("ELECTRIC STORE")
                         .setFont(vietnameseBoldFont)
                         .setFontSize(20)
@@ -111,7 +108,6 @@ public class PDFService {
             divider.addCell(dividerCell);
             document.add(divider);
 
-            // Thông tin khách hàng
             document.add(new Paragraph("\nTHÔNG TIN KHÁCH HÀNG")
                     .setFont(vietnameseBoldFont)
                     .setFontSize(14)

@@ -45,13 +45,11 @@ public class SupplierController {
             @RequestParam(required = false) String errorMessage,
             Model model) {
 
-        // Thêm DTO rỗng cho modal thêm/sửa
         SupplierDTO supplierDTO = new SupplierDTO();
         supplierDTO.setSupplierCode(supplierService.generateNewSupplierCode());
         model.addAttribute("supplierDTO", supplierDTO);
         model.addAttribute("editSupplier", new SupplierDTO());
 
-        // Xử lý thông báo từ URL parameter
         if (successMessage != null && !successMessage.isEmpty()) {
             model.addAttribute("successMessage", successMessage);
         }
@@ -62,19 +60,16 @@ public class SupplierController {
         Page<Supplier> supplierPage;
 
         if (filter != null && keyword != null && !keyword.trim().isEmpty()) {
-            // Gọi phương thức tìm kiếm có phân trang
             supplierPage = searchByFilter(filter, keyword, page, size);
             model.addAttribute("isSearch", true);
             if (supplierPage.isEmpty()) {
                 model.addAttribute("noResultMessage", "Không tìm thấy kết quả phù hợp với dữ liệu tìm kiếm.");
             }
         } else {
-            // Lấy danh sách nhà cung cấp có phân trang
             supplierPage = supplierService.getSuppliers(page, size);
             model.addAttribute("isSearch", false);
         }
 
-        // Xử lý trường hợp truy cập trang không hợp lệ
         if (page >= supplierPage.getTotalPages() && supplierPage.getTotalPages() > 0) {
             int newPage = Math.max(0, supplierPage.getTotalPages() - 1);
             return "redirect:/Admin/suppliers-manager?page=" + newPage + "&size=" + size;
@@ -83,21 +78,17 @@ public class SupplierController {
             return "redirect:/Admin/suppliers-manager?page=0&size=" + size;
         }
 
-        // Thêm các thuộc tính phân trang vào model
         model.addAttribute("suppliers", supplierPage.getContent());
         model.addAttribute("currentPage", supplierPage.getNumber());
         model.addAttribute("totalPages", supplierPage.getTotalPages());
         model.addAttribute("totalItems", supplierPage.getTotalElements());
         model.addAttribute("pageSize", size);
-
-        // Giữ lại giá trị tìm kiếm
         model.addAttribute("filter", filter);
         model.addAttribute("keyword", keyword);
 
         return "admin/suppliers/listSupplier";
     }
 
-    // API lấy mã nhà cung cấp mới
     @GetMapping("/generate-code")
     @ResponseBody
     public String generateSupplierCode() {
@@ -131,7 +122,6 @@ public class SupplierController {
         if (supplier.isPresent()) {
             model.addAttribute("supplier", supplier.get());
 
-            // Get paginated products for this supplier
             Page<Product> productsPage = productService.getProductsBySupplierPaginated(id, productPage, productSize);
 
             model.addAttribute("products", productsPage.getContent());
@@ -183,7 +173,6 @@ public class SupplierController {
                     })
                     .collect(Collectors.toList());
 
-            // Đưa các lỗi "không được để trống" vào map errors
             for (FieldError error : emptyFieldErrors) {
                 errors.put(error.getField(), error.getDefaultMessage());
             }
@@ -207,7 +196,7 @@ public class SupplierController {
             supplier.setEmail(supplierDTO.getEmail());
             supplierService.addSupplier(supplier);
 
-            return ResponseEntity.ok("Thêm nhà cung cấp thành công");
+            return ResponseEntity.ok("Thêm nhà cung cấp thành công.");
         } catch (SupplierException ex) {
             errors.put(mapErrorCodeToField(ex.getErrorCode()), ex.getMessage());
             return ResponseEntity.badRequest().body(errors);
@@ -254,20 +243,16 @@ public class SupplierController {
     public ResponseEntity<Map<String, Object>> deleteSuppliers(@RequestBody List<Integer> supplierIds) {
         Map<String, Object> response = new HashMap<>();
         try {
-            // Xóa danh sách nhà cung cấp
             supplierService.deleteSuppliers(supplierIds);
 
-            // Gọi lại danh sách nhà cung cấp từ service để cập nhật totalPages
-            int pageSize = 5; // Kích thước trang
-            Page<Supplier> supplierPage = supplierService.getSuppliers(0, pageSize); // Lấy trang đầu tiên
-            int totalPages = supplierPage.getTotalPages(); // Tổng số trang mới sau khi xóa
+            int pageSize = 5;
+            Page<Supplier> supplierPage = supplierService.getSuppliers(0, pageSize);
+            int totalPages = supplierPage.getTotalPages();
 
-            // Đảm bảo totalPages không nhỏ hơn 1
             totalPages = Math.max(totalPages, 1);
 
-            // Trả về phản hồi JSON
             response.put("success", true);
-            response.put("message", "Nhà cung cấp đã được xóa thành công!");
+            response.put("message", "Nhà cung cấp đã được xóa thành công.");
             response.put("totalPages", totalPages);
 
             return ResponseEntity.ok(response);

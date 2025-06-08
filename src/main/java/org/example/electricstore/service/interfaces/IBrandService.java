@@ -8,22 +8,13 @@ import java.util.Optional;
 
 public interface IBrandService {
     List<Brand> getAllBrands();
-
     Optional<Brand> getBrandById(Integer brandID);
-
     Brand saveBrand(Brand brand);
-
     void deleteBrand(List<Integer> brandIds);
-
     List<Brand> findByBrandNameContaining(String keyword);
-
     boolean existsByBrandName(String brandName);
-
     Page<Brand> getAllBrandsPaginated(int page, int size);
-
     Page<Brand> findByBrandNameContainingPaginated(String brandName, int page, int size);
-
     Page<Brand> findByBrandCodeContainingPaginated(String brandCode, int page, int size);
-
     String generateNewBrandCode();
 }

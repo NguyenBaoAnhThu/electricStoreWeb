@@ -28,10 +28,8 @@ public interface IProductRepository extends JpaRepository<Product, Integer> {
     @Query("SELECT p FROM Product p LEFT JOIN FETCH p.productDetail WHERE p.name LIKE %:keyword%")
     Page<Product> findByNameContaining(@Param("keyword") String keyword, Pageable pageable);
 
-    // Đổi tên phương thức để khớp với tên trường mới
     List<Product> findBySupplierSupplierID(Integer supplierID);
 
-    // Đổi tên phương thức để khớp với tên trường mới
     Page<Product> findBySupplierSupplierID(Integer supplierID, Pageable pageable);
 
     @Query("SELECT p FROM Product p WHERE p.supplier.supplierID = :supplierId")

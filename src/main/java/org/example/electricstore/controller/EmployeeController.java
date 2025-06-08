@@ -127,7 +127,6 @@ public class EmployeeController {
         Map<String, String> errors = new HashMap<>();
 
         // Xử lý đặc biệt cho trường mật khẩu trong form sửa
-        // Nếu có lỗi liên quan đến mật khẩu và mật khẩu đang trống, bỏ qua lỗi này
         if (bindingResult.hasFieldErrors("password") &&
                 (userDTO.getPassword() == null || userDTO.getPassword().isEmpty())) {
 

@@ -210,11 +210,7 @@ public class ProductAPIController {
         }
     }
 
-    /**
-     * API để lấy thông tin chi tiết sản phẩm (bao gồm tồn kho)
-     * @param productId ID sản phẩm
-     * @return Thông tin chi tiết sản phẩm
-     */
+    //API lấy thông tin chi tiết của sp bao gồm tồn kho
     @GetMapping("/details/{productId}")
     public ResponseEntity<Map<String, Object>> getProductDetails(@PathVariable Integer productId) {
         try {

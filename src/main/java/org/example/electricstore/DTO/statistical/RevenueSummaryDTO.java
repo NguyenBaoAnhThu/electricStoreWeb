@@ -9,7 +9,6 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class RevenueSummaryDTO {
-
     private Integer totalOrdersSuccess;
     private Integer totalItems;
     private Double revenue;

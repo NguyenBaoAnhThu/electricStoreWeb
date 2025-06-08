@@ -43,49 +43,42 @@ import java.util.Locale;
 public class PDFImportService {
 
     // Định nghĩa màu sắc chủ đạo
-    private static final DeviceRgb PRIMARY_COLOR = new DeviceRgb(0, 123, 255); // Màu xanh chủ đạo
-    private static final DeviceRgb SECONDARY_COLOR = new DeviceRgb(51, 51, 51); // #333333 - Màu đen chữ
-    private static final DeviceRgb TABLE_HEADER_COLOR = new DeviceRgb(33, 37, 41); // #212529 - Màu đen nhạt
+    private static final DeviceRgb PRIMARY_COLOR = new DeviceRgb(0, 123, 255);
+    private static final DeviceRgb SECONDARY_COLOR = new DeviceRgb(51, 51, 51);
+    private static final DeviceRgb TABLE_HEADER_COLOR = new DeviceRgb(33, 37, 41);
     private static final float BORDER_WIDTH = 0.5f;
 
     @Autowired
     private InvoiceRepository invoiceRepository;
-
-    @Autowired
-    private ISupplierRepository supplierRepository;
 
     public byte[] createImportPDF(Integer invoiceId) throws IOException {
         // Lấy thông tin hóa đơn từ database
         Invoice invoice = invoiceRepository.findByIdWithProducts(invoiceId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy phiếu nhập kho"));
 
-        // Convert sang DTO để xử lý
         WarehouseImportDTO importDTO = convertToDTO(invoice);
 
         // Tạo PDF
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-            // Tạo PDF writer và document
+
             PdfWriter writer = new PdfWriter(outputStream);
             PdfDocument pdf = new PdfDocument(writer);
             Document document = new Document(pdf, PageSize.A4);
             document.setMargins(36, 36, 36, 36); // 36pt = 0.5 inch
 
-            // Tải font tiếng Việt
             InputStream fontStream = new ClassPathResource("fonts/vuArial.ttf").getInputStream();
             PdfFont vietnameseFont = PdfFontFactory.createFont(fontStream.readAllBytes(), PdfEncodings.IDENTITY_H);
 
-            // Tải font in đậm (nếu có)
             InputStream boldFontStream = null;
             PdfFont vietnameseBoldFont = null;
             try {
                 boldFontStream = new ClassPathResource("fonts/vuArialBold.ttf").getInputStream();
                 vietnameseBoldFont = PdfFontFactory.createFont(boldFontStream.readAllBytes(), PdfEncodings.IDENTITY_H);
             } catch (Exception e) {
-                // Nếu không có font in đậm, sử dụng font thường
                 vietnameseBoldFont = vietnameseFont;
             }
 
-            // Thêm logo (nếu có)
+            // Thêm logo
             try {
                 InputStream logoStream = new ClassPathResource("static/img/logo.png").getInputStream();
                 Image logo = new Image(ImageDataFactory.create(logoStream.readAllBytes()));
@@ -93,7 +86,6 @@ public class PDFImportService {
                 logo.setHorizontalAlignment(HorizontalAlignment.CENTER);
                 document.add(logo);
             } catch (Exception e) {
-                // Nếu không có logo, thêm tên cửa hàng
                 document.add(new Paragraph("ELECTRIC STORE")
                         .setFont(vietnameseBoldFont)
                         .setFontSize(20)
@@ -158,7 +150,6 @@ public class PDFImportService {
                 }
             }
 
-            // Thêm ghi chú nếu có
             if (importDTO.getNotes() != null && !importDTO.getNotes().isEmpty()) {
                 addInfoRow(supplierInfoTable, "Ghi chú:", importDTO.getNotes(), vietnameseFont);
             }

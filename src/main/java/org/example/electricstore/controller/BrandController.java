@@ -28,7 +28,6 @@ public class BrandController {
         this.brandService = brandService;
     }
 
-    // Hiển thị danh sách thương hiệu với tìm kiếm và phân trang
     @GetMapping
     public ModelAndView showListBrand(
             Authentication authentication,
@@ -79,14 +78,13 @@ public class BrandController {
         modelAndView.addObject("size", size);
         return modelAndView;
     }
-    // Tạo mã thương hiệu mới
+
     @GetMapping("/generate-code")
     @ResponseBody
     public String generateBrandCode() {
         return brandService.generateNewBrandCode();
     }
 
-    // Thêm thương hiệu mới
     @PostMapping("/add")
     @ResponseBody
     public ResponseEntity<?> addBrand(@Valid @RequestBody BrandDTO brandDTO,
@@ -115,7 +113,6 @@ public class BrandController {
         }
     }
 
-    // Cập nhật thông tin thương hiệu
     @PostMapping("/edit")
     @ResponseBody
     public ResponseEntity<?> updateBrand(@Valid @RequestBody BrandDTO brandDTO,
@@ -136,7 +133,7 @@ public class BrandController {
             brand.setUpdateAt(LocalDateTime.now());
 
             brandService.saveBrand(brand);
-            return ResponseEntity.ok("Cập nhật thương hiệu thành công");
+            return ResponseEntity.ok("Cập nhật thương hiệu thành công.");
         } catch (Exception e) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("error", "Lỗi khi cập nhật thương hiệu: " + e.getMessage());
@@ -144,7 +141,6 @@ public class BrandController {
         }
     }
 
-    // Xóa danh sách thương hiệu
     @PostMapping("/delete")
     @ResponseBody
     public ResponseEntity<?> deleteBrands(@RequestBody List<Integer> brandIds) {
@@ -152,17 +148,16 @@ public class BrandController {
             brandService.deleteBrand(brandIds);
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
-            response.put("message", "Thương hiệu đã được xóa thành công!");
+            response.put("message", "Thương hiệu đã được xóa thành công.");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             Map<String, Object> response = new HashMap<>();
             response.put("success", false);
-            response.put("message", "Lỗi khi xóa thương hiệu!");
+            response.put("message", "Lỗi khi xóa thương hiệu.");
             return ResponseEntity.badRequest().body(response);
         }
     }
 
-    // Kiểm tra tên thương hiệu đã tồn tại
     @GetMapping("/check-name")
     @ResponseBody
     public ResponseEntity<?> checkBrandNameExists(@RequestParam("brandName") String brandName) {

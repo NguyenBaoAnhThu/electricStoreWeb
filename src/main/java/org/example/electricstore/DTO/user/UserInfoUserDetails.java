@@ -23,7 +23,6 @@ public class UserInfoUserDetails implements UserDetails {
         authorities = new ArrayList<>();
         if (userRoles != null) {
             for (UserRole userRole : userRoles) {
-                // ROLE_USER, ROLE_ADMIN,..
                 GrantedAuthority authority = new SimpleGrantedAuthority(userRole.getRole().getRoleName().name());
                 authorities.add(authority);
             }

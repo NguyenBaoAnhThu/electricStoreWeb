@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class OrderDetailRevenueDTO {
-
     private String code;
     private String customerName;
     private LocalDateTime orderDate;

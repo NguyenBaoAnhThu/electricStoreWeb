@@ -11,7 +11,6 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class OverViewRevenueDTO {
-
     private RevenueSummaryDTO revenueSummary;
     private List<DailyRevenueDTO> dailyRevenue;
     private List<TopSellingProductDTO> topSellingProducts;

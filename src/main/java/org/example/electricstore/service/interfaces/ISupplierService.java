@@ -9,17 +9,11 @@ import java.util.Optional;
 
 public interface ISupplierService {
     Page<Supplier> getSuppliers(int page, int size);
-
     List<Supplier> getAllSuppliers();
-
     Optional<Supplier> getSupplierById(Integer id);
-
     Supplier addSupplier(Supplier supplier);
-
     Supplier updateSupplier(Integer id, Supplier supplierDetails);
-
     void deleteSuppliers(List<Integer> ids);
-
     Page<Supplier> searchSuppliersByAllFields(
             String supplierCode,
             String supplierName,
@@ -27,7 +21,6 @@ public interface ISupplierService {
             String phone,
             String email,
             Pageable pageable);
-
     List<Supplier> searchSuppliersByAllFields(
             String supplierCode,
             String supplierName,

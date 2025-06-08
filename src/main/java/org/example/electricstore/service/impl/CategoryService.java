@@ -59,7 +59,6 @@ public class CategoryService implements ICategoryService {
 
     @Override
     public Category saveCategory(Category category) {
-        // Nếu là category có id (đang cập nhật)
         if (category.getCategoryID() != null && categoryRepository.existsById(category.getCategoryID())) {
             Category existingCategory = categoryRepository.findById(category.getCategoryID()).orElse(null);
             if (existingCategory != null) {
@@ -70,7 +69,6 @@ public class CategoryService implements ICategoryService {
                 return categoryRepository.save(existingCategory);
             }
         } else {
-            // Nếu là category mới (chưa có id), tạo categoryCode
             category.setCategoryCode(generateNextCategoryCode());
             category.setCreateAt(LocalDateTime.now());
             category.setUpdateAt(LocalDateTime.now());
@@ -122,9 +120,7 @@ public class CategoryService implements ICategoryService {
         if (maxCategoryCode == null) {
             return "DM0001";
         } else {
-            // Trích xuất số từ mã hiện tại
             int currentNumber = Integer.parseInt(maxCategoryCode.substring(2));
-            // Tạo mã mới với số tăng lên 1
             return String.format("DM%04d", currentNumber + 1);
         }
     }
