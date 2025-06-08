@@ -75,17 +75,14 @@
             }
         }
 
-        // Run the function on load
         updateFooter();
 
-        // Check if sidebar toggle exists
         if (sidebarToggle) {
             sidebarToggle.addEventListener("click", function () {
                 body.classList.toggle("sidebar-collapsed");
                 updateFooter();
             });
         } else {
-            // If the sidebar-toggle doesn't exist, try to listen for class changes on body
             const observer = new MutationObserver(function(mutations) {
                 mutations.forEach(function(mutation) {
                     if (mutation.attributeName === "class") {

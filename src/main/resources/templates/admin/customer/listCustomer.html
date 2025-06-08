@@ -247,8 +247,6 @@
                 data: JSON.stringify(customerData),
                 success: function (response) {
                     $("#editCustomerModal").modal("hide");
-
-                    // Chuyển hướng với tham số thông báo thành công
                     window.location.href = '/Admin/customers?successMessage=' + encodeURIComponent('Chỉnh sửa khách hàng thành công.');
                 },
                 error: function (xhr) {
