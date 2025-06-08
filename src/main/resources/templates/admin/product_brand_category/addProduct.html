@@ -119,9 +119,7 @@
             <div class="card-body">
                 <div class="alert alert-danger mt-3" th:if="${error}" th:text="${error}"></div>
                 <form th:action="@{/Admin/product-manager/add}" method="post" th:object="${product}" enctype="multipart/form-data">
-                    <!-- Tab content -->
                     <div class="tab-content">
-                        <!-- Tab: Thông tin cơ bản -->
                         <div class="tab-pane active" id="basic-info">
                             <div class="row mb-3">
                                 <div class="col-md-8">
@@ -381,12 +379,9 @@
                         </div>
                     </div>
 
-                    <!-- Ghi chú trường bắt buộc -->
                     <div class="mt-3 mb-3">
                         <small class="text-muted"><span class="text-danger">*</span> Trường Bắt Buộc Phải Nhập</small>
                     </div>
-
-                    <!-- Buttons -->
                     <div class="d-flex justify-content-end mt-4">
                         <button type="button" class="btn btn-secondary me-2" id="cancelAddButton">
                             Hủy
@@ -451,23 +446,15 @@
         }
     });
 
-    // Tab switching functionality
     document.querySelectorAll('.card-tab').forEach(tab => {
         tab.addEventListener('click', function() {
-            // Remove active class from all tabs
             document.querySelectorAll('.card-tab').forEach(t => {
                 t.classList.remove('active');
             });
-
-            // Add active class to clicked tab
             this.classList.add('active');
-
-            // Hide all tab panes
             document.querySelectorAll('.tab-pane').forEach(pane => {
                 pane.classList.remove('active');
             });
-
-            // Show corresponding tab pane
             const tabId = this.getAttribute('data-tab');
             document.getElementById(tabId).classList.add('active');
         });
@@ -479,39 +466,30 @@
 <script th:src="@{/js/admin/sidebarActiveMenu.js}"></script>
 <script th:src="@{/js/admin/header.js}" type="text/javascript"></script>
 <script>
-    $(document).ready(function(){
-        $('#productPrice_01').each(function() {
-            var value = $(this).val();
+    document.addEventListener('DOMContentLoaded', function(){
+        // Xử lý format giá sản phẩm từ dạng scientific notation
+        const productPriceElement = document.getElementById('productPrice_01');
+        if (productPriceElement) {
+            let value = productPriceElement.value;
             if (value.match(/e\+?(\d+)/i)) {
                 value = Number(value).toFixed(0);
-                $(this).val(value);
+                productPriceElement.value = value;
             }
-        });
+        }
     });
-</script>
-<script>
-    // Đảm bảo DOM đã được tải đầy đủ
     document.addEventListener('DOMContentLoaded', function() {
-        // Định nghĩa biến toàn cục
         const productNameInput = document.getElementById('productNameInput');
         const charLimitMsg = document.getElementById('charLimitMsg');
 
         if (productNameInput) {
             // Thêm sự kiện paste để xử lý khi người dùng dán văn bản
             productNameInput.addEventListener('paste', function(e) {
-                // Xử lý sau khi dán để đảm bảo đúng quy tắc
                 setTimeout(() => {
                     const MAX_LENGTH = 100;
                     let currentValue = this.value;
-
-                    // Lọc ký tự đặc biệt
                     const filteredValue = currentValue.replace(/[^\p{L}0-9\s]/gu, '');
-
-                    // Giới hạn độ dài
                     if (filteredValue.length > MAX_LENGTH) {
                         this.value = filteredValue.substring(0, MAX_LENGTH);
-
-                        // Hiển thị thông báo
                         charLimitMsg.textContent = 'Đã đạt giới hạn ký tự tên sản phẩm';
                         charLimitMsg.style.display = 'block';
 
@@ -526,11 +504,8 @@
         }
 
         // Sử lý modal hủy thêm sản phẩm
-        // Có 2 nút có thể gọi modal: nút "Quay lại" ở trên và nút "Hủy" ở dưới form
-        const cancelButton = document.getElementById('cancelButton'); // Nút trên cùng
-        const cancelAddButton = document.getElementById('cancelAddButton'); // Nút trong form
-
-        // Xử lý cho nút "Quay lại" ở trên
+        const cancelButton = document.getElementById('cancelButton');
+        const cancelAddButton = document.getElementById('cancelAddButton');
         if (cancelButton) {
             cancelButton.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -540,7 +515,6 @@
             });
         }
 
-        // Xử lý cho nút "Hủy" trong form
         if (cancelAddButton) {
             cancelAddButton.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -554,11 +528,9 @@
         const confirmButton = document.getElementById('confirmCancelAddBtn');
         if (confirmButton) {
             confirmButton.addEventListener('click', function() {
-                // Chuyển hướng về trang quản lý sản phẩm
                 window.location.href = '/Admin/product-manager';
             });
         }
-
         // Debug để kiểm tra modal
         console.log('Modal element exists:', !!document.getElementById('cancelAddProductModal'));
         console.log('Cancel buttons found:', {

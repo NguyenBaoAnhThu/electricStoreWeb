@@ -1279,7 +1279,6 @@
                             })
                                 .then(response2 => {
                                     if (response2.ok) {
-                                        // In hóa đơn trước khi chuyển trang
                                         window.open("/Admin/order/downloadInvoicePdf?orderId=" + response.orderId, "_blank");
                                         window.location.href = "/Admin/order?successMessage=" + encodeURIComponent("Thêm đơn hàng mới thành công.");
                                     } else {
@@ -1294,9 +1293,8 @@
                                 });
                         };
                     } else {
-                        // Nếu thanh toán tiền mặt, in hóa đơn trước khi chuyển hướng
                         window.open("/Admin/order/downloadInvoicePdf?orderId=" + response.orderId, "_blank");
-                        window.location.href = "/Admin/order?successMessage=Thêm đơn hàng mới thành công!";
+                        window.location.href = "/Admin/order?successMessage=Thêm đơn hàng mới thành công.";
                     }
 
                     // Clear storage
@@ -1375,14 +1373,6 @@
                     stockErrorModal.show();
                 }
             }
-        });
-    }
-    // Thêm các hàm xử lý thanh toán QR
-    function copyToClipboard(text) {
-        navigator.clipboard.writeText(text).then(function() {
-            alert("Đã sao chép: " + text);
-        }, function() {
-            alert("Không thể sao chép văn bản");
         });
     }
 

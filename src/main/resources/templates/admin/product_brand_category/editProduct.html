@@ -147,7 +147,6 @@
                 </div>
             </div>
             <div class="card-body">
-                <!-- Thông báo lỗi tổng quát -->
                 <div class="alert alert-danger mt-3" th:if="${error}" th:text="${error}"></div>
                 <div class="alert alert-danger mt-3" th:if="${errorMessage != null}" th:text="${errorMessage}"></div>
 
@@ -155,7 +154,6 @@
                     <input type="hidden" th:field="*{productID}">
                     <input type="hidden" th:field="*{productCode}">
 
-                    <!-- Tab content -->
                     <div class="tab-content">
                         <!-- Tab: Thông tin cơ bản -->
                         <div class="tab-pane active" id="basic-info">
@@ -248,15 +246,9 @@
                                     <div class="compact-form-group">
                                         <label class="form-label  -field">Ảnh Sản Phẩm</label>
                                         <input type="file" name="files" multiple accept="image/*" class="form-control" id="imageUpload">
-                                        <!-- Quan trọng: Luôn giữ URL ảnh hiện tại trong form -->
                                         <input type="hidden" name="mainImageUrl" id="imagePaths" th:field="*{mainImageUrl}">
-
-                                        <!-- Hiển thị lỗi từ imageError trong model (từ ProductException) -->
                                         <div class="text-danger" th:if="${imageError != null}" th:text="${imageError}"></div>
-
-                                        <!-- Hiển thị lỗi từ validation trong ProductDTO -->
                                         <div class="text-danger" th:if="${#fields.hasErrors('mainImageUrl')}" th:errors="*{mainImageUrl}"></div>
-
                                         <div id="imagePreview" class="mt-2">
                                             <img th:if="${product.mainImageUrl != null && !product.mainImageUrl.isEmpty()}"
                                                  th:src="${product.mainImageUrl}"
@@ -507,23 +499,15 @@
         }
     });
 
-    // Tab switching functionality
     document.querySelectorAll('.card-tab').forEach(tab => {
         tab.addEventListener('click', function() {
-            // Remove active class from all tabs
             document.querySelectorAll('.card-tab').forEach(t => {
                 t.classList.remove('active');
             });
-
-            // Add active class to clicked tab
             this.classList.add('active');
-
-            // Hide all tab panes
             document.querySelectorAll('.tab-pane').forEach(pane => {
                 pane.classList.remove('active');
             });
-
-            // Show corresponding tab pane
             const tabId = this.getAttribute('data-tab');
             document.getElementById(tabId).classList.add('active');
         });
@@ -532,7 +516,6 @@
     document.addEventListener("DOMContentLoaded", function() {
         const productNameInput = document.querySelector('input[name="name"]');
         if (productNameInput) {
-            // Tạo trước thẻ hiển thị thông báo giới hạn ký tự
             let charLimitMsg = document.createElement('div');
             charLimitMsg.id = 'char-limit-message';
             charLimitMsg.className = 'text-danger small mt-1';
@@ -540,50 +523,36 @@
             productNameInput.parentNode.appendChild(charLimitMsg);
 
             productNameInput.addEventListener('input', function(e) {
-                const MAX_LENGTH = 100; // Giới hạn 100 ký tự
+                const MAX_LENGTH = 100;
                 let currentValue = this.value;
 
-                // 1. Loại bỏ ký tự đặc biệt ngay khi nhập (không hiển thị thông báo)
                 const filteredValue = currentValue.replace(/[^a-zA-Z0-9\sÀ-ỹ]/g, '');
                 if (currentValue !== filteredValue) {
                     this.value = filteredValue;
                     currentValue = filteredValue;
                 }
 
-                // 2. Kiểm tra và xử lý giới hạn ký tự
                 if (currentValue.length >= MAX_LENGTH) {
-                    // Cắt bỏ phần thừa
                     this.value = currentValue.substring(0, MAX_LENGTH);
-
-                    // Hiển thị thông báo đã đạt giới hạn
                     charLimitMsg.textContent = 'Đã đạt giới hạn ký tự tên sản phẩm';
                     charLimitMsg.style.display = 'block';
-
-                    // Tự động ẩn thông báo sau 3 giây
                     setTimeout(() => {
                         charLimitMsg.style.display = 'none';
                     }, 3000);
                 } else {
-                    // Ẩn thông báo nếu chưa đạt giới hạn
                     charLimitMsg.style.display = 'none';
                 }
             });
 
             // Thêm cả sự kiện paste để xử lý khi người dùng dán văn bản
             productNameInput.addEventListener('paste', function(e) {
-                // Xử lý sau khi dán để đảm bảo đúng quy tắc
                 setTimeout(() => {
                     const MAX_LENGTH = 100;
                     let currentValue = this.value;
-
-                    // Lọc ký tự đặc biệt
                     const filteredValue = currentValue.replace(/[^a-zA-Z0-9\sÀ-ỹ]/g, '');
 
-                    // Giới hạn độ dài
                     if (filteredValue.length > MAX_LENGTH) {
                         this.value = filteredValue.substring(0, MAX_LENGTH);
-
-                        // Hiển thị thông báo
                         charLimitMsg.textContent = 'Đã đạt giới hạn ký tự tên sản phẩm';
                         charLimitMsg.style.display = 'block';
 
@@ -597,41 +566,31 @@
             });
         }
 
-        // Xử lý modal hủy chỉnh sửa sản phẩm
-        // Có 2 nút có thể gọi modal: nút "Quay lại" ở trên và nút "Hủy" ở dưới form
-        const cancelButton = document.getElementById('cancelButton'); // Nút trên cùng
-        const cancelEditButton = document.getElementById('cancelEditButton'); // Nút trong form
+        const cancelButton = document.getElementById('cancelButton');
+        const cancelEditButton = document.getElementById('cancelEditButton');
 
-        // Xử lý cho nút "Quay lại" ở trên
         if (cancelButton) {
             cancelButton.addEventListener('click', function(e) {
                 e.preventDefault();
-                // Hiển thị modal xác nhận
                 const modal = new bootstrap.Modal(document.getElementById('cancelEditProductModal'));
                 modal.show();
             });
         }
 
-        // Xử lý cho nút "Hủy" trong form
         if (cancelEditButton) {
             cancelEditButton.addEventListener('click', function(e) {
                 e.preventDefault();
-                // Hiển thị modal xác nhận
                 const modal = new bootstrap.Modal(document.getElementById('cancelEditProductModal'));
                 modal.show();
             });
         }
 
-        // Xử lý khi người dùng xác nhận hủy
         const confirmButton = document.getElementById('confirmCancelEditBtn');
         if (confirmButton) {
             confirmButton.addEventListener('click', function() {
-                // Chuyển hướng về trang quản lý sản phẩm
                 window.location.href = '/Admin/product-manager';
             });
         }
-
-        // Debug để kiểm tra modal
         console.log('Modal element exists:', !!document.getElementById('cancelEditProductModal'));
         console.log('Cancel buttons found:', {
             topButton: !!cancelButton,

@@ -130,7 +130,6 @@
         </tr>
         </thead>
         <tbody>
-        <!-- Hiển thị danh sách sản phẩm từ nhà cung cấp này nếu có -->
         <tr th:each="product, status : ${products}" th:if="${!#lists.isEmpty(products)}">
           <td th:text="${status.count + (productCurrentPage * productPageSize)}"></td>
           <td th:text="${product.productCode}"></td>
@@ -145,17 +144,14 @@
       </table>
     </div>
 
-    <!-- Empty state if no products -->
     <div th:if="${#lists.isEmpty(products)}" class="text-center py-5">
       <i class="fas fa-box mb-3" style="font-size: 48px; color: #e9ecef;"></i>
       <p class="text-muted">Nhà cung cấp chưa có sản phẩm nào</p>
     </div>
 
-    <!-- Pagination Section -->
     <div class="d-flex justify-content-end align-items-center mt-4" th:if="${productTotalPages > 1}">
       <nav aria-label="Page navigation">
         <ul class="pagination m-0">
-          <!-- First Page Button -->
           <li class="page-item" th:classappend="${productCurrentPage == 0} ? 'disabled'">
             <a class="page-link text-dark bg-light border"
                th:href="@{/Admin/suppliers-manager/{id}(id=${supplier.supplierID}, productPage=0, productSize=${productPageSize})}"
@@ -164,7 +160,6 @@
             </a>
           </li>
 
-          <!-- Previous Page Button -->
           <li class="page-item" th:classappend="${productCurrentPage == 0} ? 'disabled'">
             <a class="page-link text-dark bg-light border"
                th:href="@{/Admin/suppliers-manager/{id}(id=${supplier.supplierID}, productPage=${productCurrentPage - 1}, productSize=${productPageSize})}"
@@ -179,7 +174,6 @@
             </span>
           </li>
 
-          <!-- Next Page Button -->
           <li class="page-item" th:classappend="${productCurrentPage == productTotalPages - 1} ? 'disabled'">
             <a class="page-link text-dark bg-light border"
                th:href="@{/Admin/suppliers-manager/{id}(id=${supplier.supplierID}, productPage=${productCurrentPage + 1}, productSize=${productPageSize})}"
@@ -188,7 +182,6 @@
             </a>
           </li>
 
-          <!-- Last Page Button -->
           <li class="page-item" th:classappend="${productCurrentPage == productTotalPages - 1} ? 'disabled'">
             <a class="page-link text-dark bg-light border"
                th:href="@{/Admin/suppliers-manager/{id}(id=${supplier.supplierID}, productPage=${productTotalPages - 1}, productSize=${productPageSize})}"
@@ -201,7 +194,6 @@
     </div>
   </div>
 </main>
-
 <div th:replace="~{admin/fragments/footer :: footer}"></div>
 <script th:src="@{/js/admin/layout.js}"></script>
 <script th:src="@{/js/admin/header.js}" type="text/javascript"></script>
