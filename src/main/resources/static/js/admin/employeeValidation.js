@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     phoneInputs.forEach(input => {
         if (input) {
-            // Xử lý khi nhập số điện thoại
             input.addEventListener("input", function(e) {
                 const value = e.target.value;
 
@@ -11,8 +10,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (!/^\d*$/.test(value)) {
                     e.target.value = value.replace(/\D/g, '');
                 }
-
-                // Giới hạn độ dài
                 if (value.length > 10) {
                     e.target.value = value.slice(0, 10);
                 }
@@ -22,11 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
             input.addEventListener('paste', function(e) {
                 setTimeout(() => {
                     const currentValue = this.value;
-
-                    // Lọc ký tự không phải số
                     const filteredValue = currentValue.replace(/\D/g, '');
-
-                    // Giới hạn độ dài
                     if (filteredValue.length > 10) {
                         this.value = filteredValue.substring(0, 10);
                     } else {
@@ -37,33 +30,24 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // === VALIDATE TÊN NHÂN VIÊN ===
     const nameInputs = document.querySelectorAll("#employeeName, #editEmployeeName");
 
     nameInputs.forEach(input => {
         if (input) {
-            // Thêm id cho thông báo giới hạn ký tự
             let errorId = input.id === 'employeeName' ? 'employeeNameError' : 'editEmployeeNameError';
             let charLimitMsg = document.getElementById(errorId);
 
-            // Xử lý khi nhập tên nhân viên
             input.addEventListener("input", function(e) {
                 const value = e.target.value;
 
-                // Chỉ cho phép chữ cái, số và khoảng trắng
                 if (!/^[A-Za-z0-9À-ỹ\s]*$/.test(value)) {
                     e.target.value = value.replace(/[^A-Za-z0-9À-ỹ\s]/g, '');
                 }
-
-                // Giới hạn độ dài
                 if (value.length > 50) {
                     e.target.value = value.slice(0, 50);
-
-                    // Hiển thị thông báo giới hạn
                     if (charLimitMsg) {
                         charLimitMsg.textContent = 'Đã đạt giới hạn ký tự tên nhân viên';
                         charLimitMsg.style.display = 'block';
-
                         setTimeout(() => {
                             charLimitMsg.style.display = 'none';
                         }, 3000);
@@ -76,15 +60,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 setTimeout(() => {
                     const MAX_LENGTH = 50;
                     const currentValue = this.value;
-
-                    // Lọc ký tự không hợp lệ
                     const filteredValue = currentValue.replace(/[^A-Za-z0-9À-ỹ\s]/g, '');
 
-                    // Giới hạn độ dài
                     if (filteredValue.length > MAX_LENGTH) {
                         this.value = filteredValue.substring(0, MAX_LENGTH);
-
-                        // Hiển thị thông báo
                         if (charLimitMsg) {
                             charLimitMsg.textContent = 'Đã đạt giới hạn 50 ký tự cho tên nhân viên';
                             charLimitMsg.style.display = 'block';
@@ -101,7 +80,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // === VALIDATE ĐỊA CHỈ ===
     const addressInputs = document.querySelectorAll("#employeeAddress, #editEmployeeAddress");
 
     addressInputs.forEach(input => {
@@ -112,8 +90,6 @@ document.addEventListener('DOMContentLoaded', function() {
             // Xử lý khi nhập địa chỉ
             input.addEventListener("input", function(e) {
                 const value = e.target.value;
-
-                // Chỉ cho phép chữ cái, số, khoảng trắng và các ký tự đặc biệt cho phép
                 if (!/^[A-Za-z0-9À-ỹ,\s.-]*$/.test(value)) {
                     e.target.value = value.replace(/[^A-Za-z0-9À-ỹ,\s.-]/g, '');
                 }
@@ -138,11 +114,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 setTimeout(() => {
                     const MAX_LENGTH = 200;
                     const currentValue = this.value;
-
-                    // Lọc ký tự không hợp lệ
                     const filteredValue = currentValue.replace(/[^A-Za-z0-9À-ỹ,\s.-]/g, '');
-
-                    // Giới hạn độ dài
                     if (filteredValue.length > MAX_LENGTH) {
                         this.value = filteredValue.substring(0, MAX_LENGTH);
 
@@ -162,7 +134,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // === VALIDATE EMAIL ===
     const emailInputs = document.querySelectorAll("#email, #editEmail");
 
     emailInputs.forEach(input => {
@@ -170,11 +141,8 @@ document.addEventListener('DOMContentLoaded', function() {
             let errorId = input.id === 'email' ? 'emailError' : 'editEmailError';
             let charLimitMsg = document.getElementById(errorId);
 
-            // Xử lý khi nhập email
             input.addEventListener("input", function(e) {
                 const value = e.target.value;
-
-                // Giới hạn độ dài
                 if (value.length > 100) {
                     e.target.value = value.slice(0, 100);
 
@@ -191,7 +159,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // === VALIDATE NGÀY SINH ===
     const birthdayInputs = document.querySelectorAll("#employeeBirthday, #editEmployeeBirthday");
 
     birthdayInputs.forEach(input => {
@@ -219,20 +186,4 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     });
-
-    // === VALIDATE FORM TRƯỚC KHI SUBMIT ===
-    const addEmployeeForm = document.getElementById('addEmployeeForm');
-    const editEmployeeForm = document.getElementById('editEmployeeForm');
-
-    if (addEmployeeForm) {
-        addEmployeeForm.addEventListener('submit', function(e) {
-            // Xác thực form trước khi submit - tự xử lý ở server
-        });
-    }
-
-    if (editEmployeeForm) {
-        editEmployeeForm.addEventListener('submit', function(e) {
-            // Xác thực form trước khi submit - tự xử lý ở server
-        });
-    }
 });

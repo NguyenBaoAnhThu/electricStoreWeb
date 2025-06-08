@@ -527,9 +527,8 @@
                 headers[header] = token;
             }
 
-            console.log("Dữ liệu gửi đi:", employeeData); // Log dữ liệu để debug
+            console.log("Dữ liệu gửi đi:", employeeData);
 
-            // Gửi request Ajax
             $.ajax({
                 url: '/Admin/employee-manager/create',
                 type: 'POST',
@@ -537,17 +536,12 @@
                 data: JSON.stringify(employeeData),
                 headers: headers,
                 success: function(response) {
-                    // Đóng modal
                     $('#addEmployeeModal').modal('hide');
-
-                    // Chuyển hướng với thông báo thành công
-                    window.location.href = '/Admin/employee-manager?successMessage=' + encodeURIComponent('Thêm nhân viên thành công!');
+                    window.location.href = '/Admin/employee-manager?successMessage=' + encodeURIComponent('Thêm nhân viên thành công.');
                 },
                 error: function(xhr) {
-                    // Xóa thông báo lỗi cũ
                     $('.error').text('');
 
-                    // Hiển thị lỗi
                     let errors = xhr.responseJSON;
                     for (let field in errors) {
                         $('#' + field + 'Error').text(errors[field]);
@@ -604,10 +598,7 @@
                     window.location.href = '/Admin/employee-manager?successMessage=' + encodeURIComponent('Chỉnh sửa nhân viên thành công.');
                 },
                 error: function(xhr) {
-                    // Xóa thông báo lỗi cũ
                     $('.error').text('');
-
-                    // Hiển thị lỗi
                     let errors = xhr.responseJSON;
                     for (let field in errors) {
                         $('#edit' + field.charAt(0).toUpperCase() + field.slice(1) + 'Error').text(errors[field]);

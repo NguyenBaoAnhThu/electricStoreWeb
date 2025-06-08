@@ -1,4 +1,3 @@
-
 $(document).ready(function () {
 
     $(".form-control").on("input", function () {

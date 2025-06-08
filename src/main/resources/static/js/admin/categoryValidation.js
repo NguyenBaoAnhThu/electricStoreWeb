@@ -1,284 +1,307 @@
-$(document).ready(function() {
-    // Khi mở modal thêm danh mục
-    $('#addCategoryModal').on('show.bs.modal', function() {
-        $.ajax({
-            url: '/Admin/category-manager/next-code',
-            type: 'GET',
-            success: function(response) {
-                $('#categoryCode').val(response);
-            }
+document.addEventListener('DOMContentLoaded', function() {
+    const addCategoryModal = document.getElementById('addCategoryModal');
+    if (addCategoryModal) {
+        addCategoryModal.addEventListener('show.bs.modal', function() {
+            fetch('/Admin/category-manager/next-code')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('categoryCode').value = data;
+                });
+            document.getElementById('addCategoryForm').reset();
+            document.querySelectorAll('.error').forEach(error => error.textContent = '');
         });
+    }
 
-        // Reset form và xóa thông báo lỗi
-        $('#addCategoryForm')[0].reset();
-        $('.error').text('');
-    });
-
-    // Validate form khi nhập
-    function validateField(inputElement, errorElementSelector, minLength, maxLength, regexPattern, emptyMessage, lengthMessage, formatMessage) {
-        let value = inputElement.val().trim();
-        let errorElement = $(errorElementSelector);
+    // Hàm validate field chung
+    function validateField(inputElement, errorSelector, minLength, maxLength, regexPattern, emptyMessage, lengthMessage, formatMessage) {
+        const value = inputElement.value.trim();
+        const errorElement = document.querySelector(errorSelector);
 
         if (value === '') {
-            errorElement.text(emptyMessage);
+            errorElement.textContent = emptyMessage;
             return false;
         } else if (value.length < minLength || value.length > maxLength) {
-            errorElement.text(lengthMessage);
+            errorElement.textContent = lengthMessage;
             return false;
         } else if (!regexPattern.test(value)) {
-            errorElement.text(formatMessage);
+            errorElement.textContent = formatMessage;
             return false;
         } else {
-            errorElement.text('');
+            errorElement.textContent = '';
             return true;
         }
     }
 
     // Validate tên danh mục khi nhập
-    $('#categoryName').on('input', function() {
-        // Loại bỏ ký tự đặc biệt khi nhập
-        this.value = this.value.replace(/[^\p{L}0-9\s]/gu, '');
+    const categoryName = document.getElementById('categoryName');
+    if (categoryName) {
+        categoryName.addEventListener('input', function() {
+            // Loại bỏ ký tự đặc biệt
+            this.value = this.value.replace(/[^\p{L}0-9\s]/gu, '');
 
-        validateField(
-            $(this),
-            '#categoryNameError',
-            2, 100,
-            /^[\p{L}0-9\s]+$/u,
-            'Vui lòng không để trống tên danh mục',
-            'Tên danh mục phải từ 2 đến 100 ký tự',
-            'Tên danh mục không được chứa ký tự đặc biệt'
-        );
-    });
+            validateField(
+                this,
+                '#categoryNameError',
+                2, 100,
+                /^[\p{L}0-9\s]+$/u,
+                'Vui lòng không để trống tên danh mục',
+                'Tên danh mục phải từ 2 đến 100 ký tự',
+                'Tên danh mục không được chứa ký tự đặc biệt'
+            );
+        });
+    }
 
     // Validate mô tả khi nhập
-    $('#description').on('input', function() {
-        // Loại bỏ ký tự đặc biệt khi nhập
-        this.value = this.value.replace(/[^\p{L}0-9\s,.]/gu, '');
+    const description = document.getElementById('description');
+    if (description) {
+        description.addEventListener('input', function() {
+            this.value = this.value.replace(/[^\p{L}0-9\s,.]/gu, '');
 
-        validateField(
-            $(this),
-            '#descriptionError',
-            10, 1000,
-            /^[\p{L}0-9\s,.]+$/u,
-            'Vui lòng không để trống mô tả',
-            'Mô tả phải từ 10 đến 1000 ký tự',
-            'Mô tả không được chứa ký tự đặc biệt ngoại trừ dấu chấm và dấu phẩy'
-        );
-    });
-
-    // Tương tự cho form chỉnh sửa
-    $('#editCategoryName').on('input', function() {
-        this.value = this.value.replace(/[^\p{L}0-9\s]/gu, '');
-
-        validateField(
-            $(this),
-            '#editCategoryNameError',
-            2, 100,
-            /^[\p{L}0-9\s]+$/u,
-            'Vui lòng không để trống tên danh mục',
-            'Tên danh mục phải từ 2 đến 100 ký tự',
-            'Tên danh mục không được chứa ký tự đặc biệt'
-        );
-    });
-
-    $('#editCategoryDescription').on('input', function() {
-        this.value = this.value.replace(/[^\p{L}0-9\s,.]/gu, '');
-
-        validateField(
-            $(this),
-            '#editDescriptionError',
-            10, 1000,
-            /^[\p{L}0-9\s,.]+$/u,
-            'Vui lòng không để trống mô tả',
-            'Mô tả phải từ 10 đến 1000 ký tự',
-            'Mô tả không được chứa ký tự đặc biệt ngoại trừ dấu chấm và dấu phẩy'
-        );
-    });
-
-    // Thêm hiệu ứng kiểm tra khi người dùng submit form thêm mới
-    $('#addCategoryForm').on('submit', function(event) {
-        event.preventDefault();
-
-        // Validate tất cả trường dữ liệu
-        let nameValid = validateField(
-            $('#categoryName'),
-            '#categoryNameError',
-            2, 100,
-            /^[\p{L}0-9\s]+$/u,
-            'Vui lòng không để trống tên danh mục',
-            'Tên danh mục phải từ 2 đến 100 ký tự',
-            'Tên danh mục không được chứa ký tự đặc biệt'
-        );
-
-        let descValid = validateField(
-            $('#description'),
-            '#descriptionError',
-            10, 1000,
-            /^[\p{L}0-9\s,.]+$/u,
-            'Vui lòng không để trống mô tả',
-            'Mô tả phải từ 10 đến 1000 ký tự',
-            'Mô tả không được chứa ký tự đặc biệt ngoại trừ dấu chấm và dấu phẩy'
-        );
-
-        // Nếu dữ liệu không hợp lệ, dừng xử lý
-        if (!nameValid || !descValid) {
-            return;
-        }
-
-        // Lấy dữ liệu từ form
-        let categoryData = {
-            categoryCode: $('#categoryCode').val(),
-            categoryName: $('#categoryName').val().trim(),
-            description: $('#description').val().trim()
-        };
-
-        // Lấy CSRF token nếu có
-        const token = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
-        const header = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
-
-        // Cấu hình header
-        const headers = {
-            'Content-Type': 'application/json'
-        };
-
-        if (token && header) {
-            headers[header] = token;
-        }
-
-        // Gửi request Ajax
-        $.ajax({
-            url: '/Admin/category-manager/add',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(categoryData),
-            headers: headers,
-            success: function(response) {
-                $('#addCategoryModal').modal('hide');
-
-                // Thay thế SweetAlert2 bằng chuyển hướng có tham số thông báo
-                window.location.href = '/Admin/category-manager?successMessage=' + encodeURIComponent('Thêm danh mục thành công!');
-            },
-            error: function(xhr) {
-                $('.error').text('');
-
-                let errors = xhr.responseJSON;
-                for (let field in errors) {
-                    $('#' + field + 'Error').text(errors[field]);
-                }
-            }
+            validateField(
+                this,
+                '#descriptionError',
+                10, 1000,
+                /^[\p{L}0-9\s,.]+$/u,
+                'Vui lòng không để trống mô tả',
+                'Mô tả phải từ 10 đến 1000 ký tự',
+                'Mô tả không được chứa ký tự đặc biệt ngoại trừ dấu chấm và dấu phẩy'
+            );
         });
-    });
+    }
 
-    // Xử lý form chỉnh sửa
-    $('#editCategoryForm').on('submit', function(event) {
-        event.preventDefault();
+    const editCategoryName = document.getElementById('editCategoryName');
+    if (editCategoryName) {
+        editCategoryName.addEventListener('input', function() {
+            this.value = this.value.replace(/[^\p{L}0-9\s]/gu, '');
 
-        // Validate tất cả trường dữ liệu
-        let nameValid = validateField(
-            $('#editCategoryName'),
-            '#editCategoryNameError',
-            2, 100,
-            /^[\p{L}0-9\s]+$/u,
-            'Vui lòng không để trống tên danh mục',
-            'Tên danh mục phải từ 2 đến 100 ký tự',
-            'Tên danh mục không được chứa ký tự đặc biệt'
-        );
-
-        let descValid = validateField(
-            $('#editCategoryDescription'),
-            '#editDescriptionError',
-            10, 1000,
-            /^[\p{L}0-9\s,.]+$/u,
-            'Vui lòng không để trống mô tả',
-            'Mô tả phải từ 10 đến 1000 ký tự',
-            'Mô tả không được chứa ký tự đặc biệt ngoại trừ dấu chấm và dấu phẩy'
-        );
-
-        // Nếu dữ liệu không hợp lệ, dừng xử lý
-        if (!nameValid || !descValid) {
-            return;
-        }
-
-        // Lấy dữ liệu từ form
-        let categoryData = {
-            categoryID: $('#editCategoryId').val(),
-            categoryCode: $('#editCategoryCode').val(),
-            categoryName: $('#editCategoryName').val().trim(),
-            description: $('#editCategoryDescription').val().trim()
-        };
-
-        // Lấy CSRF token nếu có
-        const token = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
-        const header = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
-
-        // Cấu hình header
-        const headers = {
-            'Content-Type': 'application/json'
-        };
-
-        if (token && header) {
-            headers[header] = token;
-        }
-
-        // Gửi request Ajax
-        $.ajax({
-            url: '/Admin/category-manager/edit',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(categoryData),
-            headers: headers,
-            success: function(response) {
-                $('#editCategoryModal').modal('hide');
-                window.location.href = '/Admin/category-manager?successMessage=' + encodeURIComponent('Chỉnh sửa danh mục thành công.');
-            },
-            error: function(xhr) {
-                $('.error').text('');
-
-                let errors = xhr.responseJSON;
-                for (let field in errors) {
-                    $('#edit' + field.charAt(0).toUpperCase() + field.slice(1) + 'Error').text(errors[field]);
-                }
-            }
+            validateField(
+                this,
+                '#editCategoryNameError',
+                2, 100,
+                /^[\p{L}0-9\s]+$/u,
+                'Vui lòng không để trống tên danh mục',
+                'Tên danh mục phải từ 2 đến 100 ký tự',
+                'Tên danh mục không được chứa ký tự đặc biệt'
+            );
         });
-    });
+    }
 
-    // Kiểm tra trùng lặp tên danh mục
-    $('#categoryName').on('blur', function() {
-        const categoryName = $(this).val().trim();
+    // Validate form chỉnh sửa - mô tả
+    const editCategoryDescription = document.getElementById('editCategoryDescription');
+    if (editCategoryDescription) {
+        editCategoryDescription.addEventListener('input', function() {
+            this.value = this.value.replace(/[^\p{L}0-9\s,.]/gu, '');
 
-        if (categoryName.length >= 2) {
-            $.ajax({
-                url: '/Admin/category-manager/check-name',
-                type: 'GET',
-                data: { categoryName: categoryName },
-                success: function(response) {
-                    if (response.exists) {
-                        $('#categoryNameError').text('Tên danh mục đã tồn tại');
+            validateField(
+                this,
+                '#editDescriptionError',
+                10, 1000,
+                /^[\p{L}0-9\s,.]+$/u,
+                'Vui lòng không để trống mô tả',
+                'Mô tả phải từ 10 đến 1000 ký tự',
+                'Mô tả không được chứa ký tự đặc biệt ngoại trừ dấu chấm và dấu phẩy'
+            );
+        });
+    }
+
+    // Xử lý submit form thêm danh mục
+    const addCategoryForm = document.getElementById('addCategoryForm');
+    if (addCategoryForm) {
+        addCategoryForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const nameValid = validateField(
+                document.getElementById('categoryName'),
+                '#categoryNameError',
+                2, 100,
+                /^[\p{L}0-9\s]+$/u,
+                'Vui lòng không để trống tên danh mục',
+                'Tên danh mục phải từ 2 đến 100 ký tự',
+                'Tên danh mục không được chứa ký tự đặc biệt'
+            );
+
+            const descValid = validateField(
+                document.getElementById('description'),
+                '#descriptionError',
+                10, 1000,
+                /^[\p{L}0-9\s,.]+$/u,
+                'Vui lòng không để trống mô tả',
+                'Mô tả phải từ 10 đến 1000 ký tự',
+                'Mô tả không được chứa ký tự đặc biệt ngoại trừ dấu chấm và dấu phẩy'
+            );
+
+            // Dừng nếu validation fail
+            if (!nameValid || !descValid) {
+                return;
+            }
+
+            // Lấy dữ liệu form
+            const categoryData = {
+                categoryCode: document.getElementById('categoryCode').value,
+                categoryName: document.getElementById('categoryName').value.trim(),
+                description: document.getElementById('description').value.trim()
+            };
+
+            // Lấy CSRF token
+            const token = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+            const header = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+
+            const headers = {
+                'Content-Type': 'application/json'
+            };
+
+            if (token && header) {
+                headers[header] = token;
+            }
+
+            // Gửi request
+            fetch('/Admin/category-manager/add', {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(categoryData)
+            })
+                .then(response => {
+                    if (response.ok) {
+                        // Đóng modal và chuyển hướng
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('addCategoryModal'));
+                        modal.hide();
+                        window.location.href = '/Admin/category-manager?successMessage=' + encodeURIComponent('Thêm danh mục thành công!');
+                    } else {
+                        return response.json().then(errors => {
+                            // Xóa lỗi cũ
+                            document.querySelectorAll('.error').forEach(error => error.textContent = '');
+
+                            // Hiển thị lỗi mới
+                            for (let field in errors) {
+                                const errorElement = document.getElementById(field + 'Error');
+                                if (errorElement) {
+                                    errorElement.textContent = errors[field];
+                                }
+                            }
+                        });
                     }
-                }
-            });
-        }
-    });
+                })
+                .catch(error => console.error('Error:', error));
+        });
+    }
+
+    // Xử lý submit form chỉnh sửa
+    const editCategoryForm = document.getElementById('editCategoryForm');
+    if (editCategoryForm) {
+        editCategoryForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            // Validate tất cả trường
+            const nameValid = validateField(
+                document.getElementById('editCategoryName'),
+                '#editCategoryNameError',
+                2, 100,
+                /^[\p{L}0-9\s]+$/u,
+                'Vui lòng không để trống tên danh mục',
+                'Tên danh mục phải từ 2 đến 100 ký tự',
+                'Tên danh mục không được chứa ký tự đặc biệt'
+            );
+
+            const descValid = validateField(
+                document.getElementById('editCategoryDescription'),
+                '#editDescriptionError',
+                10, 1000,
+                /^[\p{L}0-9\s,.]+$/u,
+                'Vui lòng không để trống mô tả',
+                'Mô tả phải từ 10 đến 1000 ký tự',
+                'Mô tả không được chứa ký tự đặc biệt ngoại trừ dấu chấm và dấu phẩy'
+            );
+
+            // Dừng nếu validation fail
+            if (!nameValid || !descValid) {
+                return;
+            }
+
+            // Lấy dữ liệu form
+            const categoryData = {
+                categoryID: document.getElementById('editCategoryId').value,
+                categoryCode: document.getElementById('editCategoryCode').value,
+                categoryName: document.getElementById('editCategoryName').value.trim(),
+                description: document.getElementById('editCategoryDescription').value.trim()
+            };
+
+            // Lấy CSRF token
+            const token = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+            const header = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+
+            const headers = {
+                'Content-Type': 'application/json'
+            };
+
+            if (token && header) {
+                headers[header] = token;
+            }
+
+            // Gửi request
+            fetch('/Admin/category-manager/edit', {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(categoryData)
+            })
+                .then(response => {
+                    if (response.ok) {
+                        // Đóng modal và chuyển hướng
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('editCategoryModal'));
+                        modal.hide();
+                        window.location.href = '/Admin/category-manager?successMessage=' + encodeURIComponent('Chỉnh sửa danh mục thành công.');
+                    } else {
+                        return response.json().then(errors => {
+                            // Xóa lỗi cũ
+                            document.querySelectorAll('.error').forEach(error => error.textContent = '');
+
+                            // Hiển thị lỗi mới
+                            for (let field in errors) {
+                                const errorElement = document.getElementById('edit' + field.charAt(0).toUpperCase() + field.slice(1) + 'Error');
+                                if (errorElement) {
+                                    errorElement.textContent = errors[field];
+                                }
+                            }
+                        });
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        });
+    }
+
+    // Kiểm tra trùng lặp tên danh mục khi thêm mới
+    if (categoryName) {
+        categoryName.addEventListener('blur', function() {
+            const name = this.value.trim();
+
+            if (name.length >= 2) {
+                fetch(`/Admin/category-manager/check-name?categoryName=${encodeURIComponent(name)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.exists) {
+                            document.getElementById('categoryNameError').textContent = 'Tên danh mục đã tồn tại';
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+        });
+    }
 
     // Kiểm tra trùng lặp tên danh mục khi chỉnh sửa
-    $('#editCategoryName').on('blur', function() {
-        const categoryName = $(this).val().trim();
-        const categoryId = $('#editCategoryId').val();
+    if (editCategoryName) {
+        editCategoryName.addEventListener('blur', function() {
+            const name = this.value.trim();
+            const categoryId = document.getElementById('editCategoryId').value;
 
-        if (categoryName.length >= 2) {
-            $.ajax({
-                url: '/Admin/category-manager/check-name',
-                type: 'GET',
-                data: {
-                    categoryName: categoryName,
-                    id: categoryId
-                },
-                success: function(response) {
-                    if (response.exists) {
-                        $('#editCategoryNameError').text('Tên danh mục đã tồn tại');
-                    }
-                }
-            });
-        }
-    });
+            if (name.length >= 2) {
+                fetch(`/Admin/category-manager/check-name?categoryName=${encodeURIComponent(name)}&id=${categoryId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.exists) {
+                            document.getElementById('editCategoryNameError').textContent = 'Tên danh mục đã tồn tại';
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+        });
+    }
+
 });

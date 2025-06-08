@@ -1,19 +1,12 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // === VALIDATE SỐ ĐIỆN THOẠI KHÁCH HÀNG ===
     const phoneInputs = document.querySelectorAll("#customerPhoneNumber, #phoneNumber");
-
     phoneInputs.forEach(input => {
         if (input) {
-            // Xử lý khi nhập số điện thoại
             input.addEventListener("input", function(e) {
                 const value = e.target.value;
-
-                // Chỉ cho phép số (loại bỏ dấu + vì chỉ cần 10 số)
                 if (!/^[\d]*$/.test(value)) {
                     e.target.value = value.replace(/[^\d]/g, '');
                 }
-
-                // Giới hạn độ dài 10 số
                 if (value.length > 10) {
                     e.target.value = value.slice(0, 10);
                 }
@@ -23,11 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
             input.addEventListener('paste', function(e) {
                 setTimeout(() => {
                     const currentValue = this.value;
-
-                    // Lọc ký tự không phải số
                     const filteredValue = currentValue.replace(/[^\d]/g, '');
-
-                    // Giới hạn độ dài 10 số
                     if (filteredValue.length > 10) {
                         this.value = filteredValue.substring(0, 10);
                     } else {
@@ -38,29 +27,22 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // === VALIDATE TÊN KHÁCH HÀNG ===
+
     const nameInputs = document.querySelectorAll("#customerName");
 
     nameInputs.forEach(input => {
         if (input) {
-            // Thêm id cho thông báo giới hạn ký tự
             let errorId = 'customerNameError';
             let charLimitMsg = document.getElementById(errorId);
-
-            // Xử lý khi nhập tên khách hàng
             input.addEventListener("input", function(e) {
                 const value = e.target.value;
-
-                // Chỉ cho phép chữ cái và khoảng trắng
                 if (!/^[A-Za-zÀ-ỹ\s]*$/.test(value)) {
                     e.target.value = value.replace(/[^A-Za-zÀ-ỹ\s]/g, '');
                 }
 
-                // Giới hạn độ dài
                 if (value.length > 50) {
                     e.target.value = value.slice(0, 50);
 
-                    // Hiển thị thông báo giới hạn
                     if (charLimitMsg) {
                         charLimitMsg.textContent = 'Đã đạt giới hạn 50 ký tự cho tên khách hàng';
                         charLimitMsg.style.display = 'block';
@@ -78,14 +60,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     const MAX_LENGTH = 50;
                     const currentValue = this.value;
 
-                    // Lọc ký tự không hợp lệ
                     const filteredValue = currentValue.replace(/[^A-Za-zÀ-ỹ\s]/g, '');
 
-                    // Giới hạn độ dài
                     if (filteredValue.length > MAX_LENGTH) {
                         this.value = filteredValue.substring(0, MAX_LENGTH);
-
-                        // Hiển thị thông báo
                         if (charLimitMsg) {
                             charLimitMsg.textContent = 'Đã đạt giới hạn 50 ký tự cho tên khách hàng';
                             charLimitMsg.style.display = 'block';
@@ -102,19 +80,16 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // === VALIDATE ĐỊA CHỈ KHÁCH HÀNG ===
+
     const addressInputs = document.querySelectorAll("#customerAddress, #address");
 
     addressInputs.forEach(input => {
         if (input) {
             let errorId = 'addressError';
             let charLimitMsg = document.getElementById(errorId);
-
-            // Xử lý khi nhập địa chỉ
             input.addEventListener("input", function(e) {
                 const value = e.target.value;
 
-                // Chỉ cho phép chữ cái, số, khoảng trắng và các ký tự đặc biệt cho phép
                 if (!/^[A-Za-z0-9À-ỹ,\s.-]*$/.test(value)) {
                     e.target.value = value.replace(/[^A-Za-z0-9À-ỹ,\s.-]/g, '');
                 }
@@ -139,11 +114,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 setTimeout(() => {
                     const MAX_LENGTH = 200;
                     const currentValue = this.value;
-
-                    // Lọc ký tự không hợp lệ
                     const filteredValue = currentValue.replace(/[^A-Za-z0-9À-ỹ,\s.-]/g, '');
-
-                    // Giới hạn độ dài
                     if (filteredValue.length > MAX_LENGTH) {
                         this.value = filteredValue.substring(0, MAX_LENGTH);
 
@@ -163,7 +134,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // === VALIDATE EMAIL KHÁCH HÀNG ===
+
     const emailInputs = document.querySelectorAll("#customerEmail, #email");
 
     emailInputs.forEach(input => {
@@ -171,11 +142,8 @@ document.addEventListener('DOMContentLoaded', function() {
             let errorId = 'emailError';
             let charLimitMsg = document.getElementById(errorId);
 
-            // Xử lý khi nhập email
             input.addEventListener("input", function(e) {
                 const value = e.target.value;
-
-                // Giới hạn độ dài
                 if (value.length > 100) {
                     e.target.value = value.slice(0, 100);
 
@@ -190,7 +158,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
 
-            // Kiểm tra định dạng email khi mất focus
             input.addEventListener("blur", function() {
                 const value = this.value.trim();
                 const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
@@ -207,7 +174,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // === VALIDATE NGÀY SINH KHÁCH HÀNG ===
     const birthdayInputs = document.querySelectorAll("#customerBirthdate, #birthDate");
 
     birthdayInputs.forEach(input => {
@@ -236,12 +202,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // === VALIDATE FORM TRƯỚC KHI SUBMIT ===
     const addCustomerForm = document.getElementById('addCustomerForm');
     const editCustomerForm = document.getElementById('editCustomerForm');
     const orderForm = document.getElementById('orderForm');
 
-    // Hàm hiển thị lỗi
     function showError(fieldId, message) {
         const errorElement = document.getElementById(fieldId + 'Error');
         if (errorElement) {
@@ -298,12 +262,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Hàm kiểm tra form
     async function validateCustomerForm(form) {
         let isValid = true;
-
-        // Lấy ID khách hàng hiện tại (cho trường hợp edit)
         const customerIdInput = form.querySelector('#customerId') || form.querySelector('[name="customerId"]');
         const currentCustomerId = customerIdInput ? customerIdInput.value : null;
 
-        // Kiểm tra tên khách hàng
         const nameInput = form.querySelector('#customerName') || form.querySelector('[name="customerName"]');
         if (nameInput) {
             const nameValue = nameInput.value.trim();
@@ -322,7 +283,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
-        // Kiểm tra số điện thoại
         const phoneInput = form.querySelector('#customerPhoneNumber') || form.querySelector('#phoneNumber') || form.querySelector('[name="phoneNumber"]');
         if (phoneInput) {
             const phoneValue = phoneInput.value.trim();
@@ -338,7 +298,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 showError('customerPhoneNumber', 'Số điện thoại phải đủ 10 số và bắt đầu bằng 0');
                 isValid = false;
             } else {
-                // Kiểm tra trùng lặp
                 const isDuplicate = await checkPhoneDuplicate(phoneValue, currentCustomerId);
                 if (isDuplicate) {
                     showError('customerPhoneNumber', 'Số điện thoại đã tồn tại');

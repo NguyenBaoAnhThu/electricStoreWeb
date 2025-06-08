@@ -1,6 +1,4 @@
-// Đề xuất nội dung cho file header.js
 document.addEventListener("DOMContentLoaded", function() {
-    // Hàm đồng hồ
     function time() {
         var today = new Date();
         var weekday = ["Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"];
@@ -33,7 +31,5 @@ document.addEventListener("DOMContentLoaded", function() {
     function checkTime(i) {
         return i < 10 ? "0" + i : i;
     }
-
-    // Bắt đầu đồng hồ
     time();
 });

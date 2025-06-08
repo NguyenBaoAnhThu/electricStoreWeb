@@ -1,8 +1,6 @@
 $(document).ready(function () {
     const path = window.location.pathname;
     console.log("Current path:", path);
-
-    // Ẩn tất cả submenus
     $('.treeview-menu').hide();
 
     // Reset trạng thái menu
@@ -29,7 +27,6 @@ $(document).ready(function () {
 
     // Highlight theo URL
     function highlightActiveMenu() {
-        // Lấy đường dẫn URL hiện tại
         const currentUrl = window.location.href;
         console.log("Highlighting for URL:", currentUrl);
 
@@ -62,8 +59,6 @@ $(document).ready(function () {
             $('#report-menu').addClass('active');
         }
     }
-
-    // Gọi hàm highlight
     highlightActiveMenu();
 
     // Click mở rộng treeview
@@ -104,7 +99,6 @@ $(document).ready(function () {
         $tree.find('> .treeview-menu').show();
     });
 
-    // Hover
     $('.sidebar-menu li').hover(
         function () {
             if (!$(this).hasClass('active')) {
@@ -121,10 +115,4 @@ $(document).ready(function () {
             }
         }
     );
-
-    // Toggle sidebar (using jQuery for consistency)
-    $('#sidebar-toggle').on('click', function() {
-        console.log("Sidebar toggle clicked!");
-        $('body').toggleClass('sidebar-collapsed');
-    });
 });
