@@ -165,11 +165,17 @@ public class OrderController {
                 }
             }
 
-            Integer customerId = (orderDTO.getCustomerDTO().getCustomerId() == null) ?
-                    customerService.addCustomerAndGetId(orderDTO.getCustomerDTO()) :
-                    orderDTO.getCustomerDTO().getCustomerId();
-
-            orderDTO.setCustomerId(customerId);
+            // Kiểm tra khách hàng mới
+            if (orderDTO.getCustomerDTO().getCustomerId() == null) {
+                try {
+                    Integer customerId = customerService.addCustomerAndGetId(orderDTO.getCustomerDTO());
+                    orderDTO.setCustomerId(customerId);
+                } catch (Exception e) {
+                    Map<String, String> errors = new HashMap<>();
+                    errors.put("customerDTO", e.getMessage());
+                    return ResponseEntity.badRequest().body(errors);
+                }
+            }
 
             Integer orderId = orderService.saveOrder(orderDTO);
             System.out.println("Order ID: " + orderId);
