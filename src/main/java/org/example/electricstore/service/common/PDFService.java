@@ -171,7 +171,7 @@ public class PDFService {
             // Tổng tiền hàng
             Cell subtotalLabelCell = new Cell();
             subtotalLabelCell.setBorder(Border.NO_BORDER);
-            subtotalLabelCell.add(new Paragraph("Tổng tiền hàng:"))
+            subtotalLabelCell.add(new Paragraph("Tổng tiền hàng (VNĐ):"))
                     .setFont(vietnameseFont)
                     .setFontSize(12)
                     .setTextAlignment(TextAlignment.RIGHT);
@@ -189,7 +189,7 @@ public class PDFService {
             if (orderDTO.getDiscountAmount() != null && orderDTO.getDiscountAmount() > 0) {
                 Cell discountLabelCell = new Cell();
                 discountLabelCell.setBorder(Border.NO_BORDER);
-                discountLabelCell.add(new Paragraph("Giảm giá:"))
+                discountLabelCell.add(new Paragraph("Giảm giá (VNĐ):"))
                         .setFont(vietnameseFont)
                         .setFontSize(12)
                         .setTextAlignment(TextAlignment.RIGHT);
@@ -247,7 +247,7 @@ public class PDFService {
             // Tổng thanh toán
             Cell totalLabelCell = new Cell();
             totalLabelCell.setBorder(Border.NO_BORDER);
-            totalLabelCell.add(new Paragraph("TỔNG THANH TOÁN:"))
+            totalLabelCell.add(new Paragraph("TỔNG THANH TOÁN (VNĐ):"))
                     .setFont(vietnameseBoldFont)
                     .setFontSize(14)
                     .setTextAlignment(TextAlignment.RIGHT);
@@ -335,6 +335,6 @@ public class PDFService {
     }
 
     private String formatCurrency(int amount) {
-        return String.format("%,d VNĐ", amount);
+        return String.format("%,d", amount).replace(",", ".");
     }
 }

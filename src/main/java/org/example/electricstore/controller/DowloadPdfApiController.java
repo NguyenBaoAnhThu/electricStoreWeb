@@ -24,5 +24,4 @@ public class DowloadPdfApiController {
         headers.add("Content-Disposition", "attachment; filename=invoice_" + orderDTO.getCustomerId() + ".pdf");
         return new ResponseEntity<>(pdf, headers, HttpStatus.OK);
     }
-
 }
