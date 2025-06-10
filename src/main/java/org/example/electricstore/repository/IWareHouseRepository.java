@@ -21,8 +21,8 @@ public interface IWareHouseRepository extends JpaRepository<WareHouse, Integer> 
       AND (:brand IS NULL OR :brand = '' OR LOWER(w.product.brand.brandName) LIKE LOWER(CONCAT('%', :brand, '%')))
       AND (:statusStock IS NULL OR :statusStock = 0 OR 
            (:statusStock = 1 AND w.product.stock = 0) OR 
-           (:statusStock = 2 AND w.product.stock > 0 AND w.product.stock <= 30) OR 
-           (:statusStock = 3 AND w.product.stock > 30))
+           (:statusStock = 2 AND w.product.stock > 0 AND w.product.stock <= 5) OR 
+           (:statusStock = 3 AND w.product.stock > 5))
       AND (:productCode IS NULL OR :productCode = '' OR LOWER(w.product.productCode) LIKE LOWER(CONCAT('%', :productCode, '%')))
       AND (:productName IS NULL OR :productName = '' OR LOWER(w.product.name) LIKE LOWER(CONCAT('%', :productName, '%')))
 """)

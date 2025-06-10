@@ -68,7 +68,8 @@
                     <td th:text="${order.codeOrder}"></td>
                     <td th:text="${order.customer.customerName}"></td>
                     <td th:text="${order.customer.phoneNumber}"></td>
-                    <td th:text="${#temporals.format(order.createAt, 'dd/MM/yyyy')}"></td>                    <td th:text="${#numbers.formatDecimal(order.totalPrice, 1, 'POINT', 0, 'COMMA')}"></td>
+                    <td th:text="${#temporals.format(order.createAt, 'dd/MM/yyyy')}"></td>
+                    <td th:text="${#numbers.formatDecimal(order.totalPrice, 1, 'POINT', 0, 'COMMA')}"></td>
                     <td>
                         <span class="badge px-3 py-2 w-100" style="min-width: 120px; display: inline-block;"
                               th:classappend="${order.status.name() == 'COMPLETE'} ? 'bg-success' :

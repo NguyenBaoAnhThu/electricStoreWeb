@@ -905,7 +905,7 @@
         <div class="alert alert-danger">
             <p class="mb-2">Các sản phẩm sau vượt quá số lượng tồn kho:</p>
             <ul class="mb-0">${productList}</ul>
-        </div>
+</div>
         <p class="mb-0">Vui lòng điều chỉnh số lượng đặt hàng trước khi tiếp tục.</p>
     `;
 
@@ -1248,18 +1248,6 @@
 
                     console.log("Server response:", response);
 
-                    if (response.error) {
-                        // Hiển thị lỗi và không tiếp tục
-                        $('#stockErrorModalBody').html(`
-                            <div class="alert alert-danger">
-                                <p class="mb-0">${response.error}</p>
-                            </div>
-                        `);
-                        const stockErrorModal = new bootstrap.Modal(document.getElementById('stockErrorModal'));
-                        stockErrorModal.show();
-                        return;
-                    }
-
                     if (response.paymentMethod == 1) {
                         // Hiển thị modal QR code
                         const qrModal = new bootstrap.Modal(document.getElementById('qrPaymentModal'));
@@ -1325,26 +1313,62 @@
                     console.log("Validation errors:", errors);
                     $(".error-message").remove();
 
-                    // Hiển thị lỗi trong modal
-                    let errorHtml = '<div class="alert alert-danger"><ul class="mb-0">';
                     for (let field in errors) {
-                        errorHtml += `<li>${errors[field]}</li>`;
                         let errorMessage = "<span class='error-message text-danger'>" + errors[field] + "</span>";
                         $('input[name="' + field + '"], select[name="' + field + '"], textarea[name="' + field + '"]').after(errorMessage);
                     }
-                    errorHtml += '</ul></div>';
+                } else if (xhr.responseText && xhr.responseText.includes("không đủ số lượng trong kho")) {
+                    // Xử lý lỗi tồn kho từ server
+                    try {
+                        const errorMsg = xhr.responseText;
+                        // Trích xuất thông tin sản phẩm và tồn kho từ lỗi
+                        const regex = /Sản phẩm (.*?) không đủ số lượng trong kho\. Hiện chỉ còn (\d+) sản phẩm/;
+                        const match = errorMsg.match(regex);
 
-                    $('#stockErrorModalBody').html(errorHtml);
-                    const stockErrorModal = new bootstrap.Modal(document.getElementById('stockErrorModal'));
-                    stockErrorModal.show();
+                        if (match) {
+                            const productName = match[1];
+                            const availableStock = parseInt(match[2]);
+
+                            // Tìm sản phẩm trong bảng và cập nhật số lượng tồn kho
+                            $('.product-row').each(function() {
+                                const $row = $(this);
+                                if ($row.find('input[name$=".productName"]').val() === productName) {
+                                    const $quantityInput = $row.find('.quantity-input');
+                                    $quantityInput.data('stock', availableStock);
+                                    $quantityInput.attr('data-stock', availableStock);
+
+                                    // Đánh dấu lỗi
+                                    $quantityInput.addClass('is-invalid');
+                                }
+                            });
+
+                            // Hiển thị modal lỗi
+                            showStockErrorModal([{
+                                name: productName,
+                                requested: parseInt($('.product-row').find(`.quantity-input.is-invalid`).val()),
+                                available: availableStock
+                            }]);
+                        } else {
+                            // Hiển thị thông báo lỗi chung
+                            $('#stockErrorModalBody').html(`
+                            <div class="alert alert-danger">
+                                <p class="mb-0">${errorMsg}</p>
+</div>
+                        `);
+                            const stockErrorModal = new bootstrap.Modal(document.getElementById('stockErrorModal'));
+                            stockErrorModal.show();
+                        }
+                    } catch (e) {
+                        console.error("Lỗi khi xử lý phản hồi lỗi tồn kho:", e);
+                    }
                 } else {
                     // Hiển thị lỗi chung
                     console.error("Lỗi khi gửi yêu cầu:", xhr.statusText);
                     $('#stockErrorModalBody').html(`
-                        <div class="alert alert-danger">
-                            <p class="mb-0">Đã xảy ra lỗi khi tạo đơn hàng: ${xhr.responseText || xhr.statusText || "Lỗi không xác định"}</p>
-                        </div>
-                    `);
+                    <div class="alert alert-danger">
+                        <p class="mb-0">Đã xảy ra lỗi khi tạo đơn hàng: ${xhr.responseText || xhr.statusText || "Lỗi không xác định"}</p>
+</div>
+                `);
                     const stockErrorModal = new bootstrap.Modal(document.getElementById('stockErrorModal'));
                     stockErrorModal.show();
                 }
