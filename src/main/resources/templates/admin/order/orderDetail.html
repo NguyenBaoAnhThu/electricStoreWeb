@@ -247,7 +247,32 @@
     function printInvoice() {
         const url = window.location.href;
         const orderId = url.substring(url.lastIndexOf('/') + 1);
-        window.location.href = `${window.location.origin}/Admin/order/downloadInvoicePdf?orderId=${orderId}`;
+
+        fetch(`${window.location.origin}/Admin/order/downloadInvoicePdf?orderId=${orderId}`, {
+            method: 'GET',
+            headers: { 'Accept': 'application/pdf' }
+        })
+            .then(response => {
+                if (!response.ok) throw new Error('Không thể tạo PDF. Vui lòng thử lại sau.');
+                return response.blob();
+            })
+            .then(blob => {
+                const codeOrderElement = document.querySelector('h3 span');
+                const codeOrder = codeOrderElement ? codeOrderElement.textContent : 'hoa-don';
+
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${codeOrder}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            })
+            .catch(error => {
+                console.error('Lỗi khi xuất PDF:', error);
+                alert('Có lỗi xảy ra khi xuất PDF: ' + error.message);
+            });
     }
     document.addEventListener('DOMContentLoaded', function() {
         const confirmCancelBtn = document.getElementById('confirmCancelBtn');
@@ -256,7 +281,6 @@
                 const url = window.location.href;
                 const orderId = url.substring(url.lastIndexOf('/') + 1);
 
-                // Thêm token CSRF nếu ứng dụng của bạn sử dụng Spring Security
                 const token = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
                 const header = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
 

@@ -26,270 +26,85 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 @Service
 public class PDFService {
 
     // Định nghĩa màu sắc chủ đạo
-    private static final DeviceRgb PRIMARY_COLOR = new DeviceRgb(209, 0, 36);
-    private static final DeviceRgb SECONDARY_COLOR = new DeviceRgb(51, 51, 51);
-    private static final DeviceRgb TABLE_HEADER_COLOR = new DeviceRgb(33, 37, 41);
-    private static final float BORDER_WIDTH = 0.5f;
+    private static final DeviceRgb PRIMARY_COLOR = new DeviceRgb(0, 102, 204);
+    private static final DeviceRgb SECONDARY_COLOR = new DeviceRgb(33, 37, 41);
+    private static final DeviceRgb TABLE_HEADER_COLOR = new DeviceRgb(0, 0, 0);
+    private static final float BORDER_WIDTH = 0.3f; // Viền mỏng hơn cho tinh tế
 
     public byte[] createInvoicePDF(OrderDTO orderDTO) {
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-
             PdfWriter writer = new PdfWriter(outputStream);
             PdfDocument pdf = new PdfDocument(writer);
             Document document = new Document(pdf, PageSize.A4);
-            document.setMargins(36, 36, 36, 36); // 36pt = 0.5 inch
+            document.setMargins(30, 30, 30, 30); // Giảm margin cho bố cục rộng rãi hơn
 
+            // Tải font chữ hỗ trợ tiếng Việt
             InputStream fontStream = new ClassPathResource("fonts/vuArial.ttf").getInputStream();
             PdfFont vietnameseFont = PdfFontFactory.createFont(fontStream.readAllBytes(), PdfEncodings.IDENTITY_H);
 
-            // Tải font in đậm (nếu có)
-            InputStream boldFontStream = null;
-            PdfFont vietnameseBoldFont = null;
+            // Thử tải font in đậm, nếu không tồn tại thì dùng font thường
+            PdfFont vietnameseBoldFont = vietnameseFont;
             try {
-                boldFontStream = new ClassPathResource("fonts/vuArialBold.ttf").getInputStream();
+                InputStream boldFontStream = new ClassPathResource("fonts/vuArialBold.ttf").getInputStream();
                 vietnameseBoldFont = PdfFontFactory.createFont(boldFontStream.readAllBytes(), PdfEncodings.IDENTITY_H);
-            } catch (Exception e) {
-                vietnameseBoldFont = vietnameseFont;
+            } catch (IOException e) {
+                System.err.println("Font vuArialBold.ttf not found, falling back to vuArial.ttf");
             }
 
-            // Thêm logo (nếu có)
-            try {
-                InputStream logoStream = new ClassPathResource("static/img/logo.png").getInputStream();
-                Image logo = new Image(ImageDataFactory.create(logoStream.readAllBytes()));
-                logo.setWidth(150);
-                logo.setHorizontalAlignment(HorizontalAlignment.CENTER);
-                document.add(logo);
-            } catch (Exception e) {
-                document.add(new Paragraph("ELECTRIC STORE")
-                        .setFont(vietnameseBoldFont)
-                        .setFontSize(20)
-                        .setFontColor(PRIMARY_COLOR)
-                        .setTextAlignment(TextAlignment.CENTER));
-            }
+            // Thêm header công ty
+            addCompanyHeader(document, vietnameseFont, vietnameseBoldFont);
 
-            // Thêm tiêu đề hóa đơn
+            // Tiêu đề hóa đơn
             document.add(new Paragraph("HÓA ĐƠN BÁN HÀNG")
                     .setFont(vietnameseBoldFont)
-                    .setFontSize(18)
+                    .setFontSize(16)
                     .setFontColor(PRIMARY_COLOR)
                     .setTextAlignment(TextAlignment.CENTER)
-                    .setMarginTop(10)
-                    .setMarginBottom(5));
+                    .setMarginTop(15)
+                    .setMarginBottom(10));
 
-            // Thêm số hóa đơn và ngày tạo
-            document.add(new Paragraph("Số hóa đơn: " + orderDTO.getInvoiceNumber())
-                    .setFont(vietnameseFont)
-                    .setFontSize(12)
-                    .setTextAlignment(TextAlignment.CENTER));
-
-            // Lấy ngày hiện tại để hiển thị
-            String currentDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
-            document.add(new Paragraph("Ngày: " + currentDate)
-                    .setFont(vietnameseFont)
-                    .setFontSize(12)
-                    .setTextAlignment(TextAlignment.CENTER)
-                    .setMarginBottom(20));
+            // Thêm thông tin hóa đơn
+            addInvoiceInfo(document, orderDTO, vietnameseFont, vietnameseBoldFont);
 
             // Vẽ đường phân cách
-            Table divider = new Table(1);
-            divider.setWidth(UnitValue.createPercentValue(100));
-            Cell dividerCell = new Cell();
-            dividerCell.setBorder(Border.NO_BORDER);
-            dividerCell.setBorderBottom(new SolidBorder(PRIMARY_COLOR, 1));
-            dividerCell.setHeight(1);
-            divider.addCell(dividerCell);
-            document.add(divider);
+            addDivider(document);
 
-            document.add(new Paragraph("\nTHÔNG TIN KHÁCH HÀNG")
+            // Thông tin khách hàng
+            document.add(new Paragraph("THÔNG TIN KHÁCH HÀNG")
                     .setFont(vietnameseBoldFont)
-                    .setFontSize(14)
+                    .setFontSize(12)
                     .setFontColor(SECONDARY_COLOR)
-                    .setMarginTop(10)
+                    .setMarginTop(15)
                     .setMarginBottom(10));
 
-            // Bảng thông tin khách hàng
-            Table customerInfoTable = new Table(UnitValue.createPercentArray(new float[]{30, 70}));
-            customerInfoTable.setWidth(UnitValue.createPercentValue(100));
+            addCustomerInfo(document, orderDTO, vietnameseFont);
 
-            addCustomerInfoRow(customerInfoTable, "Tên khách hàng:", orderDTO.getCustomerDTO().getCustomerName(), vietnameseFont);
-            addCustomerInfoRow(customerInfoTable, "Số điện thoại:", orderDTO.getCustomerDTO().getPhoneNumber(), vietnameseFont);
-            addCustomerInfoRow(customerInfoTable, "Địa chỉ:", orderDTO.getCustomerDTO().getAddress(), vietnameseFont);
-            addCustomerInfoRow(customerInfoTable, "Email:", orderDTO.getCustomerDTO().getEmail(), vietnameseFont);
-
-            document.add(customerInfoTable);
-            document.add(new Paragraph("\n"));
-
-            // Tiêu đề chi tiết sản phẩm
+            // Chi tiết sản phẩm
             document.add(new Paragraph("CHI TIẾT SẢN PHẨM")
                     .setFont(vietnameseBoldFont)
-                    .setFontSize(14)
+                    .setFontSize(12)
                     .setFontColor(SECONDARY_COLOR)
-                    .setMarginTop(10)
+                    .setMarginTop(15)
                     .setMarginBottom(10));
 
-            // Bảng danh sách sản phẩm
-            Table productTable = new Table(UnitValue.createPercentArray(new float[]{5, 40, 15, 20, 20}));
-            productTable.setWidth(UnitValue.createPercentValue(100));
+            addProductTable(document, orderDTO, vietnameseFont, vietnameseBoldFont);
 
-            // Header của bảng sản phẩm
-            addTableHeader(productTable, "STT", vietnameseBoldFont);
-            addTableHeader(productTable, "Sản phẩm", vietnameseBoldFont);
-            addTableHeader(productTable, "Số lượng", vietnameseBoldFont);
-            addTableHeader(productTable, "Đơn giá (VNĐ)", vietnameseBoldFont);
-            addTableHeader(productTable, "Thành tiền (VNĐ)", vietnameseBoldFont);
+            // Bảng tổng hợp
+            addSummaryTable(document, orderDTO, vietnameseFont, vietnameseBoldFont);
 
-            // Dữ liệu sản phẩm
-            int index = 1;
-            double total = 0;
-            for (ProductOrderDTO product : orderDTO.getProductOrderDTOList()) {
-                double subtotal = product.getQuantity() * product.getPriceIndex();
-                total += subtotal;
-
-                // Thêm hàng sản phẩm
-                addTableCell(productTable, String.valueOf(index++), vietnameseFont, TextAlignment.CENTER);
-                addTableCell(productTable, product.getProductName(), vietnameseFont, TextAlignment.LEFT);
-                addTableCell(productTable, String.valueOf(product.getQuantity()), vietnameseFont, TextAlignment.CENTER);
-                addTableCell(productTable, formatCurrency(product.getPriceIndex()), vietnameseFont, TextAlignment.RIGHT);
-                addTableCell(productTable, formatCurrency((int) subtotal), vietnameseFont, TextAlignment.RIGHT);
-            }
-
-            document.add(productTable);
-
-            // Bảng hiển thị tổng tiền, giảm giá và tổng thanh toán
-            Table summaryTable = new Table(UnitValue.createPercentArray(new float[]{80, 20}));
-            summaryTable.setWidth(UnitValue.createPercentValue(100));
-            summaryTable.setMarginTop(10);
-
-            // Tổng tiền hàng
-            Cell subtotalLabelCell = new Cell();
-            subtotalLabelCell.setBorder(Border.NO_BORDER);
-            subtotalLabelCell.add(new Paragraph("Tổng tiền hàng (VNĐ):"))
-                    .setFont(vietnameseFont)
-                    .setFontSize(12)
-                    .setTextAlignment(TextAlignment.RIGHT);
-            summaryTable.addCell(subtotalLabelCell);
-
-            Cell subtotalValueCell = new Cell();
-            subtotalValueCell.setBorder(Border.NO_BORDER);
-            subtotalValueCell.add(new Paragraph(formatCurrency((int) total)))
-                    .setFont(vietnameseFont)
-                    .setFontSize(12)
-                    .setTextAlignment(TextAlignment.RIGHT);
-            summaryTable.addCell(subtotalValueCell);
-
-            // Giảm giá theo số tiền
-            if (orderDTO.getDiscountAmount() != null && orderDTO.getDiscountAmount() > 0) {
-                Cell discountLabelCell = new Cell();
-                discountLabelCell.setBorder(Border.NO_BORDER);
-                discountLabelCell.add(new Paragraph("Giảm giá (VNĐ):"))
-                        .setFont(vietnameseFont)
-                        .setFontSize(12)
-                        .setTextAlignment(TextAlignment.RIGHT);
-                summaryTable.addCell(discountLabelCell);
-
-                Cell discountValueCell = new Cell();
-                discountValueCell.setBorder(Border.NO_BORDER);
-                discountValueCell.add(new Paragraph(formatCurrency(orderDTO.getDiscountAmount().intValue())))
-                        .setFont(vietnameseFont)
-                        .setFontSize(12)
-                        .setTextAlignment(TextAlignment.RIGHT);
-                summaryTable.addCell(discountValueCell);
-            }
-
-            // Giảm giá theo phần trăm
-            if (orderDTO.getDiscountPercent() != null && orderDTO.getDiscountPercent() > 0) {
-                double discountAmount = total * orderDTO.getDiscountPercent() / 100;
-
-                Cell discountPercentLabelCell = new Cell();
-                discountPercentLabelCell.setBorder(Border.NO_BORDER);
-                discountPercentLabelCell.add(new Paragraph("Giảm giá (" + orderDTO.getDiscountPercent().intValue() + "%):"))
-                        .setFont(vietnameseFont)
-                        .setFontSize(12)
-                        .setTextAlignment(TextAlignment.RIGHT);
-                summaryTable.addCell(discountPercentLabelCell);
-
-                Cell discountPercentValueCell = new Cell();
-                discountPercentValueCell.setBorder(Border.NO_BORDER);
-                discountPercentValueCell.add(new Paragraph(formatCurrency((int) discountAmount)))
-                        .setFont(vietnameseFont)
-                        .setFontSize(12)
-                        .setTextAlignment(TextAlignment.RIGHT);
-                summaryTable.addCell(discountPercentValueCell);
-            }
-
-            // Tính tổng thanh toán sau khi giảm giá
-            double discountAmount = 0;
-            if (orderDTO.getDiscountAmount() != null) {
-                discountAmount += orderDTO.getDiscountAmount();
-            }
-            if (orderDTO.getDiscountPercent() != null && orderDTO.getDiscountPercent() > 0) {
-                discountAmount += total * orderDTO.getDiscountPercent() / 100;
-            }
-            double grandTotal = total - discountAmount;
-
-            // Đường kẻ phân cách trước tổng thanh toán
-            Cell separatorCell = new Cell(1, 2);
-            separatorCell.setBorder(Border.NO_BORDER);
-            separatorCell.setBorderBottom(new SolidBorder(SECONDARY_COLOR, 0.5f));
-            separatorCell.setHeight(1);
-            separatorCell.setPaddingTop(5);
-            separatorCell.setPaddingBottom(5);
-            summaryTable.addCell(separatorCell);
-
-            // Tổng thanh toán
-            Cell totalLabelCell = new Cell();
-            totalLabelCell.setBorder(Border.NO_BORDER);
-            totalLabelCell.add(new Paragraph("TỔNG THANH TOÁN (VNĐ):"))
-                    .setFont(vietnameseBoldFont)
-                    .setFontSize(14)
-                    .setTextAlignment(TextAlignment.RIGHT);
-            summaryTable.addCell(totalLabelCell);
-
-            Cell totalValueCell = new Cell();
-            totalValueCell.setBorder(Border.NO_BORDER);
-            totalValueCell.add(new Paragraph(formatCurrency((int) grandTotal)))
-                    .setFont(vietnameseBoldFont)
-                    .setFontSize(14)
-                    .setTextAlignment(TextAlignment.RIGHT)
-                    .setFontColor(PRIMARY_COLOR);
-            summaryTable.addCell(totalValueCell);
-
-            document.add(summaryTable);
-
-            // Vẽ đường phân cách cuối
-            document.add(divider);
-
-            // Phần chân trang
-            document.add(new Paragraph("\nCảm ơn quý khách đã mua hàng!")
-                    .setFont(vietnameseBoldFont)
-                    .setFontSize(12)
-                    .setTextAlignment(TextAlignment.CENTER)
-                    .setMarginTop(20));
-
-            document.add(new Paragraph("Electric Store - Địa chỉ cửa hàng điện tử uy tín")
-                    .setFont(vietnameseFont)
-                    .setFontSize(10)
-                    .setTextAlignment(TextAlignment.CENTER)
-                    .setMarginTop(5));
-
-            document.add(new Paragraph("Điện thoại: 0123.456.789 | Email: contact@electricstore.com")
-                    .setFont(vietnameseFont)
-                    .setFontSize(10)
-                    .setTextAlignment(TextAlignment.CENTER));
-
-            document.add(new Paragraph("Website: www.electricstore.com")
-                    .setFont(vietnameseFont)
-                    .setFontSize(10)
-                    .setTextAlignment(TextAlignment.CENTER)
-                    .setMarginBottom(10));
+            // Chân trang
+            addFooter(document, vietnameseFont, vietnameseBoldFont);
 
             document.close();
             return outputStream.toByteArray();
@@ -298,43 +113,274 @@ public class PDFService {
         }
     }
 
-    // Helper methods
+    private void addCompanyHeader(Document document, PdfFont font, PdfFont boldFont) throws IOException {
+        Table headerTable = new Table(UnitValue.createPercentArray(new float[]{30, 70}));
+        headerTable.setWidth(UnitValue.createPercentValue(100));
+
+        // Logo
+        try {
+            InputStream logoStream = new ClassPathResource("static/images/logo/logodark.png").getInputStream();
+            Image logo = new Image(ImageDataFactory.create(logoStream.readAllBytes()));
+            logo.setWidth(120);
+            Cell logoCell = new Cell().add(logo)
+                    .setBorder(Border.NO_BORDER)
+                    .setVerticalAlignment(VerticalAlignment.MIDDLE);
+            headerTable.addCell(logoCell);
+        } catch (Exception e) {
+            Cell logoCell = new Cell().add(new Paragraph("ELECTRIC STORE")
+                            .setFont(boldFont)
+                            .setFontSize(18)
+                            .setFontColor(PRIMARY_COLOR))
+                    .setBorder(Border.NO_BORDER)
+                    .setTextAlignment(TextAlignment.LEFT);
+            headerTable.addCell(logoCell);
+        }
+
+        // Thông tin công ty
+        Cell companyInfoCell = new Cell()
+                .setBorder(Border.NO_BORDER)
+                .setVerticalAlignment(VerticalAlignment.MIDDLE);
+        companyInfoCell.add(new Paragraph("CÔNG TY TNHH ELECTRIC STORE")
+                .setFont(boldFont)
+                .setFontSize(12)
+                .setTextAlignment(TextAlignment.RIGHT));
+        companyInfoCell.add(new Paragraph("Địa chỉ: 79 Ngũ Hành Sơn, Ngũ Hành Sơn, Đà Nẵng")
+                .setFont(font)
+                .setFontSize(10)
+                .setTextAlignment(TextAlignment.RIGHT));
+        companyInfoCell.add(new Paragraph("Mã số thuế: 0123456789")
+                .setFont(font)
+                .setFontSize(10)
+                .setTextAlignment(TextAlignment.RIGHT));
+        companyInfoCell.add(new Paragraph("Điện thoại: (028) 1234 5678")
+                .setFont(font)
+                .setFontSize(10)
+                .setTextAlignment(TextAlignment.RIGHT));
+        headerTable.addCell(companyInfoCell);
+
+        document.add(headerTable);
+    }
+
+    private void addInvoiceInfo(Document document, OrderDTO orderDTO, PdfFont font, PdfFont boldFont) {
+        Table infoTable = new Table(UnitValue.createPercentArray(new float[]{50, 50}));
+        infoTable.setWidth(UnitValue.createPercentValue(100));
+
+        // Cột bên trái
+        Cell leftCell = new Cell().setBorder(Border.NO_BORDER);
+        leftCell.add(new Paragraph("Số hóa đơn: " + orderDTO.getInvoiceNumber())
+                .setFont(boldFont)
+                .setFontSize(11));
+        leftCell.add(new Paragraph("Ngày: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")))
+                .setFont(font)
+                .setFontSize(11));
+        infoTable.addCell(leftCell);
+
+        // Cột bên phải
+        Cell rightCell = new Cell().setBorder(Border.NO_BORDER);
+        rightCell.add(new Paragraph("Mã cửa hàng: CH001")
+                .setFont(boldFont)
+                .setFontSize(11)
+                .setTextAlignment(TextAlignment.RIGHT));
+        rightCell.add(new Paragraph("Số chứng từ: CT" + orderDTO.getInvoiceNumber())
+                .setFont(font)
+                .setFontSize(11)
+                .setTextAlignment(TextAlignment.RIGHT));
+        infoTable.addCell(rightCell);
+
+        document.add(infoTable);
+    }
+
+    private void addDivider(Document document) {
+        Table divider = new Table(1);
+        divider.setWidth(UnitValue.createPercentValue(100));
+        Cell dividerCell = new Cell()
+                .setBorder(Border.NO_BORDER)
+                .setBorderBottom(new SolidBorder(PRIMARY_COLOR, 1))
+                .setHeight(2)
+                .setMarginTop(10)
+                .setMarginBottom(10);
+        divider.addCell(dividerCell);
+        document.add(divider);
+    }
+
+    private void addCustomerInfo(Document document, OrderDTO orderDTO, PdfFont font) {
+        Table customerTable = new Table(UnitValue.createPercentArray(new float[]{25, 75}));
+        customerTable.setWidth(UnitValue.createPercentValue(100));
+
+        addInfoRow(customerTable, "Tên khách hàng:", orderDTO.getCustomerDTO().getCustomerName(), font);
+        addInfoRow(customerTable, "Số điện thoại:", orderDTO.getCustomerDTO().getPhoneNumber(), font);
+        addInfoRow(customerTable, "Địa chỉ:", orderDTO.getCustomerDTO().getAddress(), font);
+        addInfoRow(customerTable, "Email:", orderDTO.getCustomerDTO().getEmail(), font);
+
+        document.add(customerTable);
+    }
+
+    private void addProductTable(Document document, OrderDTO orderDTO, PdfFont font, PdfFont boldFont) {
+        Table productTable = new Table(UnitValue.createPercentArray(new float[]{5, 40, 15, 20, 20}));
+        productTable.setWidth(UnitValue.createPercentValue(100));
+
+        // Header
+        addTableHeader(productTable, "STT", boldFont);
+        addTableHeader(productTable, "Sản phẩm", boldFont);
+        addTableHeader(productTable, "Số lượng", boldFont);
+        addTableHeader(productTable, "Đơn giá (VNĐ)", boldFont);
+        addTableHeader(productTable, "Thành tiền (VNĐ)", boldFont);
+
+        // Dữ liệu sản phẩm
+        int index = 1;
+        for (ProductOrderDTO product : orderDTO.getProductOrderDTOList()) {
+            double subtotal = product.getQuantity() * product.getPriceIndex();
+            addTableCell(productTable, String.valueOf(index++), font, TextAlignment.CENTER);
+            addTableCell(productTable, product.getProductName(), font, TextAlignment.LEFT);
+            addTableCell(productTable, String.valueOf(product.getQuantity()), font, TextAlignment.CENTER);
+            addTableCell(productTable, formatCurrency(product.getPriceIndex()), font, TextAlignment.RIGHT);
+            addTableCell(productTable, formatCurrency(subtotal), font, TextAlignment.RIGHT);
+        }
+
+        document.add(productTable);
+    }
+
+    private void addSummaryTable(Document document, OrderDTO orderDTO, PdfFont font, PdfFont boldFont) {
+        Table summaryTable = new Table(UnitValue.createPercentArray(new float[]{80, 20}));
+        summaryTable.setWidth(UnitValue.createPercentValue(50));
+        summaryTable.setHorizontalAlignment(HorizontalAlignment.RIGHT);
+        summaryTable.setMarginTop(15);
+
+        // Tính tổng tiền hàng
+        double total = 0;
+        for (ProductOrderDTO product : orderDTO.getProductOrderDTOList()) {
+            total += product.getQuantity() * product.getPriceIndex();
+        }
+
+        // Tổng tiền hàng
+        addSummaryRow(summaryTable, "Tổng tiền hàng:", formatCurrency(total), font);
+
+        // Giảm giá theo số tiền
+        double discountAmount = 0;
+        if (orderDTO.getDiscountAmount() != null && orderDTO.getDiscountAmount() > 0) {
+            discountAmount += orderDTO.getDiscountAmount();
+            addSummaryRow(summaryTable, "Giảm giá:", formatCurrency(orderDTO.getDiscountAmount()), font);
+        }
+
+        // Giảm giá theo phần trăm
+        if (orderDTO.getDiscountPercent() != null && orderDTO.getDiscountPercent() > 0) {
+            double percentDiscount = total * orderDTO.getDiscountPercent() / 100;
+            discountAmount += percentDiscount;
+            addSummaryRow(summaryTable, "Giảm giá (" + orderDTO.getDiscountPercent().intValue() + "%):", formatCurrency(percentDiscount), font);
+        }
+
+        // Đường phân cách
+        Cell separatorCell = new Cell(1, 2)
+                .setBorder(Border.NO_BORDER)
+                .setBorderBottom(new SolidBorder(SECONDARY_COLOR, 0.5f))
+                .setHeight(1)
+                .setPaddingTop(5)
+                .setPaddingBottom(5);
+        summaryTable.addCell(separatorCell);
+
+        // Tổng thanh toán
+        double grandTotal = total - discountAmount;
+        addSummaryRow(summaryTable, "TỔNG THANH TOÁN:", formatCurrency(grandTotal), boldFont, 12, PRIMARY_COLOR);
+
+        document.add(summaryTable);
+    }
+
+    private void addFooter(Document document, PdfFont font, PdfFont boldFont) {
+        document.add(new Paragraph("\nCảm ơn quý khách đã mua hàng!")
+                .setFont(boldFont)
+                .setFontSize(11)
+                .setTextAlignment(TextAlignment.CENTER)
+                .setMarginTop(20));
+        document.add(new Paragraph("Electric Store - Địa chỉ cửa hàng điện tử uy tín")
+                .setFont(font)
+                .setFontSize(9)
+                .setTextAlignment(TextAlignment.CENTER)
+                .setMarginTop(5));
+        document.add(new Paragraph("Điện thoại: (028) 1234 5678 | Email: contact@electricstore.com")
+                .setFont(font)
+                .setFontSize(9)
+                .setTextAlignment(TextAlignment.CENTER));
+        document.add(new Paragraph("Website: www.electricstore.com")
+                .setFont(font)
+                .setFontSize(9)
+                .setTextAlignment(TextAlignment.CENTER)
+                .setMarginBottom(10));
+    }
+
     private void addTableHeader(Table table, String text, PdfFont font) {
         Cell cell = new Cell();
         cell.setBackgroundColor(TABLE_HEADER_COLOR);
-        cell.add(new Paragraph(text).setFont(font).setFontColor(ColorConstants.WHITE));
+        cell.add(new Paragraph(text)
+                .setFont(font)
+                .setFontSize(10)
+                .setFontColor(ColorConstants.WHITE));
         cell.setTextAlignment(TextAlignment.CENTER);
         cell.setVerticalAlignment(VerticalAlignment.MIDDLE);
-        cell.setPadding(8);
+        cell.setPadding(6);
+        cell.setBorder(new SolidBorder(ColorConstants.LIGHT_GRAY, BORDER_WIDTH));
         table.addHeaderCell(cell);
     }
 
     private void addTableCell(Table table, String text, PdfFont font, TextAlignment alignment) {
         Cell cell = new Cell();
-        cell.add(new Paragraph(text).setFont(font).setFontColor(SECONDARY_COLOR));
+        cell.add(new Paragraph(text)
+                .setFont(font)
+                .setFontSize(10)
+                .setFontColor(SECONDARY_COLOR));
         cell.setTextAlignment(alignment);
         cell.setVerticalAlignment(VerticalAlignment.MIDDLE);
-        cell.setPadding(8);
-        // Thêm border mỏng
+        cell.setPadding(6);
         cell.setBorder(new SolidBorder(ColorConstants.LIGHT_GRAY, BORDER_WIDTH));
         table.addCell(cell);
     }
 
-    private void addCustomerInfoRow(Table table, String label, String value, PdfFont font) {
+    private void addInfoRow(Table table, String label, String value, PdfFont font) {
         Cell labelCell = new Cell();
         labelCell.setBorder(Border.NO_BORDER);
-        labelCell.add(new Paragraph(label).setFont(font).setFontColor(SECONDARY_COLOR));
-        labelCell.setPadding(5);
+        labelCell.add(new Paragraph(label)
+                .setFont(font)
+                .setFontSize(10)
+                .setFontColor(SECONDARY_COLOR));
+        labelCell.setPadding(4);
         table.addCell(labelCell);
 
         Cell valueCell = new Cell();
         valueCell.setBorder(Border.NO_BORDER);
-        valueCell.add(new Paragraph(value).setFont(font).setFontColor(SECONDARY_COLOR));
-        valueCell.setPadding(5);
+        valueCell.add(new Paragraph(value)
+                .setFont(font)
+                .setFontSize(10)
+                .setFontColor(SECONDARY_COLOR));
+        valueCell.setPadding(4);
         table.addCell(valueCell);
     }
 
-    private String formatCurrency(int amount) {
-        return String.format("%,d", amount).replace(",", ".");
+    private void addSummaryRow(Table table, String label, String value, PdfFont font) {
+        addSummaryRow(table, label, value, font, 10, SECONDARY_COLOR);
+    }
+
+    private void addSummaryRow(Table table, String label, String value, PdfFont font, float fontSize, DeviceRgb color) {
+        Cell labelCell = new Cell();
+        labelCell.setBorder(Border.NO_BORDER);
+        labelCell.add(new Paragraph(label)
+                .setFont(font)
+                .setFontSize(fontSize)
+                .setTextAlignment(TextAlignment.RIGHT));
+        labelCell.setPadding(4);
+        table.addCell(labelCell);
+
+        Cell valueCell = new Cell();
+        valueCell.setBorder(Border.NO_BORDER);
+        valueCell.add(new Paragraph(value)
+                .setFont(font)
+                .setFontSize(fontSize)
+                .setFontColor(color)
+                .setTextAlignment(TextAlignment.RIGHT));
+        valueCell.setPadding(4);
+        table.addCell(valueCell);
+    }
+
+    private String formatCurrency(double amount) {
+        NumberFormat currencyFormat = NumberFormat.getNumberInstance(new Locale("vi", "VN"));
+        return currencyFormat.format(Math.round(amount));
     }
 }

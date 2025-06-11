@@ -245,7 +245,7 @@
             </div>
             <div class="form-check mb-3">
               <input class="form-check-input payment-method" type="radio" name="paymentMethod" id="cardOption" value="card">
-              <label class="form-check-label" for="cardOption">Quẹt Thẻ</label>
+              <label class="form-check-label" for="cardOption">Thanh Toán Thẻ</label>
             </div>
           </div>
           <div id="paymentAmountContainer" class="mb-3" style="display: none;">
@@ -323,39 +323,42 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-  $(document).ready(function() {
-    const invoiceId = $("#invoiceId").val();
+  document.addEventListener('DOMContentLoaded', function() {
+    const invoiceId = document.getElementById("invoiceId").value;
     initializeInvoiceDetails();
     loadPaymentHistory();
     setupEventListeners();
 
     function initializeInvoiceDetails() {
-      const paymentStatus = $(".badge").text().trim();
+      const paymentStatus = document.querySelector(".badge").textContent.trim();
 
       // Tính tổng số lượng nhập
       let totalQuantity = 0;
-      $('.product-table tbody tr').each(function() {
-        const quantity = parseNumberFromString($(this).find('td:nth-child(5)').text());
+      const productRows = document.querySelectorAll('.product-table tbody tr');
+      productRows.forEach(function(row) {
+        const quantityCell = row.querySelector('td:nth-child(5)');
+        const quantity = parseNumberFromString(quantityCell.textContent);
         totalQuantity += quantity;
       });
-      $('#totalQuantityDisplay').text(totalQuantity);
+      document.getElementById('totalQuantityDisplay').textContent = totalQuantity;
 
       // Tính tổng tiền hàng
       let totalPrice = 0;
-      $('.product-table tbody tr').each(function() {
-        const rowTotal = parseNumberFromString($(this).find('td:last').text());
+      productRows.forEach(function(row) {
+        const lastCell = row.querySelector('td:last-child');
+        const rowTotal = parseNumberFromString(lastCell.textContent);
         totalPrice += rowTotal;
       });
-      $('#totalProductsPrice').text(formatCurrency(totalPrice));
+      document.getElementById('totalProductsPrice').textContent = formatCurrency(totalPrice);
 
       // Lấy các giá trị từ hidden input
-      const grandTotal = parseFloat($("#invoiceTotal").val()) || 0;
-      const vatRate = parseFloat($("#vatRate").val()) || 0;
-      const discountValue = parseFloat($("#discountValue").val()) || 0;
-      const additionalFeesValue = parseFloat($("#additionalFeesValue").val()) || 0;
+      const grandTotal = parseFloat(document.getElementById("invoiceTotal").value) || 0;
+      const vatRate = parseFloat(document.getElementById("vatRate").value) || 0;
+      const discountValue = parseFloat(document.getElementById("discountValue").value) || 0;
+      const additionalFeesValue = parseFloat(document.getElementById("additionalFeesValue").value) || 0;
 
       // Hiển thị VAT
-      $('#vatDisplay').text(vatRate > 0 ? `${vatRate.toFixed(0)}%` : '0');
+      document.getElementById('vatDisplay').textContent = vatRate > 0 ? `${vatRate.toFixed(0)}%` : '0';
 
       console.log('Debug values:', {
         grandTotal,
@@ -367,37 +370,41 @@
 
     function setupEventListeners() {
       // Sự kiện khi chọn phương thức thanh toán
-      $(".payment-method").on("change", function() {
-        $("#paymentAmountContainer").show();
+      const paymentMethods = document.querySelectorAll(".payment-method");
+      paymentMethods.forEach(function(method) {
+        method.addEventListener("change", function() {
+          document.getElementById("paymentAmountContainer").style.display = "block";
 
-        // Lấy số tiền còn nợ hiện tại
-        const remainingText = $("#remainingDebt").text();
-        const remaining = parseNumberFromString(remainingText);
+          // Lấy số tiền còn nợ hiện tại
+          const remainingText = document.getElementById("remainingDebt").textContent;
+          const remaining = parseNumberFromString(remainingText);
 
-        console.log('Selected payment method, remaining debt:', remaining);
+          console.log('Selected payment method, remaining debt:', remaining);
 
-        if (remaining > 0) {
-          // Tự động điền số tiền còn nợ vào ô input với định dạng có dấu chấm
-          $("#paymentAmount").val(formatNumberWithDots(remaining));
-          $("#totalDebt").text(formatCurrency(remaining) + ' VNĐ');
-          $("#paymentSubmitBtn").prop("disabled", false);
-        } else {
-          $("#paymentAmount").val('0');
-          $("#totalDebt").text('0 VNĐ');
-          $("#paymentSubmitBtn").prop("disabled", true);
-        }
+          if (remaining > 0) {
+            // Tự động điền số tiền còn nợ vào ô input với định dạng có dấu chấm
+            document.getElementById("paymentAmount").value = formatNumberWithDots(remaining);
+            document.getElementById("totalDebt").textContent = formatCurrency(remaining) + ' VNĐ';
+            document.getElementById("paymentSubmitBtn").disabled = false;
+          } else {
+            document.getElementById("paymentAmount").value = '0';
+            document.getElementById("totalDebt").textContent = '0 VNĐ';
+            document.getElementById("paymentSubmitBtn").disabled = true;
+          }
+        });
       });
 
       // Sự kiện khi nhập số tiền thanh toán
-      $("#paymentAmount").on("input", function() {
+      const paymentAmountInput = document.getElementById("paymentAmount");
+      paymentAmountInput.addEventListener("input", function() {
         formatPaymentInput(this);
         checkPaymentValidity();
       });
 
       // Chỉ cho phép nhập số
-      $("#paymentAmount").on("keypress", function(e) {
+      paymentAmountInput.addEventListener("keypress", function(e) {
         // Chỉ cho phép số (0-9), backspace, delete, tab, escape, enter
-        if ($.inArray(e.keyCode, [46, 8, 9, 27, 13]) !== -1 ||
+        if ([46, 8, 9, 27, 13].indexOf(e.keyCode) !== -1 ||
                 // Cho phép Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
                 (e.keyCode === 65 && e.ctrlKey === true) ||
                 (e.keyCode === 67 && e.ctrlKey === true) ||
@@ -412,63 +419,73 @@
       });
 
       // Sự kiện submit form thanh toán
-      $("#paymentForm").on("submit", handlePaymentSubmit);
+      const paymentForm = document.getElementById("paymentForm");
+      paymentForm.addEventListener("submit", handlePaymentSubmit);
 
       // Sự kiện xuất PDF
-      $("#confirmExportBtn").on("click", function() {
-        $("#exportConfirmModal").modal("hide");
+      const confirmExportBtn = document.getElementById("confirmExportBtn");
+      confirmExportBtn.addEventListener("click", function() {
+        const exportModal = bootstrap.Modal.getInstance(document.getElementById("exportConfirmModal"));
+        exportModal.hide();
         handleExportPdf();
       });
 
       // Thêm sự kiện cho nút hủy phiếu
       window.confirmCancel = function() {
-        const reason = $("#cancelReason").val().trim();
-        const reasonError = $("#cancelReasonError");
-        reasonError.text("");
+        const reason = document.getElementById("cancelReason").value.trim();
+        const reasonError = document.getElementById("cancelReasonError");
+        reasonError.textContent = "";
 
         if (reason === "") {
-          reasonError.text("Vui lòng nhập lý do hủy phiếu.");
+          reasonError.textContent = "Vui lòng nhập lý do hủy phiếu.";
           return;
         }
 
-        $.ajax({
-          url: "/api/Admin/invoice/cancel",
-          type: "POST",
-          data: { invoiceId: invoiceId, reason: reason },
-          success: function(response) {
-            window.location.href = "/Admin/ware-houses/history_warehouse?successMessage=Hủy phiếu nhập thành công";
-          },
-          error: function(error) {
-            console.error("Lỗi khi hủy phiếu:", error);
-            alert("Có lỗi xảy ra khi hủy phiếu. Vui lòng thử lại sau.");
-          }
-        });
+        const formData = new FormData();
+        formData.append('invoiceId', invoiceId);
+        formData.append('reason', reason);
+
+        fetch("/api/Admin/invoice/cancel", {
+          method: "POST",
+          body: formData
+        })
+                .then(response => {
+                  if (response.ok) {
+                    window.location.href = "/Admin/ware-houses/history_warehouse?successMessage=Hủy phiếu nhập thành công";
+                  } else {
+                    throw new Error('Network response was not ok');
+                  }
+                })
+                .catch(error => {
+                  console.error("Lỗi khi hủy phiếu:", error);
+                  alert("Có lỗi xảy ra khi hủy phiếu. Vui lòng thử lại sau.");
+                });
       };
     }
 
     function checkPaymentValidity() {
-      const selectedMethod = $("input[name='paymentMethod']:checked").val();
-      const amountInput = $("#paymentAmount").val();
+      const selectedMethod = document.querySelector("input[name='paymentMethod']:checked");
+      const amountInput = document.getElementById("paymentAmount").value;
       const amount = parseNumberFromFormattedString(amountInput);
-      const maxAmountText = $("#remainingDebt").text();
+      const maxAmountText = document.getElementById("remainingDebt").textContent;
       const maxAmount = parseNumberFromString(maxAmountText);
 
       console.log('Checking payment validity:', {
-        selectedMethod,
+        selectedMethod: selectedMethod ? selectedMethod.value : undefined,
         amount,
         maxAmount,
         amountInput
       });
 
-      const isMethodSelected = selectedMethod !== undefined;
+      const isMethodSelected = selectedMethod !== null;
       const isAmountValid = amount > 0 && amount <= maxAmount;
 
-      $("#paymentSubmitBtn").prop("disabled", !(isMethodSelected && isAmountValid));
+      document.getElementById("paymentSubmitBtn").disabled = !(isMethodSelected && isAmountValid);
 
       if (isAmountValid && amount > 0) {
-        $("#totalDebt").text(formatCurrency(amount) + ' VNĐ');
+        document.getElementById("totalDebt").textContent = formatCurrency(amount) + ' VNĐ';
       } else {
-        $("#totalDebt").text("0 VNĐ");
+        document.getElementById("totalDebt").textContent = "0 VNĐ";
       }
     }
 
@@ -479,8 +496,9 @@
 
     function handlePaymentSubmit(e) {
       e.preventDefault();
-      const paymentMethod = $("input[name='paymentMethod']:checked").val();
-      const paymentAmount = parseNumberFromFormattedString($("#paymentAmount").val());
+      const selectedMethod = document.querySelector("input[name='paymentMethod']:checked");
+      const paymentMethod = selectedMethod ? selectedMethod.value : null;
+      const paymentAmount = parseNumberFromFormattedString(document.getElementById("paymentAmount").value);
 
       if (paymentAmount <= 0) {
         alert("Vui lòng nhập số tiền hợp lệ");
@@ -488,34 +506,42 @@
       }
 
       // Disable button để tránh submit nhiều lần
-      $("#paymentSubmitBtn").prop("disabled", true).text("Đang xử lý...");
+      const submitBtn = document.getElementById("paymentSubmitBtn");
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Đang xử lý...";
 
-      $.ajax({
-        url: "/api/Admin/invoice/payment-process",
-        type: "POST",
-        data: {
-          invoiceId: invoiceId,
-          method: paymentMethod,
-          amount: paymentAmount
-        },
-        success: function(response) {
-          const sessionKey = `invoice-paid-${invoiceId}`;
-          const currentPaid = getStoredPaymentData(sessionKey);
-          sessionStorage.setItem(sessionKey, currentPaid + paymentAmount);
-          window.location.href = "/Admin/ware-houses/history_warehouse?successMessage=Thanh toán thành công phiếu nhập kho";
-        },
-        error: function(error) {
-          console.error("Lỗi khi xử lý thanh toán:", error);
-          alert("Lỗi khi xử lý thanh toán: " + (error.responseText || "Đã có lỗi xảy ra"));
-          // Enable lại button nếu có lỗi
-          $("#paymentSubmitBtn").prop("disabled", false).text("Thanh Toán");
-        }
-      });
+      const formData = new FormData();
+      formData.append('invoiceId', invoiceId);
+      formData.append('method', paymentMethod);
+      formData.append('amount', paymentAmount);
+
+      fetch("/api/Admin/invoice/payment-process", {
+        method: "POST",
+        body: formData
+      })
+              .then(response => {
+                if (response.ok) {
+                  const sessionKey = `invoice-paid-${invoiceId}`;
+                  const currentPaid = getStoredPaymentData(sessionKey);
+                  sessionStorage.setItem(sessionKey, currentPaid + paymentAmount);
+                  window.location.href = "/Admin/ware-houses/history_warehouse?successMessage=Thanh toán thành công phiếu nhập kho";
+                } else {
+                  throw new Error('Network response was not ok');
+                }
+              })
+              .catch(error => {
+                console.error("Lỗi khi xử lý thanh toán:", error);
+                alert("Lỗi khi xử lý thanh toán: " + (error.message || "Đã có lỗi xảy ra"));
+                // Enable lại button nếu có lỗi
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Thanh Toán";
+              });
     }
 
     function handleExportPdf() {
-      const exportButton = $("[data-bs-target='#exportConfirmModal']");
-      exportButton.prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Đang xử lý...');
+      const exportButton = document.querySelector("[data-bs-target='#exportConfirmModal']");
+      exportButton.disabled = true;
+      exportButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Đang xử lý...';
 
       fetch(`/api/Admin/invoice/export-pdf/${invoiceId}`, {
         method: 'GET',
@@ -526,7 +552,8 @@
                 return response.blob();
               })
               .then(blob => {
-                const invoiceCode = $('h3 span').text() || 'phieu-nhap';
+                const invoiceCodeElement = document.querySelector('h3 span');
+                const invoiceCode = invoiceCodeElement ? invoiceCodeElement.textContent : 'phieu-nhap';
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
@@ -534,47 +561,57 @@
                 document.body.appendChild(a);
                 a.click();
                 window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
               })
               .catch(error => {
                 console.error('Lỗi khi xuất PDF:', error);
                 alert('Có lỗi xảy ra khi xuất PDF: ' + error.message);
               })
               .finally(() => {
-                exportButton.prop("disabled", false).text("Xuất Phiếu");
+                exportButton.disabled = false;
+                exportButton.textContent = "Xuất Phiếu";
               });
     }
 
     function loadPaymentHistory() {
-      $.ajax({
-        url: `/api/Admin/invoice/payment-history?invoiceId=${invoiceId}`,
-        type: "GET",
-        dataType: "json",
-        success: function(historyList) {
-          renderPaymentHistory(historyList);
-          let totalPaid = 0;
-          if (historyList && historyList.length > 0) {
-            historyList.forEach(entry => totalPaid += Number(entry.amount));
-          }
-          const sessionKey = `invoice-paid-${invoiceId}`;
-          sessionStorage.setItem(sessionKey, totalPaid);
-          updatePaymentDisplay(totalPaid);
-        },
-        error: function(error) {
-          console.error("Lỗi khi tải lịch sử thanh toán:", error);
-          $("#paymentHistoryBody").html(`
-                    <tr>
-                        <td colspan="3" class="text-center text-danger">
-                            Không thể tải dữ liệu. Vui lòng thử lại sau.
-                        </td>
-                    </tr>
-                `);
+      fetch(`/api/Admin/invoice/payment-history?invoiceId=${invoiceId}`, {
+        method: "GET",
+        headers: {
+          'Content-Type': 'application/json'
         }
-      });
+      })
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error('Network response was not ok');
+                }
+                return response.json();
+              })
+              .then(historyList => {
+                renderPaymentHistory(historyList);
+                let totalPaid = 0;
+                if (historyList && historyList.length > 0) {
+                  historyList.forEach(entry => totalPaid += Number(entry.amount));
+                }
+                const sessionKey = `invoice-paid-${invoiceId}`;
+                sessionStorage.setItem(sessionKey, totalPaid);
+                updatePaymentDisplay(totalPaid);
+              })
+              .catch(error => {
+                console.error("Lỗi khi tải lịch sử thanh toán:", error);
+                const paymentHistoryBody = document.getElementById("paymentHistoryBody");
+                paymentHistoryBody.innerHTML = `
+                <tr>
+                    <td colspan="3" class="text-center text-danger">
+                        Không thể tải dữ liệu. Vui lòng thử lại sau.
+                    </td>
+                </tr>
+            `;
+              });
     }
 
     function updatePaymentDisplay(paidAmount) {
-      const grandTotal = parseFloat($("#invoiceTotal").val()) || 0;
-      const vatRate = parseFloat($("#vatRate").val()) || 0;
+      const grandTotal = parseFloat(document.getElementById("invoiceTotal").value) || 0;
+      const vatRate = parseFloat(document.getElementById("vatRate").value) || 0;
 
       console.log('Update payment display:', {
         grandTotal,
@@ -582,43 +619,55 @@
         remaining: grandTotal - paidAmount
       });
 
-      $('#vatDisplay').text(vatRate > 0 ? `${vatRate.toFixed(0)}%` : '0');
-      $("#paidAmountDisplay").text(formatCurrency(paidAmount));
+      document.getElementById('vatDisplay').textContent = vatRate > 0 ? `${vatRate.toFixed(0)}%` : '0';
+      document.getElementById("paidAmountDisplay").textContent = formatCurrency(paidAmount);
 
       const remaining = Math.max(0, grandTotal - paidAmount);
-      $("#remainingDebtDisplay").text(formatCurrency(remaining));
-      $("#paymentModal .text-success").text(formatCurrency(paidAmount) + ' VNĐ');
-      $("#remainingDebt").text(formatCurrency(remaining) + ' VNĐ');
-      $("#totalDebt").text(formatCurrency(remaining) + ' VNĐ');
-      $("#maxPaymentAmount").text(formatCurrency(remaining));
+      document.getElementById("remainingDebtDisplay").textContent = formatCurrency(remaining);
+
+      const paidAmountElement = document.querySelector("#paymentModal .text-success");
+      if (paidAmountElement) {
+        paidAmountElement.textContent = formatCurrency(paidAmount) + ' VNĐ';
+      }
+
+      document.getElementById("remainingDebt").textContent = formatCurrency(remaining) + ' VNĐ';
+      document.getElementById("totalDebt").textContent = formatCurrency(remaining) + ' VNĐ';
+      document.getElementById("maxPaymentAmount").textContent = formatCurrency(remaining);
 
       // Vô hiệu hóa nút thanh toán nếu đã thanh toán hết
       if (remaining <= 0) {
-        $("[data-bs-target='#paymentModal']").prop("disabled", true).text("Đã thanh toán");
+        const paymentButton = document.querySelector("[data-bs-target='#paymentModal']");
+        if (paymentButton) {
+          paymentButton.disabled = true;
+          paymentButton.textContent = "Đã thanh toán";
+        }
       }
     }
 
     function renderPaymentHistory(historyList) {
-      const tbody = $("#paymentHistoryBody");
-      tbody.empty();
+      const tbody = document.getElementById("paymentHistoryBody");
+      tbody.innerHTML = "";
+
       if (!historyList || historyList.length === 0) {
-        tbody.html(`
+        tbody.innerHTML = `
                 <tr>
                     <td colspan="3" class="text-center text-muted">
                         Chưa có dữ liệu thanh toán.
                     </td>
                 </tr>
-            `);
+            `;
         return;
       }
-      $.each(historyList, function(index, entry) {
+
+      historyList.forEach(function(entry) {
         const paidDate = new Date(entry.paidAt).toLocaleString("vi-VN");
-        const row = $("<tr>").html(`
+        const row = document.createElement("tr");
+        row.innerHTML = `
                 <td>${paidDate}</td>
                 <td>${entry.method}</td>
                 <td>${formatCurrency(Number(entry.amount))}</td>
-            `);
-        tbody.append(row);
+            `;
+        tbody.appendChild(row);
       });
     }
 
@@ -652,11 +701,8 @@
     // Hàm định dạng input khi người dùng nhập
     function formatPaymentInput(input) {
       let value = input.value;
-      // Loại bỏ tất cả ký tự không phải số và dấu chấm
       value = value.replace(/[^\d.]/g, '');
-      // Loại bỏ dấu chấm
       value = value.replace(/\./g, '');
-      // Thêm dấu chấm phân cách hàng nghìn
       if (value) {
         value = formatNumberWithDots(parseInt(value) || 0);
       }

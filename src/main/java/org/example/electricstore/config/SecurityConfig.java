@@ -86,10 +86,6 @@ public class SecurityConfig {
                                 .invalidateHttpSession(false)
                                 .logoutUrl("/logout")
                                 .logoutSuccessUrl("/logoutSuccessful"))
-                .rememberMe((remember) ->
-                        remember
-                                .rememberMeParameter("remember-me")
-                                .tokenValiditySeconds(60 * 60 * 24 * 365)) // Token hợp lệ 1 năm
                 .exceptionHandling((exceptionHandling) ->
                         exceptionHandling
                                 .accessDeniedPage("/403"));

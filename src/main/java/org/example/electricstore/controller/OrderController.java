@@ -204,16 +204,20 @@ public class OrderController {
     }
 
     @GetMapping("/downloadInvoicePdf")
-    public void downloadInvoicePdf(@RequestParam Integer orderId, HttpServletResponse response) throws IOException {
-        OrderDTO orderDTO = orderService.getOrderDTOById(orderId);
+    public void downloadInvoicePdf(@RequestParam Integer orderId, HttpServletResponse response) {
+        try {
+            OrderDTO orderDTO = orderService.getOrderDTOById(orderId);
 
-        byte[] pdf = pdfService.createInvoicePDF(orderDTO);
+            byte[] pdf = pdfService.createInvoicePDF(orderDTO);
 
-        response.setContentType("application/pdf");
-        response.setHeader("Content-Disposition", "attachment; filename=invoice.pdf");
-        response.getOutputStream().write(pdf);
-        response.getOutputStream().flush();
-        response.getOutputStream().close();
+            response.setContentType("application/pdf");
+            response.setHeader("Content-Disposition", "attachment; filename=invoice.pdf");
+            response.getOutputStream().write(pdf);
+            response.getOutputStream().flush();
+            response.getOutputStream().close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @GetMapping("/showListCustomer")
