@@ -460,12 +460,9 @@
             window.location.href = "/Admin/order";
         });
 
-        // Gắn sự kiện cho nút thêm sản phẩm
         $('#addProductButton').on('click', function() {
             selectProductWithValidation();
         });
-
-        // Form submission handling
         $("#orderForm").submit(handleFormSubmission);
     }
 
@@ -1269,7 +1266,6 @@
                         qrModal.show();
                         // Xử lý nút xác nhận thanh toán
                         document.getElementById('confirmPaymentBtn').onclick = function() {
-                            // Gọi API xác nhận thanh toán
                             fetch('/Admin/payment/confirm-payment', {
                                 method: 'POST',
                                 headers: {
@@ -1296,8 +1292,6 @@
                         window.open("/Admin/order/downloadInvoicePdf?orderId=" + response.orderId, "_blank");
                         window.location.href = "/Admin/order?successMessage=Thêm đơn hàng mới thành công.";
                     }
-
-                    // Clear storage
                     sessionStorage.removeItem("selectedProduct");
                     sessionStorage.removeItem("selectedCustomer");
                     sessionStorage.removeItem("selectedNewCustomer");

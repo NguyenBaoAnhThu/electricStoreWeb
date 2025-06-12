@@ -241,7 +241,6 @@ public class EmployeeController {
         return ResponseEntity.ok(response);
     }
 
-    // Hàm helper để map ErrorCode sang tên field
     private String mapErrorCodeToField(UserError errorCode) {
         switch (errorCode) {
             case INVALID_NAME_FORMAT:

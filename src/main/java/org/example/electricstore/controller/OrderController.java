@@ -210,8 +210,12 @@ public class OrderController {
 
             byte[] pdf = pdfService.createInvoicePDF(orderDTO);
 
+            String fileName = (orderDTO.getInvoiceNumber() != null && !orderDTO.getInvoiceNumber().isEmpty())
+                    ? orderDTO.getInvoiceNumber() + ".pdf"
+                    : "invoice.pdf";
+
             response.setContentType("application/pdf");
-            response.setHeader("Content-Disposition", "attachment; filename=invoice.pdf");
+            response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
             response.getOutputStream().write(pdf);
             response.getOutputStream().flush();
             response.getOutputStream().close();

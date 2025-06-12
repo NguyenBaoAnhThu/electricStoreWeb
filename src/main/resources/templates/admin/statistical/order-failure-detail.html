@@ -77,11 +77,11 @@
                     </td>
                 </tr>
                 <tr th:each="order : ${orders.content}">
-                    <td class="text-center fw-bold" th:text="${order.code}"></td>
+                    <td class="text-center" th:text="${order.code}"></td>
                     <td th:text="${order.customerName}"></td>
                     <td class="text-center" th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm')}"></td>
                     <td class="text-center" th:text="${order.quantity}"></td>
-                    <td class="text-end fw-bold" th:text="${#numbers.formatDecimal(order.price, 0, 'COMMA', 0, 'POINT')}"></td>
+                    <td class="text-end" th:text="${#numbers.formatDecimal(order.price, 0, 'COMMA', 0, 'POINT')}"></td>
                     <td class="text-center">
                         <span class="badge bg-danger">
                             ĐÃ HỦY

@@ -136,7 +136,7 @@ public class StatisticalController {
 
         model.addAttribute("orders", orderDetailPage);
         model.addAttribute("ordersSize", filteredOrders.size());
-        model.addAttribute("totalRevenue", totalRevenue); // Add total revenue to the model
+        model.addAttribute("totalRevenue", totalRevenue);
         model.addAttribute("page", page);
         model.addAttribute("size", size);
         model.addAttribute("type", type);

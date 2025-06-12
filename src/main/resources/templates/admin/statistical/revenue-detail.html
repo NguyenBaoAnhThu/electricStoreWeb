@@ -72,7 +72,7 @@
                         <h6 class="card-title">
                             LỢI NHUẬN RÒNG (VNĐ)
                         </h6>
-                        <p class="card-text text-danger fw-bold" th:text="${#numbers.formatDecimal(netProfit, 0, 'COMMA', 0, 'POINT')}"></p>
+                        <p class="card-text text-danger fw-bold" th:text="${#numbers.formatDecimal(netProfit, 0, 'POINT', 0, 'COMMA')}"></p>
                     </div>
                 </div>
             </div>

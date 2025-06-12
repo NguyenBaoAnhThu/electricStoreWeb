@@ -26,7 +26,6 @@ public class EmployeeAPIController {
         Map<String, Object> response = new HashMap<>();
 
         try {
-            // Gọi phương thức cập nhật từ UserService
             userService.update(userDTO, null);
 
             response.put("status", "success");
